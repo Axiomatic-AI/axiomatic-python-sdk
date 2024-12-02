@@ -84,7 +84,7 @@ Use the `max_retries` request option to configure this behavior.
 client.pic.extract(..., request_options={
         "max_retries": 1
     })
-    ```
+```
 
 ### Timeouts
 
