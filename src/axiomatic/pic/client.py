@@ -50,7 +50,6 @@ class PicClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.pic.extract()
         """
@@ -112,7 +111,6 @@ class PicClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.pic.extract_from_text(
             query="query",
@@ -179,7 +177,6 @@ class PicClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.pic.extract_from_paper()
         """
@@ -241,7 +238,6 @@ class PicClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.pic.identify(
             statements=[
@@ -322,7 +318,6 @@ class PicClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.pic.identify_with_context(
             statements="statements",
@@ -388,7 +383,6 @@ class PicClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.pic.synthesize_circuit_from_paper()
         """
@@ -450,7 +444,6 @@ class PicClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.pic.synthesize_circuit_from_text(
             query="query",
@@ -524,7 +517,6 @@ class AsyncPicClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -594,7 +586,6 @@ class AsyncPicClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -669,7 +660,6 @@ class AsyncPicClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -739,7 +729,6 @@ class AsyncPicClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -828,7 +817,6 @@ class AsyncPicClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -902,7 +890,6 @@ class AsyncPicClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -972,7 +959,6 @@ class AsyncPicClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 

@@ -24,7 +24,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.extract()
 ```
@@ -40,7 +39,6 @@ from axiomatic import AsyncAxiomatic
 
 client = AsyncAxiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 
 

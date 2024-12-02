@@ -20,11 +20,13 @@ from .types import (
 from .errors import UnprocessableEntityError
 from . import experimental, generic, lean, pic
 from .client import AsyncAxiomatic, Axiomatic
+from .environment import AxiomaticEnvironment
 from .version import __version__
 
 __all__ = [
     "AsyncAxiomatic",
     "Axiomatic",
+    "AxiomaticEnvironment",
     "CircuitImage",
     "CodeSynthesisResponse",
     "Edge",

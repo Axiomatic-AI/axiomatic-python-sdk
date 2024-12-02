@@ -43,7 +43,6 @@ class ExperimentalClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.experimental.assistant(
             query="query",
@@ -107,7 +106,6 @@ class ExperimentalClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.experimental.synthesize(
             query="query",
@@ -178,7 +176,6 @@ class AsyncExperimentalClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -250,7 +247,6 @@ class AsyncExperimentalClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 

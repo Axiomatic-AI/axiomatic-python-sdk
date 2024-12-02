@@ -16,7 +16,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.health_check_health_check_get()
 
@@ -78,7 +77,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.extract()
 
@@ -149,7 +147,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.extract_from_text(
     query="query",
@@ -220,7 +217,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.extract_from_paper()
 
@@ -291,7 +287,6 @@ from axiomatic import Axiomatic, StatementInput
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.identify(
     statements=[
@@ -367,7 +362,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.identify_with_context(
     statements="statements",
@@ -446,7 +440,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.synthesize_circuit_from_paper()
 
@@ -517,7 +510,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.pic.synthesize_circuit_from_text(
     query="query",
@@ -575,7 +567,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.lean.lean_execute()
 
@@ -646,7 +637,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.lean.suggest(
     prompt="prompt",
@@ -712,7 +702,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.lean.z_3_execute(
     code="code",
@@ -784,7 +773,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.experimental.assistant(
     query="query",
@@ -864,7 +852,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.experimental.synthesize(
     query="query",
@@ -922,7 +909,6 @@ from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
-    base_url="https://yourhost.com/path/to/api",
 )
 client.generic.extract(
     query="query",

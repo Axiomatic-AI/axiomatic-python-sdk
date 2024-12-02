@@ -49,7 +49,6 @@ class LeanClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.lean.lean_execute()
         """
@@ -115,7 +114,6 @@ class LeanClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.lean.suggest(
             prompt="prompt",
@@ -181,7 +179,6 @@ class LeanClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.lean.z_3_execute(
             code="code",
@@ -261,7 +258,6 @@ class AsyncLeanClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -335,7 +331,6 @@ class AsyncLeanClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -409,7 +404,6 @@ class AsyncLeanClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 

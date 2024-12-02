@@ -40,7 +40,6 @@ class GenericClient:
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.generic.extract(
             query="query",
@@ -111,7 +110,6 @@ class AsyncGenericClient:
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
