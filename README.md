@@ -104,7 +104,7 @@ client = Axiomatic(
     client.pic.extract(..., request_options={
         "timeout_in_seconds": 1
     })
-    ```
+```
 
 ### Custom Client
 
