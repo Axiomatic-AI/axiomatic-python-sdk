@@ -1,6 +1,6 @@
 # Axiomatic Python Library
 
-[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Ffern-demo%2Faxiomatic-python-sdk)
+[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Faxiomatic-ai%2Faxiomatic-python-sdk)
 [![pypi](https://img.shields.io/pypi/v/axiomatic)](https://pypi.python.org/pypi/axiomatic)
 
 The Axiomatic Python library provides convenient access to the Axiomatic API from Python.
@@ -84,7 +84,7 @@ Use the `max_retries` request option to configure this behavior.
 client.pic.extract(..., request_options={
         "max_retries": 1
     })
-```
+    ```
 
 ### Timeouts
 
@@ -104,7 +104,7 @@ client = Axiomatic(
     client.pic.extract(..., request_options={
         "timeout_in_seconds": 1
     })
-```
+    ```
 
 ### Custom Client
 
