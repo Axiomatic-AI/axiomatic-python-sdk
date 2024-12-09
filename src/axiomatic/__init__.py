@@ -14,6 +14,7 @@ from .types import (
     StatementInput,
     SynthesisResponse,
     SynthesizeCircuitResponse,
+    Type,
     ValidationError,
     ValidationErrorLocItem,
 )
@@ -40,6 +41,7 @@ __all__ = [
     "StatementInput",
     "SynthesisResponse",
     "SynthesizeCircuitResponse",
+    "Type",
     "UnprocessableEntityError",
     "ValidationError",
     "ValidationErrorLocItem",

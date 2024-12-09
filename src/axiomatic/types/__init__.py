@@ -13,6 +13,7 @@ from .statement import Statement
 from .statement_input import StatementInput
 from .synthesis_response import SynthesisResponse
 from .synthesize_circuit_response import SynthesizeCircuitResponse
+from .type import Type
 from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
 
@@ -30,6 +31,7 @@ __all__ = [
     "StatementInput",
     "SynthesisResponse",
     "SynthesizeCircuitResponse",
+    "Type",
     "ValidationError",
     "ValidationErrorLocItem",
 ]

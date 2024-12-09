@@ -3,8 +3,9 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing_extensions
 from ..core.serialization import FieldMetadata
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import typing
+from .type import Type
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
@@ -12,6 +13,7 @@ class Statement(UniversalBaseModel):
     id: str
     statement: str
     z_3_formalization: typing_extensions.Annotated[str, FieldMetadata(alias="z3_formalization")]
+    type: typing.Optional[Type] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
