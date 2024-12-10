@@ -7,8 +7,10 @@ from .extract_links_response import ExtractLinksResponse
 from .extract_response import ExtractResponse
 from .extract_statements_response import ExtractStatementsResponse
 from .extract_title_response import ExtractTitleResponse
+from .generate_code_response import GenerateCodeResponse
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
+from .magic_response import MagicResponse
 from .statement import Statement
 from .statement_input import StatementInput
 from .synthesis_response import SynthesisResponse
@@ -25,8 +27,10 @@ __all__ = [
     "ExtractResponse",
     "ExtractStatementsResponse",
     "ExtractTitleResponse",
+    "GenerateCodeResponse",
     "HttpValidationError",
     "InteractiveResponse",
+    "MagicResponse",
     "Statement",
     "StatementInput",
     "SynthesisResponse",

@@ -17,6 +17,7 @@ from ..types.extract_links_response import ExtractLinksResponse
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..types.synthesis_response import SynthesisResponse
 from ..types.synthesize_circuit_response import SynthesizeCircuitResponse
+from ..types.generate_code_response import GenerateCodeResponse
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -467,6 +468,69 @@ class PicClient:
                     SynthesizeCircuitResponse,
                     parse_obj_as(
                         type_=SynthesizeCircuitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def generate(self, *, query: str, request_options: typing.Optional[RequestOptions] = None) -> GenerateCodeResponse:
+        """
+        Generate GDS factory code to create a circuit
+
+        Parameters
+        ----------
+        query : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GenerateCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.generate(
+            query="query",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/code/generate",
+            method="POST",
+            json={
+                "query": query,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    GenerateCodeResponse,
+                    parse_obj_as(
+                        type_=GenerateCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -988,6 +1052,79 @@ class AsyncPicClient:
                     SynthesizeCircuitResponse,
                     parse_obj_as(
                         type_=SynthesizeCircuitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def generate(
+        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> GenerateCodeResponse:
+        """
+        Generate GDS factory code to create a circuit
+
+        Parameters
+        ----------
+        query : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GenerateCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.generate(
+                query="query",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/code/generate",
+            method="POST",
+            json={
+                "query": query,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    GenerateCodeResponse,
+                    parse_obj_as(
+                        type_=GenerateCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

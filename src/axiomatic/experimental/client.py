@@ -10,6 +10,7 @@ from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..types.code_synthesis_response import CodeSynthesisResponse
+from ..types.magic_response import MagicResponse
 from ..core.client_wrapper import AsyncClientWrapper
 
 
@@ -125,6 +126,70 @@ class ExperimentalClient:
                     CodeSynthesisResponse,
                     parse_obj_as(
                         type_=CodeSynthesisResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def magic_request(
+        self, *, query: str, cell: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+    ) -> MagicResponse:
+        """
+        Interactive assistant for IPython extension
+
+        Parameters
+        ----------
+        query : str
+
+        cell : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        MagicResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.experimental.magic_request(
+            query="query",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "experimental/circuit_assistant",
+            method="POST",
+            params={
+                "query": query,
+                "cell": cell,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    MagicResponse,
+                    parse_obj_as(
+                        type_=MagicResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -272,6 +337,78 @@ class AsyncExperimentalClient:
                     CodeSynthesisResponse,
                     parse_obj_as(
                         type_=CodeSynthesisResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def magic_request(
+        self, *, query: str, cell: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+    ) -> MagicResponse:
+        """
+        Interactive assistant for IPython extension
+
+        Parameters
+        ----------
+        query : str
+
+        cell : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        MagicResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.experimental.magic_request(
+                query="query",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "experimental/circuit_assistant",
+            method="POST",
+            params={
+                "query": query,
+                "cell": cell,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    MagicResponse,
+                    parse_obj_as(
+                        type_=MagicResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
