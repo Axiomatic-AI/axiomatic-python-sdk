@@ -1,4 +1,4 @@
-import platformdirs
+import platformdirs # type: ignore
 import os
 
 
@@ -29,9 +29,11 @@ class AXMagic:
 
     def ax_query(self, query, cell=None):
         # NOTE: we need to add additional dependencies to the requirements!
-        from IPython import get_ipython
-        from IPython.core.magic import register_line_cell_magic, register_line_magic
-        from IPython.display import HTML, display
+        # TODO: This would actually be a different dependency group
+        # we don't want to force users to install IPython!
+        from IPython import get_ipython # type: ignore
+        from IPython.core.magic import register_line_cell_magic, register_line_magic # type: ignore
+        from IPython.display import HTML, display # type: ignore
 
         if self.api_key:
             result = self.ax.experimental.magic_request(query=query, cell=cell)
@@ -39,7 +41,7 @@ class AXMagic:
 
             try:
                 # When running in colab
-                from google.colab import _frontend
+                from google.colab import _frontend # type: ignore
 
                 _frontend.create_scratch_cell(
                     f"""# {query}\n{result.code}""", bottom_pane=True
