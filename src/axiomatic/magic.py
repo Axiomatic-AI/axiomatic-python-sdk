@@ -1,4 +1,4 @@
-import platformdirs # type: ignore
+import platformdirs  # type: ignore
 import os
 
 
@@ -28,20 +28,28 @@ class AXMagic:
             print("API key set.")
 
     def ax_query(self, query, cell=None):
-        # NOTE: we need to add additional dependencies to the requirements!
-        # TODO: This would actually be a different dependency group
-        # we don't want to force users to install IPython!
-        from IPython import get_ipython # type: ignore
-        from IPython.core.magic import register_line_cell_magic, register_line_magic # type: ignore
-        from IPython.display import HTML, display # type: ignore
+        from IPython import get_ipython  # type: ignore
+        from IPython.core.magic import register_line_cell_magic, register_line_magic  # type: ignore
+        from IPython.display import HTML, display  # type: ignore
 
         if self.api_key:
-            result = self.ax.experimental.magic_request(query=query, cell=cell)
-            display(HTML(result.response))
+            if cell:
+                # REFINE
+                ...
+                ipython = get_ipython()
+                last_cell = ipython.history_manager.input_hist_parsed[-1]
+                print(f"Last executed cell:\n{last_cell}")
+                feedback = ""  # TODO: add feedback according to interface
+                result = self.ax.pic.refine(query=query, code=cell, feedback=feedback)
+            else:
+                # GENERATE FROM SCRATCH
+                result = self.ax.pic.generate(query=query)
+
+            display(HTML(result.thought_text))
 
             try:
                 # When running in colab
-                from google.colab import _frontend # type: ignore
+                from google.colab import _frontend  # type: ignore
 
                 _frontend.create_scratch_cell(
                     f"""# {query}\n{result.code}""", bottom_pane=True
