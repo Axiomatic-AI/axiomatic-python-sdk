@@ -6,7 +6,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class GenerateCodeResponse(UniversalBaseModel):
+class RefineCodeResponse(UniversalBaseModel):
     raw_content: str
     code: str
     outcome_success: bool

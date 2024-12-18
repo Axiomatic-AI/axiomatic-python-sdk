@@ -6,12 +6,15 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class GenerateCodeResponse(UniversalBaseModel):
-    raw_content: str
-    code: str
-    outcome_success: bool
-    feedback_text: typing.Optional[str] = None
-    thought_text: typing.Optional[str] = None
+class Measurement(UniversalBaseModel):
+    """
+    Dot notation of the id of the statement and the name of the variable within its
+    z3 formalization e.g. abc123.L
+    """
+
+    variable: str
+    arguments: typing.Dict[str, str]
+    measurement_name: str
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

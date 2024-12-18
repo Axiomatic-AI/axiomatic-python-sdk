@@ -7,17 +7,25 @@ from .extract_links_response import ExtractLinksResponse
 from .extract_response import ExtractResponse
 from .extract_statements_response import ExtractStatementsResponse
 from .extract_title_response import ExtractTitleResponse
+from .formalize_response import FormalizeResponse
 from .generate_code_response import GenerateCodeResponse
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
-from .magic_response import MagicResponse
+from .measurement import Measurement
+from .netlist import Netlist
+from .pic_component import PicComponent
+from .pic_component_info_value import PicComponentInfoValue
+from .pic_component_settings_value import PicComponentSettingsValue
+from .refine_code_response import RefineCodeResponse
 from .statement import Statement
 from .statement_input import StatementInput
 from .synthesis_response import SynthesisResponse
 from .synthesize_circuit_response import SynthesizeCircuitResponse
 from .type import Type
+from .validate_response import ValidateResponse
 from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
+from .verify_netlist_response import VerifyNetlistResponse
 
 __all__ = [
     "CircuitImage",
@@ -27,15 +35,23 @@ __all__ = [
     "ExtractResponse",
     "ExtractStatementsResponse",
     "ExtractTitleResponse",
+    "FormalizeResponse",
     "GenerateCodeResponse",
     "HttpValidationError",
     "InteractiveResponse",
-    "MagicResponse",
+    "Measurement",
+    "Netlist",
+    "PicComponent",
+    "PicComponentInfoValue",
+    "PicComponentSettingsValue",
+    "RefineCodeResponse",
     "Statement",
     "StatementInput",
     "SynthesisResponse",
     "SynthesizeCircuitResponse",
     "Type",
+    "ValidateResponse",
     "ValidationError",
     "ValidationErrorLocItem",
+    "VerifyNetlistResponse",
 ]

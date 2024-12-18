@@ -7,6 +7,7 @@ from .core.client_wrapper import SyncClientWrapper
 from .pic.client import PicClient
 from .lean.client import LeanClient
 from .experimental.client import ExperimentalClient
+from .formalization.client import FormalizationClient
 from .generic.client import GenericClient
 from .core.request_options import RequestOptions
 from .core.pydantic_utilities import parse_obj_as
@@ -16,6 +17,7 @@ from .core.client_wrapper import AsyncClientWrapper
 from .pic.client import AsyncPicClient
 from .lean.client import AsyncLeanClient
 from .experimental.client import AsyncExperimentalClient
+from .formalization.client import AsyncFormalizationClient
 from .generic.client import AsyncGenericClient
 
 
@@ -80,6 +82,7 @@ class Axiomatic:
         self.pic = PicClient(client_wrapper=self._client_wrapper)
         self.lean = LeanClient(client_wrapper=self._client_wrapper)
         self.experimental = ExperimentalClient(client_wrapper=self._client_wrapper)
+        self.formalization = FormalizationClient(client_wrapper=self._client_wrapper)
         self.generic = GenericClient(client_wrapper=self._client_wrapper)
 
     def health_check_health_check_get(
@@ -186,6 +189,7 @@ class AsyncAxiomatic:
         self.pic = AsyncPicClient(client_wrapper=self._client_wrapper)
         self.lean = AsyncLeanClient(client_wrapper=self._client_wrapper)
         self.experimental = AsyncExperimentalClient(client_wrapper=self._client_wrapper)
+        self.formalization = AsyncFormalizationClient(client_wrapper=self._client_wrapper)
         self.generic = AsyncGenericClient(client_wrapper=self._client_wrapper)
 
     async def health_check_health_check_get(

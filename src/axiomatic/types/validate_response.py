@@ -6,12 +6,9 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class GenerateCodeResponse(UniversalBaseModel):
-    raw_content: str
-    code: str
-    outcome_success: bool
-    feedback_text: typing.Optional[str] = None
-    thought_text: typing.Optional[str] = None
+class ValidateResponse(UniversalBaseModel):
+    valid: bool
+    violated_constraints: typing.List[str]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -2,16 +2,17 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .pic_component import PicComponent
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class GenerateCodeResponse(UniversalBaseModel):
-    raw_content: str
-    code: str
-    outcome_success: bool
-    feedback_text: typing.Optional[str] = None
-    thought_text: typing.Optional[str] = None
+class Netlist(UniversalBaseModel):
+    name: str
+    instances: typing.Dict[str, PicComponent]
+    connections: typing.Dict[str, str]
+    ports: typing.Dict[str, str]
+    placements: typing.Optional[typing.Dict[str, typing.Dict[str, float]]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

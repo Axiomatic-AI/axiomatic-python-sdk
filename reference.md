@@ -619,6 +619,201 @@ client.pic.generate(
 </dl>
 </details>
 
+<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">refine</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Refine GDS factory code to create a circuit
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.refine(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**feedback:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**code:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">verify_netlist</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Verify a netlist meets physical constraints within statements
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, Measurement, Netlist, PicComponent, Statement
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.verify_netlist(
+    netlist=Netlist(
+        name="name",
+        instances={
+            "key": PicComponent(
+                component="component",
+            )
+        },
+        connections={"key": "value"},
+        ports={"key": "value"},
+    ),
+    statements=[
+        Statement(
+            id="id",
+            statement="statement",
+            z_3_formalization="z3_formalization",
+        )
+    ],
+    measurements=[
+        Measurement(
+            variable="variable",
+            arguments={"key": "value"},
+            measurement_name="measurement_name",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**statements:** `typing.Sequence[Statement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**measurements:** `typing.Sequence[Measurement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## lean
 <details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">lean_execute</a>(...)</code></summary>
 <dl>
@@ -961,7 +1156,8 @@ client.experimental.synthesize(
 </dl>
 </details>
 
-<details><summary><code>client.experimental.<a href="src/axiomatic/experimental/client.py">magic_request</a>(...)</code></summary>
+## formalization
+<details><summary><code>client.formalization.<a href="src/axiomatic/formalization/client.py">formalize</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -973,7 +1169,7 @@ client.experimental.synthesize(
 <dl>
 <dd>
 
-Interactive assistant for IPython extension
+Formalize a query into a dictionary of constraints
 </dd>
 </dl>
 </dd>
@@ -993,7 +1189,7 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.experimental.magic_request(
+client.formalization.formalize(
     query="query",
 )
 
@@ -1019,7 +1215,89 @@ client.experimental.magic_request(
 <dl>
 <dd>
 
-**cell:** `typing.Optional[str]` 
+**domain:** `typing.Optional[typing.Literal["PIC"]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.formalization.<a href="src/axiomatic/formalization/client.py">validate</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Validate a set of values with respect to a dictionary of constraints
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, FormalizeResponse
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.formalization.validate(
+    constraints=FormalizeResponse(
+        variables={"key": "value"},
+        expressions=[],
+    ),
+    values={"key": "value"},
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**constraints:** `FormalizeResponse` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**values:** `typing.Dict[str, str]` 
     
 </dd>
 </dl>
