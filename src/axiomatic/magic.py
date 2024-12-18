@@ -35,32 +35,40 @@ class AXMagic:
         if self.api_key:
             if cell:
                 # REFINE
-                ...
-                ipython = get_ipython()
-                last_cell = ipython.history_manager.input_hist_parsed[-1]
-                print(f"Last executed cell:\n{last_cell}")
                 feedback = ""  # TODO: add feedback according to interface
                 result = self.ax.pic.refine(query=query, code=cell, feedback=feedback)
             else:
                 # GENERATE FROM SCRATCH
                 result = self.ax.pic.generate(query=query)
 
-            display(HTML(result.thought_text))
+            # Process output
+            output = result.thought_text.replace("\n", "<br>")
+            html_content = (
+                "<div style='font-family: Arial, sans-serif; line-height: 1.5;'>"
+            )
+            html_content += (
+                f"<div style='color: #6EB700;'><strong>AX:</strong> {output}</div>"
+            )
+            display(HTML(html_content))
 
-            try:
-                # When running in colab
-                from google.colab import _frontend  # type: ignore
+            # Process code
+            # remove last three lines (saving file)
+            if result.code:
+                code = "\n".join(result.code.split("\n")[:-3] + ["c"])
+                try:
+                    # When running in colab
+                    from google.colab import _frontend  # type: ignore
 
-                _frontend.create_scratch_cell(
-                    f"""# {query}\n{result.code}""", bottom_pane=True
-                )
-            except Exception as e:
-                # When running in jupyter
-                get_ipython().set_next_input(f"{result.code}", replace=False)
+                    _frontend.create_scratch_cell(
+                        f"""# {query}\n{code}""", bottom_pane=True
+                    )
+                except Exception as e:
+                    # When running in jupyter
+                    get_ipython().set_next_input(f"{code}", replace=False)
 
         else:
             print(
-                "Please set your Axiomatic API key first with the command %ax_api API_KEY. Request the api key at our Customer Service."
+                "Please set your Axiomatic API key first with the command %ax_api API_KEY and restart the kernel. Request the api key at our Customer Service."
             )
 
     def ax_fix(self, query, cell=None):
