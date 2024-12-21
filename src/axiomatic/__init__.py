@@ -18,6 +18,7 @@ from .types import (
     PicComponentInfoValue,
     PicComponentSettingsValue,
     RefineCodeResponse,
+    RequirementBody,
     Statement,
     StatementInput,
     SynthesisResponse,
@@ -29,7 +30,7 @@ from .types import (
     VerifyNetlistResponse,
 )
 from .errors import UnprocessableEntityError
-from . import experimental, formalization, generic, lean, pic
+from . import experimental, formalization, generic, lean, pic, requirements
 from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
 from .version import __version__
@@ -55,6 +56,7 @@ __all__ = [
     "PicComponentInfoValue",
     "PicComponentSettingsValue",
     "RefineCodeResponse",
+    "RequirementBody",
     "Statement",
     "StatementInput",
     "SynthesisResponse",
@@ -71,4 +73,5 @@ __all__ = [
     "generic",
     "lean",
     "pic",
+    "requirements",
 ]

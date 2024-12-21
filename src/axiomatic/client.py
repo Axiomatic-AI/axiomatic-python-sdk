@@ -4,6 +4,7 @@ import typing
 from .environment import AxiomaticEnvironment
 import httpx
 from .core.client_wrapper import SyncClientWrapper
+from .requirements.client import RequirementsClient
 from .pic.client import PicClient
 from .lean.client import LeanClient
 from .experimental.client import ExperimentalClient
@@ -14,6 +15,7 @@ from .core.pydantic_utilities import parse_obj_as
 from json.decoder import JSONDecodeError
 from .core.api_error import ApiError
 from .core.client_wrapper import AsyncClientWrapper
+from .requirements.client import AsyncRequirementsClient
 from .pic.client import AsyncPicClient
 from .lean.client import AsyncLeanClient
 from .experimental.client import AsyncExperimentalClient
@@ -79,6 +81,7 @@ class Axiomatic:
             else httpx.Client(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
+        self.requirements = RequirementsClient(client_wrapper=self._client_wrapper)
         self.pic = PicClient(client_wrapper=self._client_wrapper)
         self.lean = LeanClient(client_wrapper=self._client_wrapper)
         self.experimental = ExperimentalClient(client_wrapper=self._client_wrapper)
@@ -186,6 +189,7 @@ class AsyncAxiomatic:
             else httpx.AsyncClient(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
+        self.requirements = AsyncRequirementsClient(client_wrapper=self._client_wrapper)
         self.pic = AsyncPicClient(client_wrapper=self._client_wrapper)
         self.lean = AsyncLeanClient(client_wrapper=self._client_wrapper)
         self.experimental = AsyncExperimentalClient(client_wrapper=self._client_wrapper)

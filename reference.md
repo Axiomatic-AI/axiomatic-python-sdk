@@ -45,6 +45,71 @@ client.health_check_health_check_get()
 </dl>
 </details>
 
+## requirements
+<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">check_requirements_endpoint</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, RequirementBody
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.requirements.check_requirements_endpoint(
+    request=[
+        RequirementBody(
+            latex_symbol="latex_symbol",
+            requirement_name="requirement_name",
+            tolerance=1.1,
+            value=1.1,
+            units="units",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `typing.Sequence[RequirementBody]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## pic
 <details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">extract</a>(...)</code></summary>
 <dl>

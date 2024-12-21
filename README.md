@@ -20,12 +20,22 @@ A full reference for this library is available [here](./reference.md).
 Instantiate and use the client with the following:
 
 ```python
-from axiomatic import Axiomatic
+from axiomatic import Axiomatic, RequirementBody
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.pic.extract()
+client.requirements.check_requirements_endpoint(
+    request=[
+        RequirementBody(
+            latex_symbol="latex_symbol",
+            requirement_name="requirement_name",
+            tolerance=1.1,
+            value=1.1,
+            units="units",
+        )
+    ],
+)
 ```
 
 ## Async Client
@@ -35,7 +45,7 @@ The SDK also exports an `async` client so that you can make non-blocking calls t
 ```python
 import asyncio
 
-from axiomatic import AsyncAxiomatic
+from axiomatic import AsyncAxiomatic, RequirementBody
 
 client = AsyncAxiomatic(
     api_key="YOUR_API_KEY",
@@ -43,7 +53,17 @@ client = AsyncAxiomatic(
 
 
 async def main() -> None:
-    await client.pic.extract()
+    await client.requirements.check_requirements_endpoint(
+        request=[
+            RequirementBody(
+                latex_symbol="latex_symbol",
+                requirement_name="requirement_name",
+                tolerance=1.1,
+                value=1.1,
+                units="units",
+            )
+        ],
+    )
 
 
 asyncio.run(main())
@@ -58,7 +78,7 @@ will be thrown.
 from axiomatic.core.api_error import ApiError
 
 try:
-    client.pic.extract(...)
+    client.requirements.check_requirements_endpoint(...)
 except ApiError as e:
     print(e.status_code)
     print(e.body)
@@ -81,7 +101,7 @@ A request is deemed retriable when any of the following HTTP status codes is ret
 Use the `max_retries` request option to configure this behavior.
 
 ```python
-client.pic.extract(..., request_options={
+client.requirements.check_requirements_endpoint(..., request_options={
     "max_retries": 1
 })
 ```
@@ -101,7 +121,7 @@ client = Axiomatic(
 
 
 # Override timeout for a specific method
-client.pic.extract(..., request_options={
+client.requirements.check_requirements_endpoint(..., request_options={
     "timeout_in_seconds": 1
 })
 ```

@@ -17,6 +17,7 @@ from .pic_component import PicComponent
 from .pic_component_info_value import PicComponentInfoValue
 from .pic_component_settings_value import PicComponentSettingsValue
 from .refine_code_response import RefineCodeResponse
+from .requirement_body import RequirementBody
 from .statement import Statement
 from .statement_input import StatementInput
 from .synthesis_response import SynthesisResponse
@@ -45,6 +46,7 @@ __all__ = [
     "PicComponentInfoValue",
     "PicComponentSettingsValue",
     "RefineCodeResponse",
+    "RequirementBody",
     "Statement",
     "StatementInput",
     "SynthesisResponse",
