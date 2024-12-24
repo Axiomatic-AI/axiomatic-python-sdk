@@ -1,2 +1,3 @@
 # Specify files that shouldn't be modified by Fern
+src/axiomatic/axtract.py
 src/axiomatic/magic.py
