@@ -19,6 +19,8 @@ from .types import (
     PicComponentSettingsValue,
     RefineCodeResponse,
     RequirementBody,
+    SolutionResponse,
+    SolutionResponseSolutionValue,
     Statement,
     StatementInput,
     SynthesisResponse,
@@ -28,11 +30,13 @@ from .types import (
     ValidationError,
     ValidationErrorLocItem,
     VerifyNetlistResponse,
+    VerifyResponse,
 )
 from .errors import UnprocessableEntityError
 from . import experimental, formalization, generic, lean, pic, requirements
 from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
+from .formalization import SolutionBodyValuesValue
 from .version import __version__
 
 __all__ = [
@@ -57,6 +61,9 @@ __all__ = [
     "PicComponentSettingsValue",
     "RefineCodeResponse",
     "RequirementBody",
+    "SolutionBodyValuesValue",
+    "SolutionResponse",
+    "SolutionResponseSolutionValue",
     "Statement",
     "StatementInput",
     "SynthesisResponse",
@@ -67,6 +74,7 @@ __all__ = [
     "ValidationError",
     "ValidationErrorLocItem",
     "VerifyNetlistResponse",
+    "VerifyResponse",
     "__version__",
     "experimental",
     "formalization",

@@ -18,7 +18,7 @@ class GenericClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def extract(
+    def statement(
         self, *, query: str, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[typing.Any]:
         """
@@ -41,7 +41,7 @@ class GenericClient:
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.generic.extract(
+        client.generic.statement(
             query="query",
         )
         """
@@ -86,7 +86,7 @@ class AsyncGenericClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def extract(
+    async def statement(
         self, *, query: str, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[typing.Any]:
         """
@@ -114,7 +114,7 @@ class AsyncGenericClient:
 
 
         async def main() -> None:
-            await client.generic.extract(
+            await client.generic.statement(
                 query="query",
             )
 
