@@ -110,6 +110,233 @@ client.requirements.check_requirements_endpoint(
 </dl>
 </details>
 
+<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">get_data_endpoint</a>()</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Provides database for user menu later used to compose reqs in AXtract
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.requirements.get_data_endpoint()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">add_equation</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Add a new equation to the database
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.requirements.add_equation(
+    equation_id="equation_id",
+    latex_formula="latex_formula",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**equation_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**latex_formula:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">add_variable</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Add new variable to database
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.requirements.add_variable(
+    latex_name="latex_name",
+    name="name",
+    symbol="symbol",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**latex_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**symbol:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## pic
 <details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">extract</a>(...)</code></summary>
 <dl>
@@ -1382,8 +1609,163 @@ client.formalization.validate(
 </dl>
 </details>
 
+<details><summary><code>client.formalization.<a href="src/axiomatic/formalization/client.py">verify_constraints</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Verifies that a set of constraints are consistent
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, FormalizeResponse
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.formalization.verify_constraints(
+    constraints=FormalizeResponse(
+        variables={"key": "value"},
+        expressions=[],
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**constraints:** `FormalizeResponse` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.formalization.<a href="src/axiomatic/formalization/client.py">find_solution</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Finds a solution to a set of constraints provided partial values
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, FormalizeResponse
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.formalization.find_solution(
+    constraints=FormalizeResponse(
+        variables={"key": "value"},
+        expressions=[],
+    ),
+    values={"key": 1},
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**constraints:** `FormalizeResponse` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**values:** `typing.Dict[str, SolutionBodyValuesValue]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## generic
-<details><summary><code>client.generic.<a href="src/axiomatic/generic/client.py">extract</a>(...)</code></summary>
+<details><summary><code>client.generic.<a href="src/axiomatic/generic/client.py">statement</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1401,7 +1783,7 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.generic.extract(
+client.generic.statement(
     query="query",
 )
 

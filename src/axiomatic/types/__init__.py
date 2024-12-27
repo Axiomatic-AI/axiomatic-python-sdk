@@ -18,6 +18,8 @@ from .pic_component_info_value import PicComponentInfoValue
 from .pic_component_settings_value import PicComponentSettingsValue
 from .refine_code_response import RefineCodeResponse
 from .requirement_body import RequirementBody
+from .solution_response import SolutionResponse
+from .solution_response_solution_value import SolutionResponseSolutionValue
 from .statement import Statement
 from .statement_input import StatementInput
 from .synthesis_response import SynthesisResponse
@@ -27,6 +29,7 @@ from .validate_response import ValidateResponse
 from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
 from .verify_netlist_response import VerifyNetlistResponse
+from .verify_response import VerifyResponse
 
 __all__ = [
     "CircuitImage",
@@ -47,6 +50,8 @@ __all__ = [
     "PicComponentSettingsValue",
     "RefineCodeResponse",
     "RequirementBody",
+    "SolutionResponse",
+    "SolutionResponseSolutionValue",
     "Statement",
     "StatementInput",
     "SynthesisResponse",
@@ -56,4 +61,5 @@ __all__ = [
     "ValidationError",
     "ValidationErrorLocItem",
     "VerifyNetlistResponse",
+    "VerifyResponse",
 ]
