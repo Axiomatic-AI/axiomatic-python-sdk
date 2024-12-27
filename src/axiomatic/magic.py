@@ -80,11 +80,12 @@ class AXMagic:
             print(
                 "Please set your Axiomatic API key first with the command %ax_api API_KEY and restart the kernel. Request the api key at our Customer Service."
             )
+
     def ax_query(self, query, cell=None):
         # Updates the target circuit query
-        self.query=query
+        self.query = query
         return self.axquery(query, cell)
-    
+
     def ax_fix(self, query, cell=None):
         # Runs again without updating the query
         return self.axquery(query, cell)
