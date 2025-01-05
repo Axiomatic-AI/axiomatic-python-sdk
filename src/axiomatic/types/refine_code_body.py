@@ -6,10 +6,14 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class VerifyNetlistResponse(UniversalBaseModel):
-    is_valid: bool
-    feedback: str
-    statement_evaluation: typing.List[bool]
+class RefineCodeBody(UniversalBaseModel):
+    """
+    Response format for the PIC Code agent
+    """
+
+    query: str
+    feedback: typing.Optional[str] = None
+    code: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

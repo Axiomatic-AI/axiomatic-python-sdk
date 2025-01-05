@@ -1106,6 +1106,115 @@ client.pic.verify_netlist(
 </dl>
 </details>
 
+<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">optimize_netlist</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Optimize a netlist with given constraints
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, Measurement, Netlist, PicComponent, Statement
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.optimize_netlist(
+    netlist=Netlist(
+        name="name",
+        instances={
+            "key": PicComponent(
+                component="component",
+            )
+        },
+        connections={"key": "value"},
+        ports={"key": "value"},
+    ),
+    statements=[
+        Statement(
+            id="id",
+            statement="statement",
+            z_3_formalization="z3_formalization",
+        )
+    ],
+    measurements=[
+        Measurement(
+            variable="variable",
+            arguments={"key": "value"},
+            measurement_name="measurement_name",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**statements:** `typing.Sequence[Statement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**measurements:** `typing.Sequence[Measurement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## lean
 <details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">lean_execute</a>(...)</code></summary>
 <dl>

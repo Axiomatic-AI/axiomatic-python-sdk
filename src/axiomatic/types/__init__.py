@@ -5,17 +5,22 @@ from .code_synthesis_response import CodeSynthesisResponse
 from .edge import Edge
 from .extract_links_response import ExtractLinksResponse
 from .extract_response import ExtractResponse
+from .extract_statements_input import ExtractStatementsInput
 from .extract_statements_response import ExtractStatementsResponse
 from .extract_title_response import ExtractTitleResponse
 from .formalize_response import FormalizeResponse
+from .generate_code_body import GenerateCodeBody
 from .generate_code_response import GenerateCodeResponse
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
 from .measurement import Measurement
 from .netlist import Netlist
+from .optimize_netlist_body import OptimizeNetlistBody
+from .optimize_netlist_response import OptimizeNetlistResponse
 from .pic_component import PicComponent
 from .pic_component_info_value import PicComponentInfoValue
 from .pic_component_settings_value import PicComponentSettingsValue
+from .refine_code_body import RefineCodeBody
 from .refine_code_response import RefineCodeResponse
 from .requirement_body import RequirementBody
 from .solution_response import SolutionResponse
@@ -28,6 +33,7 @@ from .type import Type
 from .validate_response import ValidateResponse
 from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
+from .verify_netlist_input import VerifyNetlistInput
 from .verify_netlist_response import VerifyNetlistResponse
 from .verify_response import VerifyResponse
 
@@ -37,17 +43,22 @@ __all__ = [
     "Edge",
     "ExtractLinksResponse",
     "ExtractResponse",
+    "ExtractStatementsInput",
     "ExtractStatementsResponse",
     "ExtractTitleResponse",
     "FormalizeResponse",
+    "GenerateCodeBody",
     "GenerateCodeResponse",
     "HttpValidationError",
     "InteractiveResponse",
     "Measurement",
     "Netlist",
+    "OptimizeNetlistBody",
+    "OptimizeNetlistResponse",
     "PicComponent",
     "PicComponentInfoValue",
     "PicComponentSettingsValue",
+    "RefineCodeBody",
     "RefineCodeResponse",
     "RequirementBody",
     "SolutionResponse",
@@ -60,6 +71,7 @@ __all__ = [
     "ValidateResponse",
     "ValidationError",
     "ValidationErrorLocItem",
+    "VerifyNetlistInput",
     "VerifyNetlistResponse",
     "VerifyResponse",
 ]

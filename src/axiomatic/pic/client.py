@@ -23,6 +23,7 @@ from ..types.netlist import Netlist
 from ..types.statement import Statement
 from ..types.measurement import Measurement
 from ..types.verify_netlist_response import VerifyNetlistResponse
+from ..types.optimize_netlist_response import OptimizeNetlistResponse
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -127,9 +128,6 @@ class PicClient:
             method="POST",
             json={
                 "query": query,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -524,9 +522,6 @@ class PicClient:
             json={
                 "query": query,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -599,9 +594,6 @@ class PicClient:
                 "query": query,
                 "feedback": feedback,
                 "code": code,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -705,9 +697,6 @@ class PicClient:
                     object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
                 ),
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -717,6 +706,108 @@ class PicClient:
                     VerifyNetlistResponse,
                     parse_obj_as(
                         type_=VerifyNetlistResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def optimize_netlist(
+        self,
+        *,
+        netlist: Netlist,
+        statements: typing.Sequence[Statement],
+        measurements: typing.Sequence[Measurement],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> OptimizeNetlistResponse:
+        """
+        Optimize a netlist with given constraints
+
+        Parameters
+        ----------
+        netlist : Netlist
+
+        statements : typing.Sequence[Statement]
+
+        measurements : typing.Sequence[Measurement]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        OptimizeNetlistResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, Measurement, Netlist, PicComponent, Statement
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.optimize_netlist(
+            netlist=Netlist(
+                name="name",
+                instances={
+                    "key": PicComponent(
+                        component="component",
+                    )
+                },
+                connections={"key": "value"},
+                ports={"key": "value"},
+            ),
+            statements=[
+                Statement(
+                    id="id",
+                    statement="statement",
+                    z_3_formalization="z3_formalization",
+                )
+            ],
+            measurements=[
+                Measurement(
+                    variable="variable",
+                    arguments={"key": "value"},
+                    measurement_name="measurement_name",
+                )
+            ],
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/netlist/optimize",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=typing.Sequence[Statement], direction="write"
+                ),
+                "measurements": convert_and_respect_annotation_metadata(
+                    object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
+                ),
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    OptimizeNetlistResponse,
+                    parse_obj_as(
+                        type_=OptimizeNetlistResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -852,9 +943,6 @@ class AsyncPicClient:
             method="POST",
             json={
                 "query": query,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -1299,9 +1387,6 @@ class AsyncPicClient:
             json={
                 "query": query,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -1382,9 +1467,6 @@ class AsyncPicClient:
                 "query": query,
                 "feedback": feedback,
                 "code": code,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -1502,9 +1584,6 @@ class AsyncPicClient:
                     object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
                 ),
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -1514,6 +1593,122 @@ class AsyncPicClient:
                     VerifyNetlistResponse,
                     parse_obj_as(
                         type_=VerifyNetlistResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def optimize_netlist(
+        self,
+        *,
+        netlist: Netlist,
+        statements: typing.Sequence[Statement],
+        measurements: typing.Sequence[Measurement],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> OptimizeNetlistResponse:
+        """
+        Optimize a netlist with given constraints
+
+        Parameters
+        ----------
+        netlist : Netlist
+
+        statements : typing.Sequence[Statement]
+
+        measurements : typing.Sequence[Measurement]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        OptimizeNetlistResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import (
+            AsyncAxiomatic,
+            Measurement,
+            Netlist,
+            PicComponent,
+            Statement,
+        )
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.optimize_netlist(
+                netlist=Netlist(
+                    name="name",
+                    instances={
+                        "key": PicComponent(
+                            component="component",
+                        )
+                    },
+                    connections={"key": "value"},
+                    ports={"key": "value"},
+                ),
+                statements=[
+                    Statement(
+                        id="id",
+                        statement="statement",
+                        z_3_formalization="z3_formalization",
+                    )
+                ],
+                measurements=[
+                    Measurement(
+                        variable="variable",
+                        arguments={"key": "value"},
+                        measurement_name="measurement_name",
+                    )
+                ],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/netlist/optimize",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=typing.Sequence[Statement], direction="write"
+                ),
+                "measurements": convert_and_respect_annotation_metadata(
+                    object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
+                ),
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    OptimizeNetlistResponse,
+                    parse_obj_as(
+                        type_=OptimizeNetlistResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
