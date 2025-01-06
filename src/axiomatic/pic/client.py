@@ -17,8 +17,8 @@ from ..types.extract_links_response import ExtractLinksResponse
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..types.synthesis_response import SynthesisResponse
 from ..types.synthesize_circuit_response import SynthesizeCircuitResponse
-from ..types.generate_code_response import GenerateCodeResponse
-from ..types.refine_code_response import RefineCodeResponse
+from ..types.generate_component_code_response import GenerateComponentCodeResponse
+from ..types.refine_component_code_response import RefineComponentCodeResponse
 from ..types.netlist import Netlist
 from ..types.statement import Statement
 from ..types.measurement import Measurement
@@ -489,9 +489,11 @@ class PicClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def generate(self, *, query: str, request_options: typing.Optional[RequestOptions] = None) -> GenerateCodeResponse:
+    def generate(
+        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> GenerateComponentCodeResponse:
         """
-        Generate GDS factory code to create a circuit
+        Generate GDS factory code to create a PIC component
 
         Parameters
         ----------
@@ -502,7 +504,7 @@ class PicClient:
 
         Returns
         -------
-        GenerateCodeResponse
+        GenerateComponentCodeResponse
             Successful Response
 
         Examples
@@ -517,10 +519,13 @@ class PicClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "pic/code/generate",
+            "pic/component/generate",
             method="POST",
             json={
                 "query": query,
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -528,9 +533,9 @@ class PicClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GenerateCodeResponse,
+                    GenerateComponentCodeResponse,
                     parse_obj_as(
-                        type_=GenerateCodeResponse,  # type: ignore
+                        type_=GenerateComponentCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -556,7 +561,7 @@ class PicClient:
         feedback: typing.Optional[str] = OMIT,
         code: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> RefineCodeResponse:
+    ) -> RefineComponentCodeResponse:
         """
         Refine GDS factory code to create a circuit
 
@@ -573,7 +578,7 @@ class PicClient:
 
         Returns
         -------
-        RefineCodeResponse
+        RefineComponentCodeResponse
             Successful Response
 
         Examples
@@ -588,12 +593,15 @@ class PicClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "pic/code/refine",
+            "pic/component/refine",
             method="POST",
             json={
                 "query": query,
                 "feedback": feedback,
                 "code": code,
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -601,9 +609,9 @@ class PicClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RefineCodeResponse,
+                    RefineComponentCodeResponse,
                     parse_obj_as(
-                        type_=RefineCodeResponse,  # type: ignore
+                        type_=RefineComponentCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1346,9 +1354,9 @@ class AsyncPicClient:
 
     async def generate(
         self, *, query: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> GenerateCodeResponse:
+    ) -> GenerateComponentCodeResponse:
         """
-        Generate GDS factory code to create a circuit
+        Generate GDS factory code to create a PIC component
 
         Parameters
         ----------
@@ -1359,7 +1367,7 @@ class AsyncPicClient:
 
         Returns
         -------
-        GenerateCodeResponse
+        GenerateComponentCodeResponse
             Successful Response
 
         Examples
@@ -1382,10 +1390,13 @@ class AsyncPicClient:
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "pic/code/generate",
+            "pic/component/generate",
             method="POST",
             json={
                 "query": query,
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -1393,9 +1404,9 @@ class AsyncPicClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GenerateCodeResponse,
+                    GenerateComponentCodeResponse,
                     parse_obj_as(
-                        type_=GenerateCodeResponse,  # type: ignore
+                        type_=GenerateComponentCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1421,7 +1432,7 @@ class AsyncPicClient:
         feedback: typing.Optional[str] = OMIT,
         code: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> RefineCodeResponse:
+    ) -> RefineComponentCodeResponse:
         """
         Refine GDS factory code to create a circuit
 
@@ -1438,7 +1449,7 @@ class AsyncPicClient:
 
         Returns
         -------
-        RefineCodeResponse
+        RefineComponentCodeResponse
             Successful Response
 
         Examples
@@ -1461,12 +1472,15 @@ class AsyncPicClient:
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "pic/code/refine",
+            "pic/component/refine",
             method="POST",
             json={
                 "query": query,
                 "feedback": feedback,
                 "code": code,
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -1474,9 +1488,9 @@ class AsyncPicClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RefineCodeResponse,
+                    RefineComponentCodeResponse,
                     parse_obj_as(
-                        type_=RefineCodeResponse,  # type: ignore
+                        type_=RefineComponentCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
