@@ -3,6 +3,7 @@ from IPython.display import display  # type: ignore
 from dataclasses import dataclass, field
 
 OPTION_LIST = {
+    "Select a template": [],
     "IMAGING TELESCOPE": [
         "Resolution (panchromatic)",
         "Ground sampling distance (panchromatic)",
@@ -17,32 +18,63 @@ OPTION_LIST = {
         "Pixel size (multispectral)",
         "Swath width",
     ],
-    "MITRE_Template": [
-        "Object height",
-        "Image height",
-        "Wavelength",
+        "PAYLOAD": [
+        "Resolution (panchromatic)",
+        "Ground sampling distance (panchromatic)",
+        "Resolution (multispectral)",
+        "Ground sampling distance (multispectral)",
+        "Altitude",
+        "Half field of view",
+        "Mirror aperture",
+        "F-number",
+        "Focal length",
+        "Pixel size (panchromatic)",
+        "Swath width",
     ],
 }
 
 IMAGING_TELESCOPE = {
-    "Resolution (panchromatic)": 1.8,
-    "Ground sampling distance (panchromatic)": 0.6,
-    "Resolution (multispectral)": 1.8,
-    "Ground sampling distance (multispectral)": 0.9,
-    "Altitude": 460000,
-    "Half field of view": 0.02003638,
-    "Mirror aperture": 0.60,
-    "F-number": 5.53,
-    "Focal length": 3.32,
-    "Pixel size (panchromatic)": 8.75e-6,
-    "Pixel size (multispectral)": 13e-6,
-    "Swath width": 18400,
+    "Resolution (panchromatic)": 1.23529,
+    "Ground sampling distance (panchromatic)": 0.61765,
+    "Resolution (multispectral)": 1.81176,
+    "Ground sampling distance (multispectral)": 0.90588,
+    "Altitude": 420000,
+    "Half field of view": 0.017104227,
+    "Mirror aperture": 0.85,
+    "F-number": 6.0,
+    "Focal length": 5.1,
+    "Pixel size (panchromatic)": 7.5e-6,
+    "Pixel size (multispectral)": 11e-6,
+    "Swath width": 14368.95,
 }
 
-MITRE_Template = {
-    "Object height": 1.8,
-    "Image height": 1.8,
-    "Wavelength": 1.8,
+IMAGING_TELESCOPE_UNITS = {
+    "Resolution (panchromatic)": "m",
+    "Ground sampling distance (panchromatic)": "m",
+    "Resolution (multispectral)": "m",
+    "Ground sampling distance (multispectral)": "m",
+    "Altitude": "m",
+    "Half field of view": "rad",
+    "Mirror aperture": "m",
+    "F-number": "dimensionless",
+    "Focal length": "m",
+    "Pixel size (panchromatic)": "m",
+    "Pixel size (multispectral)": "m",
+    "Swath width": "m",
+}
+
+PAYLOAD_1 = {
+    "Resolution (panchromatic)": 15.4,
+    "Ground sampling distance (panchromatic)": 7.7,
+    "Resolution (multispectral)": 0.0,
+    "Ground sampling distance (multispectral)": 0.,
+    "Altitude": 420000,
+    "Half field of view": 0.005061455,
+    "Mirror aperture": 0.85,
+    "F-number": 1.,
+    "Focal length": 0.3,
+    "Pixel size (panchromatic)": 5.5e-6,
+    "Swath width": 4251.66,
 }
 
 
@@ -58,24 +90,9 @@ class Requirement:
     def __post_init__(self):
         self.sympy_symbol = self.latex_symbol.replace("{", "").replace("}", "")
 
-    # def getSympySymbol(self):
-    #     return latex2sympy(self.latex_symbol)
-
     @property
     def is_fixed(self):
         return self.tolerance == 0.0
-
-    # @property
-    # def equations(self, strict=False):
-    #     if self.is_fixed:
-    #         return [sympy.Eq(self.getSympySymbol(), self.value)]
-    #     else:
-    #       signs = [">=", "<="] if not strict else [">", "<"]
-    #       bounds = [self.value - self.tolerance, self.value + self.tolerance]
-    #       return [
-    #             sympy.Rel(self.getSympySymbol(), bound, sign)
-    #             for bound, sign in zip(bounds, signs)
-    #         ]
 
 
 def _find_symbol(name, variable_dict):
@@ -165,6 +182,46 @@ def interactive_table(preset_options_dict, variable_dict):
             # Update the name_label_width based on the longest row name
             name_label_width[0] = f"{max_name_length + 2}ch"
 
+            # Add Headers
+            header_labels = [
+                widgets.Label(
+                    value="Name",
+                    layout=widgets.Layout(width=name_label_width[0]),
+                    style={'font_weight': 'bold'}
+                ),
+                widgets.Label(
+                    value="Value",
+                    layout=widgets.Layout(width="150px"),
+                    style={'font_weight': 'bold'}
+                ),
+                widgets.Label(
+                    value="Tolerance",
+                    layout=widgets.Layout(width="150px"),
+                    style={'font_weight': 'bold'}
+                ),
+                widgets.Label(
+                    value="Accuracy",
+                    layout=widgets.Layout(width="150px"),
+                    style={'font_weight': 'bold'}
+                ),
+                widgets.Label(
+                    value="Units",
+                    layout=widgets.Layout(width="150px"),
+                    style={'font_weight': 'bold'}
+                ),
+            ]
+
+            # Combine header labels into a horizontal box
+            header = widgets.HBox(header_labels)
+            header.layout = widgets.Layout(
+                border='1px solid black',
+                padding='5px',
+                background_color='#f0f0f0'
+            )
+
+            # Add the header to the rows_output VBox
+            rows_output.children += (header,)
+
             for row_name in rows:
                 # Create name label with dynamic width
                 name_label = widgets.Label(
@@ -175,10 +232,15 @@ def interactive_table(preset_options_dict, variable_dict):
                 # Depending on the selected option, set default values
                 if selected_option == "IMAGING TELESCOPE":
                     default_value = IMAGING_TELESCOPE.get(row_name, 0.0)
+                    default_unit = IMAGING_TELESCOPE_UNITS.get(row_name, "")
                 # elif selected_option == "LIDAR":
                 #     default_value = LIDAR.get(row_name, 0.0)
-                elif selected_option == "MITRE_Template":
-                    default_value = MITRE_Template.get(row_name, 0.0)
+                elif selected_option == "PAYLOAD":
+                    default_value = PAYLOAD_1.get(row_name, 0.0)
+                    default_unit = IMAGING_TELESCOPE_UNITS.get(row_name, "")
+                else:
+                    default_value = 0.0
+                    default_unit = ""
 
                 # Create input widgets
                 value_text = widgets.FloatText(
@@ -193,7 +255,8 @@ def interactive_table(preset_options_dict, variable_dict):
                     placeholder="Accuracy", layout=widgets.Layout(width="150px")
                 )
                 units_text = widgets.Text(
-                    placeholder="Units", layout=widgets.Layout(width="150px")
+                    placeholder="Units", layout=widgets.Layout(width="150px"),
+                    value = default_unit
                 )
 
                 # Combine widgets into a horizontal box
