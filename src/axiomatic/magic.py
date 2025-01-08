@@ -14,6 +14,7 @@ class AXMagic:
 
     api_key: str
     client: Axiomatic
+    query: str
 
     def __init__(self, api_key: str = os.getenv("AXIOMATIC_API_KEY")):
         self.folder = platformdirs.user_config_dir("axiomatic")
