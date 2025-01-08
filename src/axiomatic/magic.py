@@ -13,11 +13,13 @@ class AXMagic:
     Import with `%load_ext axiomatic.magic`."""
 
     api_key: str
+    client: Axiomatic
 
     def __init__(self, api_key: str = os.getenv("AXIOMATIC_API_KEY")):
         self.folder = platformdirs.user_config_dir("axiomatic")
 
         self.api_key = api_key
+        self.client = Axiomatic(api_key=api_key)
         self.query = ""
 
     def ax_api(self, query):
