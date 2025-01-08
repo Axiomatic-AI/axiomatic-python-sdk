@@ -1,10 +1,9 @@
 import ipywidgets as widgets  # type: ignore
-from IPython.display import display, Math  # type: ignore
+from IPython.display import display, Math, HTML  # type: ignore
 from dataclasses import dataclass, field
 import hypernetx as hnx
 import matplotlib.pyplot as plt
 import re
-from ax_core.utils import printing
 
 OPTION_LIST = {
     "Select a template": [],
@@ -373,17 +372,25 @@ def display_results(equations_dict):
         rhs = value.get('rhs')
         if not match:
             not_match_counter += 1
-            print(
-                printing.print_color.bold(
-                    printing.print_color.red(
-                    "Provided requirements DO NOT fulfill the following mathematical relation:"
-                    )
-                )
-            )
+            display(HTML(
+                '<p style="color:red; '
+                'font-weight:bold; '
+                'font-family:\'Times New Roman\'; '
+                'font-size:16px;">'
+                'Provided requirements DO NOT fulfill the following mathematical relation:'
+                '</p>'
+                ))           
             display(Math(latex_equation))
             print(f"For provided values:\nleft hand side = {lhs}\nright hand side = {rhs}")
     if not_match_counter == 0:
-        print(printing.print_color.green("Requirements you provided do not cause any conflicts"))                
+        display(HTML(
+            '<p style="color:green; '
+            'font-weight:bold; '
+            'font-family:\'Times New Roman\'; '
+            'font-size:16px;">'
+            'Requirements you provided do not cause any conflicts'
+            '</p>'
+        ))
 
 
 def _get_latex_string_format(input_string):
@@ -423,7 +430,6 @@ def _add_used_vars_to_results(api_results, api_requirements):
 
 
 def get_eq_hypergraph(api_results, api_requirements):
-
     # Disable external LaTeX rendering, using matplotlib's mathtext instead
     plt.rcParams['text.usetex'] = False
     plt.rcParams['mathtext.fontset'] = 'stix'
@@ -453,7 +459,36 @@ def get_eq_hypergraph(api_results, api_requirements):
         layout_kwargs={'seed': 42, 'scale': 2.5}  
     )
 
+    node_labels = list(H.nodes)
+    symbol_explanations = _get_node_names_for_node_lables(node_labels, api_requirements)
+
+    # Adding the symbol explanations as a legend
+    explanation_text = "\n".join([f"${symbol}$: {desc}" for symbol, desc in symbol_explanations])
+    plt.annotate(
+        explanation_text, 
+        xy=(1.05, 0.5), 
+        xycoords='axes fraction', 
+        fontsize=14, 
+        verticalalignment='center'
+    )
+
     plt.title(r"Enhanced Hypergraph of Equations and Variables", fontsize=20)
     plt.show()
 
 
+def _get_node_names_for_node_lables(node_labels, api_requirements):
+
+    # Create the output list
+    node_names = []
+
+    # Iterate through each symbol in S
+    for symbol in node_labels:
+        # Search for the matching requirement
+        symbol = symbol.replace("$", "")
+        for req in api_requirements:
+            if req['latex_symbol'] == symbol:
+                # Add the matching tuple to SS
+                node_names.append((req["latex_symbol"], req["requirement_name"]))
+                break  # Stop searching once a match is found
+
+    return node_names
