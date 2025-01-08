@@ -853,7 +853,7 @@ client.pic.synthesize_circuit_from_text(
 <dl>
 <dd>
 
-Generate GDS factory code to create a PIC component
+Generate GDS factory code to create a circuit
 </dd>
 </dl>
 </dd>
