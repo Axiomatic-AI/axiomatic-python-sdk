@@ -13,18 +13,16 @@ class AXMagic:
     """Class implementing magic functions for IPython.
     Import with `%load_ext axiomatic.magic`."""
 
-    api_key: str
     client: Axiomatic
     query: str
 
-    def __init__(self, api_key: Optional[str] = os.getenv("AXIOMATIC_API_KEY")):
+    def __init__(self):
         self.folder = platformdirs.user_config_dir("axiomatic")
 
-        self.api_key = api_key
-        self.client = Axiomatic(api_key=api_key)
+        self.client = Axiomatic()
         self.query = ""
 
-    def ax_api(self, query):
+    def ax_api(self, *args, **kwargs):
         pass
 
     def axquery(self, query, cell=None):
