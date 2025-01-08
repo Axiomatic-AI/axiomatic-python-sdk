@@ -12,6 +12,8 @@ class AXMagic:
     """Class implementing magic functions for IPython.
     Import with `%load_ext axiomatic.magic`."""
 
+    api_key: str
+
     def __init__(self, api_key: str = os.getenv("AXIOMATIC_API_KEY")):
         self.folder = platformdirs.user_config_dir("axiomatic")
 
