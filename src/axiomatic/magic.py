@@ -1,6 +1,7 @@
 from IPython import get_ipython  # type: ignore
 from IPython.core.magic import register_line_cell_magic, register_line_magic  # type: ignore
 from IPython.display import HTML, display  # type: ignore
+from typing import Optional
 
 import platformdirs  # type: ignore
 import os
@@ -16,7 +17,7 @@ class AXMagic:
     client: Axiomatic
     query: str
 
-    def __init__(self, api_key: str = os.getenv("AXIOMATIC_API_KEY")):
+    def __init__(self, api_key: Optional[str] = os.getenv("AXIOMATIC_API_KEY")):
         self.folder = platformdirs.user_config_dir("axiomatic")
 
         self.api_key = api_key
