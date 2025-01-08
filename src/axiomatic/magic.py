@@ -41,13 +41,13 @@ class AXMagic:
                     feedback = f"Errors:\n{e}"
                 print(feedback)
                 current_query = f"{self.query}\n{query}"
-                result = self.ax.pic.refine(
+                result = self.client.pic.refine(
                     query=current_query, code=cell, feedback=feedback
                 )
             else:
                 # GENERATE FROM SCRATCH
                 self.query = query
-                result = self.ax.pic.generate(query=query)
+                result = self.client.pic.generate(query=query)
 
             # Process output
             pre_thought = result.raw_content.split("<thought>")[0]
