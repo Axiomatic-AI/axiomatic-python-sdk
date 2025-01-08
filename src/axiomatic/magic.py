@@ -12,15 +12,10 @@ class AXMagic:
     """Class implementing magic functions for IPython.
     Import with `%load_ext axiomatic.magic`."""
 
-    def __init__(self):
+    def __init__(self, api_key: str = os.getenv("AXIOMATIC_API_KEY")):
         self.folder = platformdirs.user_config_dir("axiomatic")
-        if not os.path.exists(f"{self.folder}/api_key"):
-            os.makedirs(self.folder, exist_ok=True)
-            self.api_key = None
-        else:
-            with open(f"{self.folder}/api_key", "r") as f:
-                self.api_key = f.read()
-            self.ax = Axiomatic(api_key=self.api_key)
+
+        self.api_key = api_key
         self.query = ""
 
     def ax_api(self, query):
