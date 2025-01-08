@@ -2,6 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from .circuit.client import CircuitClient
 from .. import core
 from ..core.request_options import RequestOptions
 from ..types.extract_response import ExtractResponse
@@ -25,6 +26,7 @@ from ..types.measurement import Measurement
 from ..types.verify_netlist_response import VerifyNetlistResponse
 from ..types.optimize_netlist_response import OptimizeNetlistResponse
 from ..core.client_wrapper import AsyncClientWrapper
+from .circuit.client import AsyncCircuitClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -33,6 +35,7 @@ OMIT = typing.cast(typing.Any, ...)
 class PicClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.circuit = CircuitClient(client_wrapper=self._client_wrapper)
 
     def extract(self, *, file: core.File, request_options: typing.Optional[RequestOptions] = None) -> ExtractResponse:
         """
@@ -671,7 +674,6 @@ class PicClient:
                 Statement(
                     id="id",
                     statement="statement",
-                    z_3_formalization="z3_formalization",
                 )
             ],
             measurements=[
@@ -773,7 +775,6 @@ class PicClient:
                 Statement(
                     id="id",
                     statement="statement",
-                    z_3_formalization="z3_formalization",
                 )
             ],
             measurements=[
@@ -830,6 +831,7 @@ class PicClient:
 class AsyncPicClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.circuit = AsyncCircuitClient(client_wrapper=self._client_wrapper)
 
     async def extract(
         self, *, file: core.File, request_options: typing.Optional[RequestOptions] = None
@@ -1555,7 +1557,6 @@ class AsyncPicClient:
                     Statement(
                         id="id",
                         statement="statement",
-                        z_3_formalization="z3_formalization",
                     )
                 ],
                 measurements=[
@@ -1671,7 +1672,6 @@ class AsyncPicClient:
                     Statement(
                         id="id",
                         statement="statement",
-                        z_3_formalization="z3_formalization",
                     )
                 ],
                 measurements=[

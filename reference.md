@@ -1,4 +1,50 @@
 # Reference
+<details><summary><code>client.<a href="src/axiomatic/client.py">trigger_error_sentry_debug_get</a>()</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.trigger_error_sentry_debug_get()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.<a href="src/axiomatic/client.py">health_check_health_check_get</a>()</code></summary>
 <dl>
 <dd>
@@ -46,7 +92,7 @@ client.health_check_health_check_get()
 </details>
 
 ## requirements
-<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">check_requirements_endpoint</a>(...)</code></summary>
+<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">check</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -64,7 +110,7 @@ from axiomatic import Axiomatic, RequirementBody
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.requirements.check_requirements_endpoint(
+client.requirements.check(
     request=[
         RequirementBody(
             latex_symbol="latex_symbol",
@@ -94,66 +140,6 @@ client.requirements.check_requirements_endpoint(
     
 </dd>
 </dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">get_data_endpoint</a>()</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Provides database for user menu later used to compose reqs in AXtract
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.requirements.get_data_endpoint()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
 
 <dl>
 <dd>
@@ -1044,7 +1030,6 @@ client.pic.verify_netlist(
         Statement(
             id="id",
             statement="statement",
-            z_3_formalization="z3_formalization",
         )
     ],
     measurements=[
@@ -1153,7 +1138,6 @@ client.pic.optimize_netlist(
         Statement(
             id="id",
             statement="statement",
-            z_3_formalization="z3_formalization",
         )
     ],
     measurements=[
@@ -1468,76 +1452,6 @@ client.experimental.assistant(
 <dd>
 
 **context:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.experimental.<a href="src/axiomatic/experimental/client.py">synthesize</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Synthesize GDS factory code from a statement describing a PIC
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.experimental.synthesize(
-    query="query",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**query:** `str` 
     
 </dd>
 </dl>
@@ -1914,6 +1828,138 @@ client.generic.statement(
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Pic Circuit
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">formalize</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Formalize a query about a circuit into a dictionary of constraints
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.formalize(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Requirements DataFiles
+<details><summary><code>client.requirements.data_files.<a href="src/axiomatic/requirements/data_files/client.py">get</a>()</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Provides database for user menu later used to compose reqs in AXtract
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.requirements.data_files.get()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
 
 <dl>
 <dd>
