@@ -1,7 +1,6 @@
 from IPython import get_ipython  # type: ignore
 from IPython.core.magic import register_line_cell_magic, register_line_magic  # type: ignore
 from IPython.display import HTML, display  # type: ignore
-from typing import Optional
 
 import platformdirs  # type: ignore
 import os
@@ -86,7 +85,6 @@ def ax_help(value: str):
 Available commands:
 
 - `%load_ext axiomatic_pic` loads the ipython extension.
-- `%ax_api` sets up the API key
 - `%ax_query` returns the requested circuit using our experimental API
 - `%%ax_fix` edit the given code
 """
