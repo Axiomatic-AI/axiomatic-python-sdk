@@ -23,7 +23,7 @@ class AXMagic:
         self.client = Axiomatic(api_key=api_key)
         self.query = ""
 
-    def ax_api(self, query):
+    def ax_api(self, api_key: str):
         folder = platformdirs.user_config_dir("axiomatic")
         with open(f"{folder}/api_key", "w") as f:
             f.write(query)
