@@ -24,7 +24,7 @@ class AXMagic:
         self.query = ""
 
     def ax_api(self, query):
-        continue
+        pass
 
     def axquery(self, query, cell=None):
         if self.api_key:
