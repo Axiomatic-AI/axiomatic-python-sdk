@@ -1,7 +1,7 @@
 import ipywidgets as widgets  # type: ignore
 from IPython.display import display, Math, HTML  # type: ignore
 from dataclasses import dataclass, field
-import hypernetx as hnx
+import hypernetx as hnx # type: ignore
 import matplotlib.pyplot as plt
 import re
 
