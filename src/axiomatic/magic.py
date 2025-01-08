@@ -28,7 +28,7 @@ class AXMagic:
         with open(f"{folder}/api_key", "w") as f:
             f.write(query)
             self.api = query
-            self.ax = Axiomatic(api_key=self.api)
+            self.ax = Axiomatic(api_key=self.api_key)
             print("API key set.")
 
     def axquery(self, query, cell=None):
