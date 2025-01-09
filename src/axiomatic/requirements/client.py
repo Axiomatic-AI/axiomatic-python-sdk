@@ -59,7 +59,7 @@ class RequirementsClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "requirements/check_requirements",
+            "requirements/check",
             method="POST",
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=typing.Sequence[RequirementBody], direction="write"
@@ -141,7 +141,7 @@ class AsyncRequirementsClient:
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "requirements/check_requirements",
+            "requirements/check",
             method="POST",
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=typing.Sequence[RequirementBody], direction="write"
