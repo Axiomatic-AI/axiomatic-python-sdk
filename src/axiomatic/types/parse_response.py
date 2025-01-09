@@ -6,9 +6,8 @@ import typing
 import pydantic
 
 
-class Edge(UniversalBaseModel):
-    source: str
-    target: str
+class ParseResponse(UniversalBaseModel):
+    content: str
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

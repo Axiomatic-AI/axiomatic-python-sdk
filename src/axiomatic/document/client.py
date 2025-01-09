@@ -2,36 +2,49 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from .. import core
 from ..core.request_options import RequestOptions
+from ..types.extract_text_response import ExtractTextResponse
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
+from ..types.parse_response import ParseResponse
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class LeanClient:
+class DocumentClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def lean_execute(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    def extract_text(
+        self,
+        *,
+        file: core.File,
+        method: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExtractTextResponse:
         """
+        Extracts text from documents
+
         Parameters
         ----------
-        code : str
+        file : core.File
+            See core.File for more documentation
+
+        method : typing.Optional[str]
+            Method to use for text-only extraction.It uses a very simple pdf parser.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        ExtractTextResponse
             Successful Response
 
         Examples
@@ -41,18 +54,17 @@ class LeanClient:
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.lean.lean_execute(
-            code="code",
-        )
+        client.document.extract_text()
         """
         _response = self._client_wrapper.httpx_client.request(
-            "lean_z3/lean_execute",
+            "document/extract_text",
             method="POST",
-            json={
-                "code": code,
+            params={
+                "method": method,
             },
-            headers={
-                "content-type": "application/json",
+            data={},
+            files={
+                "file": file,
             },
             request_options=request_options,
             omit=OMIT,
@@ -60,9 +72,9 @@ class LeanClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    ExtractTextResponse,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=ExtractTextResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -81,22 +93,30 @@ class LeanClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def suggest(
-        self, *, prompt: str, code_prefix: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    def parse(
+        self,
+        *,
+        file: core.File,
+        method: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ParseResponse:
         """
+        Extracts text from documents. It uses advanced pdf segmentation.
+
         Parameters
         ----------
-        prompt : str
+        file : core.File
+            See core.File for more documentation
 
-        code_prefix : str
+        method : typing.Optional[str]
+            Method to use for text extraction
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        ParseResponse
             Successful Response
 
         Examples
@@ -106,20 +126,17 @@ class LeanClient:
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.lean.suggest(
-            prompt="prompt",
-            code_prefix="code_prefix",
-        )
+        client.document.parse()
         """
         _response = self._client_wrapper.httpx_client.request(
-            "lean_z3/lean_suggest",
+            "document/parse",
             method="POST",
-            json={
-                "prompt": prompt,
-                "code_prefix": code_prefix,
+            params={
+                "method": method,
             },
-            headers={
-                "content-type": "application/json",
+            data={},
+            files={
+                "file": file,
             },
             request_options=request_options,
             omit=OMIT,
@@ -127,72 +144,9 @@ class LeanClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    ParseResponse,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def z_3_execute(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
-        """
-        Parameters
-        ----------
-        code : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Optional[typing.Any]
-            Successful Response
-
-        Examples
-        --------
-        from axiomatic import Axiomatic
-
-        client = Axiomatic(
-            api_key="YOUR_API_KEY",
-        )
-        client.lean.z_3_execute(
-            code="code",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "lean_z3/z3_execute",
-            method="POST",
-            json={
-                "code": code,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    typing.Optional[typing.Any],
-                    parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=ParseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -212,24 +166,34 @@ class LeanClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
 
-class AsyncLeanClient:
+class AsyncDocumentClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def lean_execute(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    async def extract_text(
+        self,
+        *,
+        file: core.File,
+        method: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExtractTextResponse:
         """
+        Extracts text from documents
+
         Parameters
         ----------
-        code : str
+        file : core.File
+            See core.File for more documentation
+
+        method : typing.Optional[str]
+            Method to use for text-only extraction.It uses a very simple pdf parser.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        ExtractTextResponse
             Successful Response
 
         Examples
@@ -244,21 +208,20 @@ class AsyncLeanClient:
 
 
         async def main() -> None:
-            await client.lean.lean_execute(
-                code="code",
-            )
+            await client.document.extract_text()
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "lean_z3/lean_execute",
+            "document/extract_text",
             method="POST",
-            json={
-                "code": code,
+            params={
+                "method": method,
             },
-            headers={
-                "content-type": "application/json",
+            data={},
+            files={
+                "file": file,
             },
             request_options=request_options,
             omit=OMIT,
@@ -266,9 +229,9 @@ class AsyncLeanClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    ExtractTextResponse,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=ExtractTextResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -287,22 +250,30 @@ class AsyncLeanClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def suggest(
-        self, *, prompt: str, code_prefix: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    async def parse(
+        self,
+        *,
+        file: core.File,
+        method: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ParseResponse:
         """
+        Extracts text from documents. It uses advanced pdf segmentation.
+
         Parameters
         ----------
-        prompt : str
+        file : core.File
+            See core.File for more documentation
 
-        code_prefix : str
+        method : typing.Optional[str]
+            Method to use for text extraction
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        ParseResponse
             Successful Response
 
         Examples
@@ -317,23 +288,20 @@ class AsyncLeanClient:
 
 
         async def main() -> None:
-            await client.lean.suggest(
-                prompt="prompt",
-                code_prefix="code_prefix",
-            )
+            await client.document.parse()
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "lean_z3/lean_suggest",
+            "document/parse",
             method="POST",
-            json={
-                "prompt": prompt,
-                "code_prefix": code_prefix,
+            params={
+                "method": method,
             },
-            headers={
-                "content-type": "application/json",
+            data={},
+            files={
+                "file": file,
             },
             request_options=request_options,
             omit=OMIT,
@@ -341,80 +309,9 @@ class AsyncLeanClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    ParseResponse,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def z_3_execute(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
-        """
-        Parameters
-        ----------
-        code : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Optional[typing.Any]
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from axiomatic import AsyncAxiomatic
-
-        client = AsyncAxiomatic(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.lean.z_3_execute(
-                code="code",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "lean_z3/z3_execute",
-            method="POST",
-            json={
-                "code": code,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    typing.Optional[typing.Any],
-                    parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=ParseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

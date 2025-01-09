@@ -156,537 +156,7 @@ client.requirements.check(
 </dl>
 </details>
 
-<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">add_equation</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Add a new equation to the database
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.requirements.add_equation(
-    equation_id="equation_id",
-    latex_formula="latex_formula",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**equation_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**latex_formula:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">add_variable</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Add new variable to database
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.requirements.add_variable(
-    latex_name="latex_name",
-    name="name",
-    symbol="symbol",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**latex_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**symbol:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 ## pic
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">extract</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Extract statements and circuit image from a PDF describing a PIC
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.extract()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**file:** `from __future__ import annotations
-
-core.File` — See core.File for more documentation
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">extract_from_text</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Extract statements from text describing a PIC
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.extract_from_text(
-    query="query",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**query:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">extract_from_paper</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Extract title from a PDF describing a PIC
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.extract_from_paper()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**file:** `from __future__ import annotations
-
-core.File` — See core.File for more documentation
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">identify</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Identify links between statements
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic, StatementInput
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.identify(
-    statements=[
-        StatementInput(
-            id="id",
-            statement="statement",
-        )
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**statements:** `typing.Sequence[StatementInput]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">identify_with_context</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Identify links between statements with the context of a paper
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.identify_with_context(
-    statements="statements",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**statements:** `str` — List of statements
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**file:** `typing.Optional[str]` — PDF of file e.g. a paper to provide context
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 <details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">synthesize_circuit_from_paper</a>(...)</code></summary>
 <dl>
 <dd>
@@ -983,114 +453,6 @@ client.pic.refine(
 </dl>
 </details>
 
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">verify_netlist</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Verify a netlist meets physical constraints within statements
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic, Measurement, Netlist, PicComponent, Statement
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.verify_netlist(
-    netlist=Netlist(
-        name="name",
-        instances={
-            "key": PicComponent(
-                component="component",
-            )
-        },
-        connections={"key": "value"},
-        ports={"key": "value"},
-    ),
-    statements=[
-        Statement(
-            id="id",
-            statement="statement",
-        )
-    ],
-    measurements=[
-        Measurement(
-            variable="variable",
-            arguments={"key": "value"},
-            measurement_name="measurement_name",
-        )
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**netlist:** `Netlist` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**statements:** `typing.Sequence[Statement]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**measurements:** `typing.Sequence[Measurement]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 <details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">optimize_netlist</a>(...)</code></summary>
 <dl>
 <dd>
@@ -1218,7 +580,9 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.lean.lean_execute()
+client.lean.lean_execute(
+    code="code",
+)
 
 ```
 </dd>
@@ -1234,23 +598,7 @@ client.lean.lean_execute()
 <dl>
 <dd>
 
-**status:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**error:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**stderr:** `typing.Optional[str]` 
+**code:** `str` 
     
 </dd>
 </dl>
@@ -1844,6 +1192,163 @@ client.generic.statement(
 </dl>
 </details>
 
+## Document
+<details><summary><code>client.document.<a href="src/axiomatic/document/client.py">extract_text</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Extracts text from documents
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.extract_text()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `from __future__ import annotations
+
+core.File` — See core.File for more documentation
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**method:** `typing.Optional[str]` — Method to use for text-only extraction.It uses a very simple pdf parser. 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.document.<a href="src/axiomatic/document/client.py">parse</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Extracts text from documents. It uses advanced pdf segmentation.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.parse()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `from __future__ import annotations
+
+core.File` — See core.File for more documentation
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**method:** `typing.Optional[str]` — Method to use for text extraction
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Pic Circuit
 <details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">formalize</a>(...)</code></summary>
 <dl>
@@ -1896,6 +1401,427 @@ client.pic.circuit.formalize(
 <dd>
 
 **query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">generate</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Generate GDS factory code to create a circuit
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.generate(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">refine</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Refine GDS factory code to create a circuit
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.refine(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**feedback:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**code:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">optimize</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Optimize a PIC circuit with given cost and constraints
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, Measurement, Netlist, PicComponent, Statement
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.optimize(
+    netlist=Netlist(
+        name="name",
+        instances={
+            "key": PicComponent(
+                component="component",
+            )
+        },
+        connections={"key": "value"},
+        ports={"key": "value"},
+    ),
+    statements=[
+        Statement(
+            id="id",
+            statement="statement",
+        )
+    ],
+    measurements=[
+        Measurement(
+            variable="variable",
+            arguments={"key": "value"},
+            measurement_name="measurement_name",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**statements:** `typing.Sequence[Statement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**measurements:** `typing.Sequence[Measurement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Pic Component
+<details><summary><code>client.pic.component.<a href="src/axiomatic/pic/component/client.py">generate</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Generate GDS factory code to create a PIC component
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.component.generate(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.component.<a href="src/axiomatic/pic/component/client.py">refine</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Refine GDS factory code to create a circuit
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.component.refine(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**feedback:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**code:** `typing.Optional[str]` 
     
 </dd>
 </dl>
