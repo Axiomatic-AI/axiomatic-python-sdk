@@ -12,6 +12,7 @@ from .lean.client import LeanClient
 from .experimental.client import ExperimentalClient
 from .formalization.client import FormalizationClient
 from .generic.client import GenericClient
+from .document.client import DocumentClient
 from .core.request_options import RequestOptions
 from .core.pydantic_utilities import parse_obj_as
 from json.decoder import JSONDecodeError
@@ -22,6 +23,7 @@ from .lean.client import AsyncLeanClient
 from .experimental.client import AsyncExperimentalClient
 from .formalization.client import AsyncFormalizationClient
 from .generic.client import AsyncGenericClient
+from .document.client import AsyncDocumentClient
 
 
 class Axiomatic:
@@ -92,6 +94,7 @@ class Axiomatic:
         self.experimental = ExperimentalClient(client_wrapper=self._client_wrapper)
         self.formalization = FormalizationClient(client_wrapper=self._client_wrapper)
         self.generic = GenericClient(client_wrapper=self._client_wrapper)
+        self.document = DocumentClient(client_wrapper=self._client_wrapper)
 
     def trigger_error_sentry_debug_get(
         self, *, request_options: typing.Optional[RequestOptions] = None
@@ -246,6 +249,7 @@ class AsyncAxiomatic:
         self.experimental = AsyncExperimentalClient(client_wrapper=self._client_wrapper)
         self.formalization = AsyncFormalizationClient(client_wrapper=self._client_wrapper)
         self.generic = AsyncGenericClient(client_wrapper=self._client_wrapper)
+        self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)
 
     async def trigger_error_sentry_debug_get(
         self, *, request_options: typing.Optional[RequestOptions] = None
