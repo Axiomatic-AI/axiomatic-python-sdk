@@ -3,6 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from .circuit.client import CircuitClient
+from .component.client import ComponentClient
 from .. import core
 from ..core.request_options import RequestOptions
 from ..types.synthesis_response import SynthesisResponse
@@ -21,6 +22,7 @@ from ..types.optimize_netlist_response import OptimizeNetlistResponse
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..core.client_wrapper import AsyncClientWrapper
 from .circuit.client import AsyncCircuitClient
+from .component.client import AsyncComponentClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -30,6 +32,7 @@ class PicClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
         self.circuit = CircuitClient(client_wrapper=self._client_wrapper)
+        self.component = ComponentClient(client_wrapper=self._client_wrapper)
 
     def synthesize_circuit_from_paper(
         self, *, file: core.File, request_options: typing.Optional[RequestOptions] = None
@@ -397,6 +400,7 @@ class AsyncPicClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
         self.circuit = AsyncCircuitClient(client_wrapper=self._client_wrapper)
+        self.component = AsyncComponentClient(client_wrapper=self._client_wrapper)
 
     async def synthesize_circuit_from_paper(
         self, *, file: core.File, request_options: typing.Optional[RequestOptions] = None
