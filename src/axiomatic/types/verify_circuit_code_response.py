@@ -6,9 +6,9 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class CircuitImage(UniversalBaseModel):
-    type: typing.Literal["image/png"] = "image/png"
-    data: str
+class VerifyCircuitCodeResponse(UniversalBaseModel):
+    overlaps: typing.Optional[typing.List[typing.Optional[typing.Any]]] = None
+    netlist: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

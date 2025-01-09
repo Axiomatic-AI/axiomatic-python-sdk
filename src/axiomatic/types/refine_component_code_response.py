@@ -7,7 +7,7 @@ import pydantic
 
 
 class RefineComponentCodeResponse(UniversalBaseModel):
-    raw_content: str
+    raw_content: typing.List[str]
     code: str
     outcome_success: bool
     feedback_text: typing.Optional[str] = None

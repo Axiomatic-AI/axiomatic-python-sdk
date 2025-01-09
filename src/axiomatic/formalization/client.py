@@ -2,6 +2,8 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from .constraints.client import ConstraintsClient
+from .solution.client import SolutionClient
 from ..core.request_options import RequestOptions
 from ..types.formalize_response import FormalizeResponse
 from ..core.pydantic_utilities import parse_obj_as
@@ -12,9 +14,11 @@ from ..core.api_error import ApiError
 from ..types.validate_response import ValidateResponse
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..types.verify_response import VerifyResponse
-from .types.solution_body_values_value import SolutionBodyValuesValue
+from ..types.solution_body_values_value import SolutionBodyValuesValue
 from ..types.solution_response import SolutionResponse
 from ..core.client_wrapper import AsyncClientWrapper
+from .constraints.client import AsyncConstraintsClient
+from .solution.client import AsyncSolutionClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -23,6 +27,8 @@ OMIT = typing.cast(typing.Any, ...)
 class FormalizationClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.constraints = ConstraintsClient(client_wrapper=self._client_wrapper)
+        self.solution = SolutionClient(client_wrapper=self._client_wrapper)
 
     def formalize(
         self,
@@ -214,9 +220,6 @@ class FormalizationClient:
                     object_=constraints, annotation=FormalizeResponse, direction="write"
                 ),
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -294,9 +297,6 @@ class FormalizationClient:
                     object_=values, annotation=typing.Dict[str, SolutionBodyValuesValue], direction="write"
                 ),
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -328,6 +328,8 @@ class FormalizationClient:
 class AsyncFormalizationClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.constraints = AsyncConstraintsClient(client_wrapper=self._client_wrapper)
+        self.solution = AsyncSolutionClient(client_wrapper=self._client_wrapper)
 
     async def formalize(
         self,
@@ -543,9 +545,6 @@ class AsyncFormalizationClient:
                     object_=constraints, annotation=FormalizeResponse, direction="write"
                 ),
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -630,9 +629,6 @@ class AsyncFormalizationClient:
                 "values": convert_and_respect_annotation_metadata(
                     object_=values, annotation=typing.Dict[str, SolutionBodyValuesValue], direction="write"
                 ),
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,

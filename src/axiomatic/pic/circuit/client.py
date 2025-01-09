@@ -16,6 +16,7 @@ from ...types.statement import Statement
 from ...types.measurement import Measurement
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
 from ...core.serialization import convert_and_respect_annotation_metadata
+from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -124,6 +125,9 @@ class CircuitClient:
             json={
                 "query": query,
             },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -196,6 +200,9 @@ class CircuitClient:
                 "query": query,
                 "feedback": feedback,
                 "code": code,
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -298,6 +305,9 @@ class CircuitClient:
                     object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
                 ),
             },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -307,6 +317,71 @@ class CircuitClient:
                     OptimizeNetlistResponse,
                     parse_obj_as(
                         type_=OptimizeNetlistResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def verify(
+        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> VerifyCircuitCodeResponse:
+        """
+        Verifies that the code for a circuit
+
+        Parameters
+        ----------
+        code : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        VerifyCircuitCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.verify(
+            code="code",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/verifycode",
+            method="POST",
+            json={
+                "code": code,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    VerifyCircuitCodeResponse,
+                    parse_obj_as(
+                        type_=VerifyCircuitCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -446,6 +521,9 @@ class AsyncCircuitClient:
             json={
                 "query": query,
             },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -526,6 +604,9 @@ class AsyncCircuitClient:
                 "query": query,
                 "feedback": feedback,
                 "code": code,
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -642,6 +723,9 @@ class AsyncCircuitClient:
                     object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
                 ),
             },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -651,6 +735,79 @@ class AsyncCircuitClient:
                     OptimizeNetlistResponse,
                     parse_obj_as(
                         type_=OptimizeNetlistResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def verify(
+        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> VerifyCircuitCodeResponse:
+        """
+        Verifies that the code for a circuit
+
+        Parameters
+        ----------
+        code : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        VerifyCircuitCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.verify(
+                code="code",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/verifycode",
+            method="POST",
+            json={
+                "code": code,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    VerifyCircuitCodeResponse,
+                    parse_obj_as(
+                        type_=VerifyCircuitCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

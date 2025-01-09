@@ -6,8 +6,9 @@ import typing
 import pydantic
 
 
-class GenerateCodeBody(UniversalBaseModel):
-    query: str
+class SuggestRequest(UniversalBaseModel):
+    prompt: str
+    code_prefix: str
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
