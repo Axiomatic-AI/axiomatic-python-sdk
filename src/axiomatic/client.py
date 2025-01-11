@@ -7,23 +7,25 @@ import httpx
 from .core.api_error import ApiError
 from .core.client_wrapper import SyncClientWrapper
 from .requirements.client import RequirementsClient
+from .pic.client import PicClient
 from .lean.client import LeanClient
 from .experimental.client import ExperimentalClient
 from .formalization.client import FormalizationClient
 from .generic.client import GenericClient
 from .document.client import DocumentClient
-from .pic.client import PicClient
+from .code_execution.client import CodeExecutionClient
 from .core.request_options import RequestOptions
 from .core.pydantic_utilities import parse_obj_as
 from json.decoder import JSONDecodeError
 from .core.client_wrapper import AsyncClientWrapper
 from .requirements.client import AsyncRequirementsClient
+from .pic.client import AsyncPicClient
 from .lean.client import AsyncLeanClient
 from .experimental.client import AsyncExperimentalClient
 from .formalization.client import AsyncFormalizationClient
 from .generic.client import AsyncGenericClient
 from .document.client import AsyncDocumentClient
-from .pic.client import AsyncPicClient
+from .code_execution.client import AsyncCodeExecutionClient
 
 
 class Axiomatic:
@@ -89,12 +91,13 @@ class Axiomatic:
             timeout=_defaulted_timeout,
         )
         self.requirements = RequirementsClient(client_wrapper=self._client_wrapper)
+        self.pic = PicClient(client_wrapper=self._client_wrapper)
         self.lean = LeanClient(client_wrapper=self._client_wrapper)
         self.experimental = ExperimentalClient(client_wrapper=self._client_wrapper)
         self.formalization = FormalizationClient(client_wrapper=self._client_wrapper)
         self.generic = GenericClient(client_wrapper=self._client_wrapper)
         self.document = DocumentClient(client_wrapper=self._client_wrapper)
-        self.pic = PicClient(client_wrapper=self._client_wrapper)
+        self.code_execution = CodeExecutionClient(client_wrapper=self._client_wrapper)
 
     def trigger_error_sentry_debug_get(
         self, *, request_options: typing.Optional[RequestOptions] = None
@@ -244,12 +247,13 @@ class AsyncAxiomatic:
             timeout=_defaulted_timeout,
         )
         self.requirements = AsyncRequirementsClient(client_wrapper=self._client_wrapper)
+        self.pic = AsyncPicClient(client_wrapper=self._client_wrapper)
         self.lean = AsyncLeanClient(client_wrapper=self._client_wrapper)
         self.experimental = AsyncExperimentalClient(client_wrapper=self._client_wrapper)
         self.formalization = AsyncFormalizationClient(client_wrapper=self._client_wrapper)
         self.generic = AsyncGenericClient(client_wrapper=self._client_wrapper)
         self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)
-        self.pic = AsyncPicClient(client_wrapper=self._client_wrapper)
+        self.code_execution = AsyncCodeExecutionClient(client_wrapper=self._client_wrapper)
 
     async def trigger_error_sentry_debug_get(
         self, *, request_options: typing.Optional[RequestOptions] = None

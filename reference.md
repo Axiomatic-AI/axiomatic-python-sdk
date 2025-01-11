@@ -156,6 +156,108 @@ client.requirements.check(
 </dl>
 </details>
 
+## pic
+<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">find_mappings</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Map variables in the constraints to computations on the netlist.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, Netlist, PicComponent, Statement
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.find_mappings(
+    statements=[
+        Statement(
+            id="id",
+            statement="statement",
+        )
+    ],
+    netlist=Netlist(
+        name="name",
+        instances={
+            "key": PicComponent(
+                component="component",
+            )
+        },
+        connections={"key": "value"},
+        ports={"key": "value"},
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**statements:** `typing.Sequence[Statement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max_iter:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## lean
 <details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">execute</a>(...)</code></summary>
 <dl>
@@ -176,62 +278,6 @@ client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.lean.execute(
-    code="code",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**code:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">lean_execute</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.lean.lean_execute(
     code="code",
 )
 
@@ -315,62 +361,6 @@ client.lean.suggest(
 <dd>
 
 **code_prefix:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">z_3_execute</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.lean.z_3_execute(
-    code="code",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**code:** `str` 
     
 </dd>
 </dl>
@@ -631,161 +621,6 @@ client.formalization.validate(
 </dl>
 </details>
 
-<details><summary><code>client.formalization.<a href="src/axiomatic/formalization/client.py">verify_constraints</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Verifies that a set of constraints are consistent
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic, FormalizeResponse
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.formalization.verify_constraints(
-    constraints=FormalizeResponse(
-        variables={"key": "value"},
-        expressions=[],
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**constraints:** `FormalizeResponse` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.formalization.<a href="src/axiomatic/formalization/client.py">find_solution</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Finds a solution to a set of constraints provided partial values
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic, FormalizeResponse
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.formalization.find_solution(
-    constraints=FormalizeResponse(
-        variables={"key": "value"},
-        expressions=[],
-    ),
-    values={"key": 1},
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**constraints:** `FormalizeResponse` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**values:** `typing.Dict[str, SolutionBodyValuesValue]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 ## generic
 <details><summary><code>client.generic.<a href="src/axiomatic/generic/client.py">statement</a>(...)</code></summary>
 <dl>
@@ -1000,6 +835,77 @@ core.File` — See core.File for more documentation
 </dl>
 </details>
 
+## CodeExecution Python
+<details><summary><code>client.code_execution.python.<a href="src/axiomatic/code_execution/python/client.py">execute</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Executes code in a secure environment
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.code_execution.python.execute(
+    code="code",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**code:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Formalization Constraints
 <details><summary><code>client.formalization.constraints.<a href="src/axiomatic/formalization/constraints/client.py">verify</a>(...)</code></summary>
 <dl>
@@ -1138,6 +1044,63 @@ client.formalization.solution.find(
 <dd>
 
 **values:** `typing.Dict[str, SolutionBodyValuesValue]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Lean Z3
+<details><summary><code>client.lean.z_3.<a href="src/axiomatic/lean/z_3/client.py">execute</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.lean.z_3.execute(
+    code="code",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**code:** `str` 
     
 </dd>
 </dl>
@@ -1411,7 +1374,7 @@ Optimize a PIC circuit with given cost and constraints
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Measurement, Netlist, PicComponent, Statement
+from axiomatic import Axiomatic, Mapping, Netlist, PicComponent, Statement
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
@@ -1433,11 +1396,13 @@ client.pic.circuit.optimize(
             statement="statement",
         )
     ],
-    measurements=[
-        Measurement(
+    mappings=[
+        Mapping(
+            statement_id="statement_id",
+            expression_idx=1,
             variable="variable",
-            arguments={"key": "value"},
-            measurement_name="measurement_name",
+            computation_name="computation_name",
+            computation_arguments={"key": 1.1},
         )
     ],
 )
@@ -1472,7 +1437,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**measurements:** `typing.Sequence[Measurement]` 
+**mappings:** `typing.Sequence[Mapping]` 
     
 </dd>
 </dl>

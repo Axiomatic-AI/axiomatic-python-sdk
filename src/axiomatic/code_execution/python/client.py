@@ -2,10 +2,8 @@
 
 import typing
 from ...core.client_wrapper import SyncClientWrapper
-from ...types.formalize_response import FormalizeResponse
 from ...core.request_options import RequestOptions
-from ...types.verify_response import VerifyResponse
-from ...core.serialization import convert_and_respect_annotation_metadata
+from ...types.execute_code_response import ExecuteCodeResponse
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
@@ -17,49 +15,42 @@ from ...core.client_wrapper import AsyncClientWrapper
 OMIT = typing.cast(typing.Any, ...)
 
 
-class ConstraintsClient:
+class PythonClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def verify(
-        self, *, constraints: FormalizeResponse, request_options: typing.Optional[RequestOptions] = None
-    ) -> VerifyResponse:
+    def execute(self, *, code: str, request_options: typing.Optional[RequestOptions] = None) -> ExecuteCodeResponse:
         """
-        Verifies that a set of constraints are consistent
+        Executes code in a secure environment
 
         Parameters
         ----------
-        constraints : FormalizeResponse
+        code : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        VerifyResponse
+        ExecuteCodeResponse
             Successful Response
 
         Examples
         --------
-        from axiomatic import Axiomatic, FormalizeResponse
+        from axiomatic import Axiomatic
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.formalization.constraints.verify(
-            constraints=FormalizeResponse(
-                variables={"key": "value"},
-                expressions=[],
-            ),
+        client.code_execution.python.execute(
+            code="code",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "formalization/constraints/verify",
+            "code-execution/python/execute",
             method="POST",
             json={
-                "constraints": convert_and_respect_annotation_metadata(
-                    object_=constraints, annotation=FormalizeResponse, direction="write"
-                ),
+                "code": code,
             },
             headers={
                 "content-type": "application/json",
@@ -70,9 +61,9 @@ class ConstraintsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    VerifyResponse,
+                    ExecuteCodeResponse,
                     parse_obj_as(
-                        type_=VerifyResponse,  # type: ignore
+                        type_=ExecuteCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -92,33 +83,33 @@ class ConstraintsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
 
-class AsyncConstraintsClient:
+class AsyncPythonClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def verify(
-        self, *, constraints: FormalizeResponse, request_options: typing.Optional[RequestOptions] = None
-    ) -> VerifyResponse:
+    async def execute(
+        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> ExecuteCodeResponse:
         """
-        Verifies that a set of constraints are consistent
+        Executes code in a secure environment
 
         Parameters
         ----------
-        constraints : FormalizeResponse
+        code : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        VerifyResponse
+        ExecuteCodeResponse
             Successful Response
 
         Examples
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, FormalizeResponse
+        from axiomatic import AsyncAxiomatic
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -126,23 +117,18 @@ class AsyncConstraintsClient:
 
 
         async def main() -> None:
-            await client.formalization.constraints.verify(
-                constraints=FormalizeResponse(
-                    variables={"key": "value"},
-                    expressions=[],
-                ),
+            await client.code_execution.python.execute(
+                code="code",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "formalization/constraints/verify",
+            "code-execution/python/execute",
             method="POST",
             json={
-                "constraints": convert_and_respect_annotation_metadata(
-                    object_=constraints, annotation=FormalizeResponse, direction="write"
-                ),
+                "code": code,
             },
             headers={
                 "content-type": "application/json",
@@ -153,9 +139,9 @@ class AsyncConstraintsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    VerifyResponse,
+                    ExecuteCodeResponse,
                     parse_obj_as(
-                        type_=VerifyResponse,  # type: ignore
+                        type_=ExecuteCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

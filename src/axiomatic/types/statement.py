@@ -18,7 +18,7 @@ class Statement(UniversalBaseModel):
     """
 
     is_formalized: typing.Optional[bool] = None
-    formalization: typing.Optional[typing.List[str]] = None
+    formalization: typing.Optional[typing.List[typing.Optional[typing.Any]]] = None
     z_3_formalization: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="z3_formalization")] = None
 
     if IS_PYDANTIC_V2:

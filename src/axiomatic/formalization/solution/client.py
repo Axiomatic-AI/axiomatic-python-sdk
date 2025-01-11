@@ -3,7 +3,7 @@
 import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ...types.formalize_response import FormalizeResponse
-from ...types.solution_body_values_value import SolutionBodyValuesValue
+from .types.solution_body_values_value import SolutionBodyValuesValue
 from ...core.request_options import RequestOptions
 from ...types.solution_response import SolutionResponse
 from ...core.serialization import convert_and_respect_annotation_metadata
@@ -71,6 +71,9 @@ class SolutionClient:
                 "values": convert_and_respect_annotation_metadata(
                     object_=values, annotation=typing.Dict[str, SolutionBodyValuesValue], direction="write"
                 ),
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -161,6 +164,9 @@ class AsyncSolutionClient:
                 "values": convert_and_respect_annotation_metadata(
                     object_=values, annotation=typing.Dict[str, SolutionBodyValuesValue], direction="write"
                 ),
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,

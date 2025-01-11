@@ -13,7 +13,7 @@ from ...types.generate_code_response import GenerateCodeResponse
 from ...types.refine_code_response import RefineCodeResponse
 from ...types.netlist import Netlist
 from ...types.statement import Statement
-from ...types.measurement import Measurement
+from ...types.mapping import Mapping
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
@@ -236,7 +236,7 @@ class CircuitClient:
         *,
         netlist: Netlist,
         statements: typing.Sequence[Statement],
-        measurements: typing.Sequence[Measurement],
+        mappings: typing.Sequence[Mapping],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -248,7 +248,7 @@ class CircuitClient:
 
         statements : typing.Sequence[Statement]
 
-        measurements : typing.Sequence[Measurement]
+        mappings : typing.Sequence[Mapping]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -260,7 +260,7 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, Measurement, Netlist, PicComponent, Statement
+        from axiomatic import Axiomatic, Mapping, Netlist, PicComponent, Statement
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -282,11 +282,13 @@ class CircuitClient:
                     statement="statement",
                 )
             ],
-            measurements=[
-                Measurement(
+            mappings=[
+                Mapping(
+                    statement_id="statement_id",
+                    expression_idx=1,
                     variable="variable",
-                    arguments={"key": "value"},
-                    measurement_name="measurement_name",
+                    computation_name="computation_name",
+                    computation_arguments={"key": 1.1},
                 )
             ],
         )
@@ -301,8 +303,8 @@ class CircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=typing.Sequence[Statement], direction="write"
                 ),
-                "measurements": convert_and_respect_annotation_metadata(
-                    object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
+                "mappings": convert_and_respect_annotation_metadata(
+                    object_=mappings, annotation=typing.Sequence[Mapping], direction="write"
                 ),
             },
             headers={
@@ -640,7 +642,7 @@ class AsyncCircuitClient:
         *,
         netlist: Netlist,
         statements: typing.Sequence[Statement],
-        measurements: typing.Sequence[Measurement],
+        mappings: typing.Sequence[Mapping],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -652,7 +654,7 @@ class AsyncCircuitClient:
 
         statements : typing.Sequence[Statement]
 
-        measurements : typing.Sequence[Measurement]
+        mappings : typing.Sequence[Mapping]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -666,13 +668,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import (
-            AsyncAxiomatic,
-            Measurement,
-            Netlist,
-            PicComponent,
-            Statement,
-        )
+        from axiomatic import AsyncAxiomatic, Mapping, Netlist, PicComponent, Statement
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -697,11 +693,13 @@ class AsyncCircuitClient:
                         statement="statement",
                     )
                 ],
-                measurements=[
-                    Measurement(
+                mappings=[
+                    Mapping(
+                        statement_id="statement_id",
+                        expression_idx=1,
                         variable="variable",
-                        arguments={"key": "value"},
-                        measurement_name="measurement_name",
+                        computation_name="computation_name",
+                        computation_arguments={"key": 1.1},
                     )
                 ],
             )
@@ -719,8 +717,8 @@ class AsyncCircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=typing.Sequence[Statement], direction="write"
                 ),
-                "measurements": convert_and_respect_annotation_metadata(
-                    object_=measurements, annotation=typing.Sequence[Measurement], direction="write"
+                "mappings": convert_and_respect_annotation_metadata(
+                    object_=mappings, annotation=typing.Sequence[Mapping], direction="write"
                 ),
             },
             headers={
