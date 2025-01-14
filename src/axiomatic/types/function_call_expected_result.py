@@ -2,4 +2,4 @@
 
 import typing
 
-PicComponentInfoValue = typing.Union[str, float, int]
+FunctionCallExpectedResult = typing.Union[float, int, str]

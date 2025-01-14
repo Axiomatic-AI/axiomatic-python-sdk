@@ -2,12 +2,13 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from .document.client import DocumentClient
 from .circuit.client import CircuitClient
 from .component.client import ComponentClient
-from ..types.statement import Statement
+from ..types.statement_dictionary import StatementDictionary
 from ..types.netlist import Netlist
 from ..core.request_options import RequestOptions
-from ..types.find_mappings_response import FindMappingsResponse
+from ..types.find_mapping_response import FindMappingResponse
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
@@ -15,6 +16,7 @@ from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper
+from .document.client import AsyncDocumentClient
 from .circuit.client import AsyncCircuitClient
 from .component.client import AsyncComponentClient
 
@@ -25,23 +27,24 @@ OMIT = typing.cast(typing.Any, ...)
 class PicClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.document = DocumentClient(client_wrapper=self._client_wrapper)
         self.circuit = CircuitClient(client_wrapper=self._client_wrapper)
         self.component = ComponentClient(client_wrapper=self._client_wrapper)
 
-    def find_mappings(
+    def find_mapping(
         self,
         *,
-        statements: typing.Sequence[Statement],
+        statements: StatementDictionary,
         netlist: Netlist,
         max_iter: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> FindMappingsResponse:
+    ) -> FindMappingResponse:
         """
         Map variables in the constraints to computations on the netlist.
 
         Parameters
         ----------
-        statements : typing.Sequence[Statement]
+        statements : StatementDictionary
 
         netlist : Netlist
 
@@ -52,44 +55,36 @@ class PicClient:
 
         Returns
         -------
-        FindMappingsResponse
+        FindMappingResponse
             Successful Response
 
         Examples
         --------
-        from axiomatic import Axiomatic, Netlist, PicComponent, Statement
+        from axiomatic import Axiomatic, Netlist, PicInstance, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.pic.find_mappings(
-            statements=[
-                Statement(
-                    id="id",
-                    statement="statement",
-                )
-            ],
+        client.pic.find_mapping(
+            statements=StatementDictionary(),
             netlist=Netlist(
-                name="name",
                 instances={
-                    "key": PicComponent(
+                    "key": PicInstance(
                         component="component",
                     )
                 },
-                connections={"key": "value"},
-                ports={"key": "value"},
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "pic/circuit/mappings/find",
+            "pic/circuit/mapping/find",
             method="POST",
             params={
                 "max_iter": max_iter,
             },
             json={
                 "statements": convert_and_respect_annotation_metadata(
-                    object_=statements, annotation=typing.Sequence[Statement], direction="write"
+                    object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
@@ -104,9 +99,9 @@ class PicClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    FindMappingsResponse,
+                    FindMappingResponse,
                     parse_obj_as(
-                        type_=FindMappingsResponse,  # type: ignore
+                        type_=FindMappingResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -129,23 +124,24 @@ class PicClient:
 class AsyncPicClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)
         self.circuit = AsyncCircuitClient(client_wrapper=self._client_wrapper)
         self.component = AsyncComponentClient(client_wrapper=self._client_wrapper)
 
-    async def find_mappings(
+    async def find_mapping(
         self,
         *,
-        statements: typing.Sequence[Statement],
+        statements: StatementDictionary,
         netlist: Netlist,
         max_iter: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> FindMappingsResponse:
+    ) -> FindMappingResponse:
         """
         Map variables in the constraints to computations on the netlist.
 
         Parameters
         ----------
-        statements : typing.Sequence[Statement]
+        statements : StatementDictionary
 
         netlist : Netlist
 
@@ -156,14 +152,14 @@ class AsyncPicClient:
 
         Returns
         -------
-        FindMappingsResponse
+        FindMappingResponse
             Successful Response
 
         Examples
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, Netlist, PicComponent, Statement
+        from axiomatic import AsyncAxiomatic, Netlist, PicInstance, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -171,22 +167,14 @@ class AsyncPicClient:
 
 
         async def main() -> None:
-            await client.pic.find_mappings(
-                statements=[
-                    Statement(
-                        id="id",
-                        statement="statement",
-                    )
-                ],
+            await client.pic.find_mapping(
+                statements=StatementDictionary(),
                 netlist=Netlist(
-                    name="name",
                     instances={
-                        "key": PicComponent(
+                        "key": PicInstance(
                             component="component",
                         )
                     },
-                    connections={"key": "value"},
-                    ports={"key": "value"},
                 ),
             )
 
@@ -194,14 +182,14 @@ class AsyncPicClient:
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "pic/circuit/mappings/find",
+            "pic/circuit/mapping/find",
             method="POST",
             params={
                 "max_iter": max_iter,
             },
             json={
                 "statements": convert_and_respect_annotation_metadata(
-                    object_=statements, annotation=typing.Sequence[Statement], direction="write"
+                    object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
@@ -216,9 +204,9 @@ class AsyncPicClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    FindMappingsResponse,
+                    FindMappingResponse,
                     parse_obj_as(
-                        type_=FindMappingsResponse,  # type: ignore
+                        type_=FindMappingResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

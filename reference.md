@@ -157,7 +157,7 @@ client.requirements.check(
 </details>
 
 ## pic
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">find_mappings</a>(...)</code></summary>
+<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">find_mapping</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -184,27 +184,19 @@ Map variables in the constraints to computations on the netlist.
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Netlist, PicComponent, Statement
+from axiomatic import Axiomatic, Netlist, PicInstance, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.pic.find_mappings(
-    statements=[
-        Statement(
-            id="id",
-            statement="statement",
-        )
-    ],
+client.pic.find_mapping(
+    statements=StatementDictionary(),
     netlist=Netlist(
-        name="name",
         instances={
-            "key": PicComponent(
+            "key": PicInstance(
                 component="component",
             )
         },
-        connections={"key": "value"},
-        ports={"key": "value"},
     ),
 )
 
@@ -222,7 +214,7 @@ client.pic.find_mappings(
 <dl>
 <dd>
 
-**statements:** `typing.Sequence[Statement]` 
+**statements:** `StatementDictionary` 
     
 </dd>
 </dl>
@@ -823,6 +815,14 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
+**ocr:** `typing.Optional[bool]` — Whether to use OCR
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -848,7 +848,7 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
-Executes code in a secure environment
+Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory
 </dd>
 </dl>
 </dd>
@@ -1101,6 +1101,86 @@ client.lean.z_3.execute(
 <dd>
 
 **code:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Pic Document
+<details><summary><code>client.pic.document.<a href="src/axiomatic/pic/document/client.py">summarize</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Generate GDS factory code to create a PIC component
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.document.summarize(
+    query="query",
+    images=["images"],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**images:** `typing.Sequence[str]` 
     
 </dd>
 </dl>
@@ -1374,35 +1454,36 @@ Optimize a PIC circuit with given cost and constraints
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Mapping, Netlist, PicComponent, Statement
+from axiomatic import (
+    Axiomatic,
+    Computation,
+    Netlist,
+    Parameter,
+    PicInstance,
+    StatementDictionary,
+)
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.pic.circuit.optimize(
     netlist=Netlist(
-        name="name",
         instances={
-            "key": PicComponent(
+            "key": PicInstance(
                 component="component",
             )
         },
-        connections={"key": "value"},
-        ports={"key": "value"},
     ),
-    statements=[
-        Statement(
-            id="id",
-            statement="statement",
+    statements=StatementDictionary(),
+    mappings={
+        "key": Computation(
+            name="name",
+            arguments={"key": 1.1},
         )
-    ],
-    mappings=[
-        Mapping(
-            statement_id="statement_id",
-            expression_idx=1,
-            variable="variable",
-            computation_name="computation_name",
-            computation_arguments={"key": 1.1},
+    },
+    parameters=[
+        Parameter(
+            path="path",
         )
     ],
 )
@@ -1429,7 +1510,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**statements:** `typing.Sequence[Statement]` 
+**statements:** `StatementDictionary` 
     
 </dd>
 </dl>
@@ -1437,7 +1518,15 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**mappings:** `typing.Sequence[Mapping]` 
+**mappings:** `typing.Dict[str, Computation]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**parameters:** `typing.Sequence[Parameter]` 
     
 </dd>
 </dl>

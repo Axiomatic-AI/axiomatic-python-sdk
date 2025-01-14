@@ -2,30 +2,24 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import pydantic
-from .statement_type import StatementType
 import typing
-from .formalization import Formalization
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class Statement(UniversalBaseModel):
+class Parameter(UniversalBaseModel):
+    path: str = pydantic.Field()
     """
-    The model for a statement.
-    """
-
-    text: str = pydantic.Field()
-    """
-    The natural language content of the statement.
+    Path to the parameter in the netlist in the format 'instance_name,parameter_name'
     """
 
-    type: StatementType = pydantic.Field()
+    lower_bound: typing.Optional[float] = pydantic.Field(default=None)
     """
-    The type/category of the statement.
+    Lower bound of the parameter
     """
 
-    formalization: typing.Optional[Formalization] = pydantic.Field(default=None)
+    upper_bound: typing.Optional[float] = pydantic.Field(default=None)
     """
-    The formalization of the statement.
+    Upper bound of the parameter
     """
 
     if IS_PYDANTIC_V2:

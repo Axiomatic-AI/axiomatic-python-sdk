@@ -2,16 +2,18 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .pic_component_info_value import PicComponentInfoValue
-from .pic_component_settings_value import PicComponentSettingsValue
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class PicComponent(UniversalBaseModel):
-    component: str
-    info: typing.Optional[typing.Dict[str, PicComponentInfoValue]] = None
-    settings: typing.Optional[typing.Dict[str, PicComponentSettingsValue]] = None
+class OptimizationHistory(UniversalBaseModel):
+    """
+    The history of the optimization process
+    containing all the settings and costs.
+    """
+
+    all_settings: typing.List[typing.Dict[str, typing.Optional[typing.Any]]]
+    all_costs: typing.List[float]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -3,7 +3,7 @@
 import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ...core.request_options import RequestOptions
-from ...types.execute_code_response import ExecuteCodeResponse
+from ...types.summarizer_response import SummarizerResponse
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
@@ -15,24 +15,28 @@ from ...core.client_wrapper import AsyncClientWrapper
 OMIT = typing.cast(typing.Any, ...)
 
 
-class PythonClient:
+class DocumentClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def execute(self, *, code: str, request_options: typing.Optional[RequestOptions] = None) -> ExecuteCodeResponse:
+    def summarize(
+        self, *, query: str, images: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
+    ) -> SummarizerResponse:
         """
-        Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory
+        Generate GDS factory code to create a PIC component
 
         Parameters
         ----------
-        code : str
+        query : str
+
+        images : typing.Sequence[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ExecuteCodeResponse
+        SummarizerResponse
             Successful Response
 
         Examples
@@ -42,15 +46,17 @@ class PythonClient:
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.code_execution.python.execute(
-            code="code",
+        client.pic.document.summarize(
+            query="query",
+            images=["images"],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "code-execution/python/execute",
+            "pic/circuit/summarize",
             method="POST",
             json={
-                "code": code,
+                "query": query,
+                "images": images,
             },
             headers={
                 "content-type": "application/json",
@@ -61,9 +67,9 @@ class PythonClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ExecuteCodeResponse,
+                    SummarizerResponse,
                     parse_obj_as(
-                        type_=ExecuteCodeResponse,  # type: ignore
+                        type_=SummarizerResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -83,26 +89,28 @@ class PythonClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
 
-class AsyncPythonClient:
+class AsyncDocumentClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def execute(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> ExecuteCodeResponse:
+    async def summarize(
+        self, *, query: str, images: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
+    ) -> SummarizerResponse:
         """
-        Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory
+        Generate GDS factory code to create a PIC component
 
         Parameters
         ----------
-        code : str
+        query : str
+
+        images : typing.Sequence[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ExecuteCodeResponse
+        SummarizerResponse
             Successful Response
 
         Examples
@@ -117,18 +125,20 @@ class AsyncPythonClient:
 
 
         async def main() -> None:
-            await client.code_execution.python.execute(
-                code="code",
+            await client.pic.document.summarize(
+                query="query",
+                images=["images"],
             )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "code-execution/python/execute",
+            "pic/circuit/summarize",
             method="POST",
             json={
-                "code": code,
+                "query": query,
+                "images": images,
             },
             headers={
                 "content-type": "application/json",
@@ -139,9 +149,9 @@ class AsyncPythonClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ExecuteCodeResponse,
+                    SummarizerResponse,
                     parse_obj_as(
-                        type_=ExecuteCodeResponse,  # type: ignore
+                        type_=SummarizerResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

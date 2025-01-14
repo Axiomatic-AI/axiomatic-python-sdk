@@ -2,4 +2,4 @@
 
 import typing
 
-MappingComputationArgumentsValue = typing.Union[float, int, str]
+FunctionCallArgumentsValue = typing.Union[float, int, str]

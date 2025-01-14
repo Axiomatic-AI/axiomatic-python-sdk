@@ -98,6 +98,7 @@ class DocumentClient:
         *,
         file: core.File,
         method: typing.Optional[str] = None,
+        ocr: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
@@ -110,6 +111,9 @@ class DocumentClient:
 
         method : typing.Optional[str]
             Method to use for text extraction
+
+        ocr : typing.Optional[bool]
+            Whether to use OCR
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -133,6 +137,7 @@ class DocumentClient:
             method="POST",
             params={
                 "method": method,
+                "ocr": ocr,
             },
             data={},
             files={
@@ -255,6 +260,7 @@ class AsyncDocumentClient:
         *,
         file: core.File,
         method: typing.Optional[str] = None,
+        ocr: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
@@ -267,6 +273,9 @@ class AsyncDocumentClient:
 
         method : typing.Optional[str]
             Method to use for text extraction
+
+        ocr : typing.Optional[bool]
+            Whether to use OCR
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -298,6 +307,7 @@ class AsyncDocumentClient:
             method="POST",
             params={
                 "method": method,
+                "ocr": ocr,
             },
             data={},
             files={

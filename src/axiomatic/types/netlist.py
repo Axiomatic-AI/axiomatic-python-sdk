@@ -2,17 +2,25 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .pic_component import PicComponent
+from .pdk import Pdk
+from .pic_instance import PicInstance
+from .netlist_placements_value_value import NetlistPlacementsValueValue
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class Netlist(UniversalBaseModel):
-    name: str
-    instances: typing.Dict[str, PicComponent]
-    connections: typing.Dict[str, str]
-    ports: typing.Dict[str, str]
-    placements: typing.Optional[typing.Dict[str, typing.Dict[str, float]]] = None
+    """
+    Class to represent a PIC netlist
+    """
+
+    name: typing.Optional[str] = None
+    pdk: typing.Optional[Pdk] = None
+    instances: typing.Dict[str, PicInstance]
+    connections: typing.Optional[typing.Dict[str, str]] = None
+    ports: typing.Optional[typing.Dict[str, str]] = None
+    placements: typing.Optional[typing.Dict[str, typing.Dict[str, NetlistPlacementsValueValue]]] = None
+    nets: typing.Optional[typing.List[typing.Dict[str, str]]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

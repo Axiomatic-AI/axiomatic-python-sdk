@@ -12,8 +12,9 @@ from ...core.api_error import ApiError
 from ...types.generate_code_response import GenerateCodeResponse
 from ...types.refine_code_response import RefineCodeResponse
 from ...types.netlist import Netlist
-from ...types.statement import Statement
-from ...types.mapping import Mapping
+from ...types.statement_dictionary import StatementDictionary
+from ...types.computation import Computation
+from ...types.parameter import Parameter
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
@@ -235,8 +236,9 @@ class CircuitClient:
         self,
         *,
         netlist: Netlist,
-        statements: typing.Sequence[Statement],
-        mappings: typing.Sequence[Mapping],
+        statements: StatementDictionary,
+        mappings: typing.Dict[str, Computation],
+        parameters: typing.Sequence[Parameter],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -246,9 +248,11 @@ class CircuitClient:
         ----------
         netlist : Netlist
 
-        statements : typing.Sequence[Statement]
+        statements : StatementDictionary
 
-        mappings : typing.Sequence[Mapping]
+        mappings : typing.Dict[str, Computation]
+
+        parameters : typing.Sequence[Parameter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -260,35 +264,36 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, Mapping, Netlist, PicComponent, Statement
+        from axiomatic import (
+            Axiomatic,
+            Computation,
+            Netlist,
+            Parameter,
+            PicInstance,
+            StatementDictionary,
+        )
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
         client.pic.circuit.optimize(
             netlist=Netlist(
-                name="name",
                 instances={
-                    "key": PicComponent(
+                    "key": PicInstance(
                         component="component",
                     )
                 },
-                connections={"key": "value"},
-                ports={"key": "value"},
             ),
-            statements=[
-                Statement(
-                    id="id",
-                    statement="statement",
+            statements=StatementDictionary(),
+            mappings={
+                "key": Computation(
+                    name="name",
+                    arguments={"key": 1.1},
                 )
-            ],
-            mappings=[
-                Mapping(
-                    statement_id="statement_id",
-                    expression_idx=1,
-                    variable="variable",
-                    computation_name="computation_name",
-                    computation_arguments={"key": 1.1},
+            },
+            parameters=[
+                Parameter(
+                    path="path",
                 )
             ],
         )
@@ -301,10 +306,13 @@ class CircuitClient:
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
                 "statements": convert_and_respect_annotation_metadata(
-                    object_=statements, annotation=typing.Sequence[Statement], direction="write"
+                    object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "mappings": convert_and_respect_annotation_metadata(
-                    object_=mappings, annotation=typing.Sequence[Mapping], direction="write"
+                    object_=mappings, annotation=typing.Dict[str, Computation], direction="write"
+                ),
+                "parameters": convert_and_respect_annotation_metadata(
+                    object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
                 ),
             },
             headers={
@@ -641,8 +649,9 @@ class AsyncCircuitClient:
         self,
         *,
         netlist: Netlist,
-        statements: typing.Sequence[Statement],
-        mappings: typing.Sequence[Mapping],
+        statements: StatementDictionary,
+        mappings: typing.Dict[str, Computation],
+        parameters: typing.Sequence[Parameter],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -652,9 +661,11 @@ class AsyncCircuitClient:
         ----------
         netlist : Netlist
 
-        statements : typing.Sequence[Statement]
+        statements : StatementDictionary
 
-        mappings : typing.Sequence[Mapping]
+        mappings : typing.Dict[str, Computation]
+
+        parameters : typing.Sequence[Parameter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -668,7 +679,14 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, Mapping, Netlist, PicComponent, Statement
+        from axiomatic import (
+            AsyncAxiomatic,
+            Computation,
+            Netlist,
+            Parameter,
+            PicInstance,
+            StatementDictionary,
+        )
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -678,28 +696,22 @@ class AsyncCircuitClient:
         async def main() -> None:
             await client.pic.circuit.optimize(
                 netlist=Netlist(
-                    name="name",
                     instances={
-                        "key": PicComponent(
+                        "key": PicInstance(
                             component="component",
                         )
                     },
-                    connections={"key": "value"},
-                    ports={"key": "value"},
                 ),
-                statements=[
-                    Statement(
-                        id="id",
-                        statement="statement",
+                statements=StatementDictionary(),
+                mappings={
+                    "key": Computation(
+                        name="name",
+                        arguments={"key": 1.1},
                     )
-                ],
-                mappings=[
-                    Mapping(
-                        statement_id="statement_id",
-                        expression_idx=1,
-                        variable="variable",
-                        computation_name="computation_name",
-                        computation_arguments={"key": 1.1},
+                },
+                parameters=[
+                    Parameter(
+                        path="path",
                     )
                 ],
             )
@@ -715,10 +727,13 @@ class AsyncCircuitClient:
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
                 "statements": convert_and_respect_annotation_metadata(
-                    object_=statements, annotation=typing.Sequence[Statement], direction="write"
+                    object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "mappings": convert_and_respect_annotation_metadata(
-                    object_=mappings, annotation=typing.Sequence[Mapping], direction="write"
+                    object_=mappings, annotation=typing.Dict[str, Computation], direction="write"
+                ),
+                "parameters": convert_and_respect_annotation_metadata(
+                    object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
                 ),
             },
             headers={
