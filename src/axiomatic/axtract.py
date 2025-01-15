@@ -1,9 +1,12 @@
-import ipywidgets as widgets # type: ignore
-from IPython.display import display, Math, HTML # type: ignore
+import ipywidgets as widgets  # type: ignore
+from IPython.display import display, Math, HTML  # type: ignore
 from dataclasses import dataclass, field
-import hypernetx as hnx # type: ignore
-import matplotlib.pyplot as plt # type: ignore
 import re
+import hypernetx as hnx  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
+import sympy  # type: ignore
+from latex2sympy2 import latex2sympy  # type: ignore
+
 
 OPTION_LIST = {
     "Select a template": [],
@@ -70,11 +73,11 @@ PAYLOAD_1 = {
     "Resolution (panchromatic)": 15.4,
     "Ground sampling distance (panchromatic)": 7.7,
     "Resolution (multispectral)": 0.0,
-    "Ground sampling distance (multispectral)": 0.,
+    "Ground sampling distance (multispectral)": 0.0,
     "Altitude": 420000,
     "Half field of view": 0.005061455,
     "Mirror aperture": 0.85,
-    "F-number": 1.,
+    "F-number": 1.0,
     "Focal length": 0.3,
     "Pixel size (panchromatic)": 5.5e-6,
     "Swath width": 4251.66,
@@ -85,6 +88,8 @@ PAYLOAD_1 = {
 class Requirement:
     requirement_name: str
     latex_symbol: str
+    # TODO: probably this should be really the latex symbol,
+    # e.g. \text{GSD}_{\text{p}}
     value: int
     units: str
     tolerance: float
@@ -92,17 +97,145 @@ class Requirement:
 
     def __post_init__(self):
         self.sympy_symbol = self.latex_symbol.replace("{", "").replace("}", "")
+        self.sympy_symbol = latex2sympy(self.latex_symbol)
+        eq = sympy.Eq(self.sympy_symbol, self.value)
+        free_symbols = eq.free_symbols
+        if len(free_symbols) > 1:
+            raise Warning(
+                f"""
+                The latex symbol of the requirement {self.latex_symbol}
+                is parsed as {free_symbols} in sympy
+                instead of a single symbol."""
+            )
 
     @property
     def is_fixed(self):
+        """Check if the requirement has tolerance set to zero."""
         return self.tolerance == 0.0
 
+    @property
+    def equations(self, strict=False):
+        if self.is_fixed:
+            return [sympy.Eq(self.sympy_symbol, self.value)]
+        else:
+            signs = [">=", "<="] if not strict else [">", "<"]
+            bounds = [self.value - self.tolerance, self.value + self.tolerance]
+            return [
+                sympy.Rel(self.sympy_symbol, bound, sign)
+                for bound, sign in zip(bounds, signs, strict=False)
+            ]
 
-def _find_symbol(name, variable_dict):
 
-    matching_keys = [
-        key for key, value in variable_dict.items() if name in value["name"]
-    ]
+def get_eq_hypergraph(api_results, api_requirements, with_printing=True):
+    # Disable external LaTeX rendering, using matplotlib's mathtext instead
+    plt.rcParams["text.usetex"] = False
+    plt.rcParams["mathtext.fontset"] = "stix"
+    plt.rcParams["font.family"] = "serif"
+
+    api_results = _add_used_vars_to_results(api_results, api_requirements)
+
+    # Prepare the data for HyperNetX visualization
+    hyperedges = {}
+    for _eq, details in api_results["results"].items():
+        hyperedges[_get_latex_string_format(details["latex_equation"])] = details[
+            "used_vars"
+        ]
+
+    # Create the hypergraph using HyperNetX
+    h = hnx.Hypergraph(hyperedges)
+
+    # Plot the hypergraph with enhanced clarity
+    plt.figure(figsize=(16, 12))
+
+    # Draw the hypergraph with node and edge labels
+    hnx.draw(
+        h,
+        with_edge_labels=True,
+        edge_labels_on_edge=False,
+        node_labels_kwargs={"fontsize": 14},
+        edge_labels_kwargs={"fontsize": 14},
+        layout_kwargs={"seed": 42, "scale": 2.5},
+    )
+
+    node_labels = list(h.nodes)
+    symbol_explanations = _get_node_names_for_node_lables(node_labels, api_requirements)
+
+    # Adding the symbol explanations as a legend
+    explanation_text = "\n".join(
+        [f"${symbol}$: {desc}" for symbol, desc in symbol_explanations]
+    )
+    plt.annotate(
+        explanation_text,
+        xy=(1.05, 0.5),
+        xycoords="axes fraction",
+        fontsize=14,
+        verticalalignment="center",
+    )
+    plt.title(r"Enhanced Hypergraph of Equations and Variables", fontsize=20)
+    if with_printing:
+        plt.show()
+    else:
+        return h
+
+
+def _get_node_names_for_node_lables(node_labels, api_requirements):
+    # Create the output list
+    node_names = []
+
+    # Iterate through each symbol in S
+    for symbol in node_labels:
+        # Search for the matching requirement
+        symbol = symbol.replace("$", "")
+        for req in api_requirements:
+            if req.latex_symbol == symbol:
+                # Add the matching tuple to SS
+                node_names.append((req.latex_symbol, req.requirement_name))
+                break  # Stop searching once a match is found
+
+    return node_names
+
+
+def _get_latex_string_format(input_string):
+    """
+    Properly formats LaTeX strings for matplotlib when text.usetex is False.
+    No escaping needed since mathtext handles backslashes properly.
+    """
+    return f"${input_string}$"  # No backslash escaping required
+
+
+def _get_requirements_set(requirements):
+    variable_set = set()
+    for req in requirements:
+        variable_set.add(req.latex_symbol)
+
+    return variable_set
+
+
+def _find_vars_in_eq(equation, variable_set):
+    patterns = [re.escape(var) for var in variable_set]
+    combined_pattern = r"|".join(patterns)
+    matches = re.findall(combined_pattern, equation)
+    return {rf"${match}$" for match in matches}
+
+
+def _add_used_vars_to_results(api_results, api_requirements):
+    requirements = _get_requirements_set(api_requirements)
+
+    for key, value in api_results["results"].items():
+        latex_equation = value.get("latex_equation")
+        # print(latex_equation)
+        if latex_equation:
+            used_vars = _find_vars_in_eq(latex_equation, requirements)
+            api_results["results"][key]["used_vars"] = used_vars
+
+    return api_results
+
+
+############################################################################################################
+
+
+def _find_symbol(name, variables):
+    matching_keys = [key for key, value in variables.items() if name in value["name"]]
 
     if not matching_keys:
         matching_keys.append("unknown")
@@ -110,12 +243,11 @@ def _find_symbol(name, variable_dict):
     return matching_keys[0]
 
 
-def requirements_from_table(results, variable_dict):
+def requirements_from_table(results, variables):
     requirements = []
 
     for key, value in results["values"].items():
-
-        latex_symbol = _find_symbol(key, variable_dict)
+        latex_symbol = _find_symbol(key, variables)
 
         name = key
         numerical_value = value["Value"]
@@ -134,7 +266,7 @@ def requirements_from_table(results, variable_dict):
     return requirements
 
 
-def interactive_table(preset_options_dict, variable_dict):
+def interactive_table(variables):
     """
     Creates an interactive table with a dropdown for selecting options.
 
@@ -145,7 +277,8 @@ def interactive_table(preset_options_dict, variable_dict):
     Returns:
     dict: A dictionary containing user inputs for the selected rows.
     """
-
+    variable_dict = variables
+    preset_options_dict = OPTION_LIST
     variable_names = [details["name"] for details in variable_dict.values()]
 
     # Placeholder for result dictionary
@@ -195,25 +328,25 @@ def interactive_table(preset_options_dict, variable_dict):
                 widgets.Label(
                     value="Name",
                     layout=widgets.Layout(width=name_label_width[0]),
-                    style={'font_weight': 'bold'}
+                    style={"font_weight": "bold"},
                 ),
                 widgets.Label(
                     value="Value",
                     layout=widgets.Layout(width="150px"),
-                    style={'font_weight': 'bold'}
+                    style={"font_weight": "bold"},
                 ),
                 widgets.Label(
                     value="Units",
                     layout=widgets.Layout(width="150px"),
-                    style={'font_weight': 'bold'}
+                    style={"font_weight": "bold"},
                 ),
             ]
 
             # Combine header labels into a horizontal box
             header = widgets.HBox(header_labels)
             header.layout = widgets.Layout(
-                border='1px solid black',
-                padding='5px',
+                border="1px solid black",
+                padding="5px",
             )
 
             # Add the header to the rows_output VBox
@@ -245,8 +378,7 @@ def interactive_table(preset_options_dict, variable_dict):
                     layout=widgets.Layout(width="150px"),
                 )
                 units_text = widgets.Text(
-                    layout=widgets.Layout(width="150px"),
-                    value=default_unit
+                    layout=widgets.Layout(width="150px"), value=default_unit
                 )
 
                 # Combine widgets into a horizontal box
@@ -295,7 +427,6 @@ def interactive_table(preset_options_dict, variable_dict):
 
     # Function to add a new requirement row
     def add_req(_):
-
         unique_key = (
             f"req_{len([k for k in value_widgets if k.startswith('req_')]) + 1}"
         )
@@ -316,9 +447,7 @@ def interactive_table(preset_options_dict, variable_dict):
             placeholder="Units", layout=widgets.Layout(width="150px")
         )
 
-        new_row = widgets.HBox(
-            [variable_dropdown, value_text, units_text]
-        )
+        new_row = widgets.HBox([variable_dropdown, value_text, units_text])
 
         rows_output.children += (new_row,)
         value_widgets[unique_key] = new_row
@@ -335,160 +464,41 @@ def interactive_table(preset_options_dict, variable_dict):
     return result
 
 
-def display_formatted_answers(equations_dict):
-    """
-    Display LaTeX formatted equations and numerical results from a nested 
-    dictionary structure in Jupyter Notebook.
-
-    Parameters:
-    equations_dict (dict): The dictionary containing the equations.
-    """
-    results = equations_dict.get('results', {})
-    print("We identified the following equations that are relevant to your requirements:")
-
-    for key, value in results.items():
-        latex_equation = value.get('latex_equation')
-        lhs = value.get('lhs')
-        rhs = value.get('rhs')
-        match = value.get('match')
-        if latex_equation:
-            display(Math(latex_equation))
-            print(f"For provided values:\nleft hand side = {lhs}\nright hand side = {rhs}")
-            if match:
-                print("Provided requirements fulfill this mathematical relation")
-        else:
-            print(f"No LaTeX equation found for {key}")
-
-
 def display_results(equations_dict):
-
-    results = equations_dict.get('results', {})
+    results = equations_dict.get("results", {})
     not_match_counter = 0
 
-    for key, value in results.items():
-        match = value.get('match')
-        latex_equation = value.get('latex_equation')
-        lhs = value.get('lhs')
-        rhs = value.get('rhs')
+    for _key, value in results.items():
+        match = value.get("match")
+        latex_equation = value.get("latex_equation")
+        lhs = value.get("lhs")
+        rhs = value.get("rhs")
         if not match:
             not_match_counter += 1
-            display(HTML(
-                '<p style="color:red; '
-                'font-weight:bold; '
-                'font-family:\'Times New Roman\'; '
-                'font-size:16px;">'
-                'Provided requirements DO NOT fulfill the following mathematical relation:'
-                '</p>'
-                ))           
+            display(
+                HTML(
+                    '<p style="color:red; '
+                    "font-weight:bold; "
+                    "font-family:'Times New Roman'; "
+                    'font-size:16px;">'
+                    "Provided requirements DO NOT fulfill"
+                    "the following mathematical relation:"
+                    "</p>"
+                )
+            )
             display(Math(latex_equation))
-            print(f"For provided values:\nleft hand side = {lhs}\nright hand side = {rhs}")
+            print(
+                f"""For provided values:
+                  \nleft hand side = {lhs}\nright hand side = {rhs}"""
+            )
     if not_match_counter == 0:
-        display(HTML(
-            '<p style="color:green; '
-            'font-weight:bold; '
-            'font-family:\'Times New Roman\'; '
-            'font-size:16px;">'
-            'Requirements you provided do not cause any conflicts'
-            '</p>'
-        ))
-
-
-def _get_latex_string_format(input_string):
-    """
-    Properly formats LaTeX strings for matplotlib when text.usetex is False.
-    No escaping needed since mathtext handles backslashes properly.
-    """
-    return f"${input_string}$"  # No backslash escaping required
-
-
-def _get_requirements_set(requirements):
-    variable_set = set()
-    for req in requirements:
-        variable_set.add(req['latex_symbol'])
-
-    return variable_set
-
-
-def _find_vars_in_eq(equation, variable_set):
-    patterns = [re.escape(var) for var in variable_set]
-    combined_pattern = r'|'.join(patterns)
-    matches = re.findall(combined_pattern, equation)
-    return {fr"${match}$" for match in matches}
-
-
-def _add_used_vars_to_results(api_results, api_requirements):
-    requirements = _get_requirements_set(api_requirements)
-
-    for key, value in api_results['results'].items():
-        latex_equation = value.get('latex_equation')
-        # print(latex_equation)
-        if latex_equation:
-            used_vars = _find_vars_in_eq(latex_equation, requirements)
-            api_results['results'][key]['used_vars'] = used_vars
-
-    return api_results
-
-
-def get_eq_hypergraph(api_results, api_requirements):
-    # Disable external LaTeX rendering, using matplotlib's mathtext instead
-    plt.rcParams['text.usetex'] = False
-    plt.rcParams['mathtext.fontset'] = 'stix'
-    plt.rcParams['font.family'] = 'serif'
-
-    api_results = _add_used_vars_to_results(api_results, api_requirements)
-
-    # Prepare the data for HyperNetX visualization
-    hyperedges = {}
-    for eq, details in api_results["results"].items():
-        hyperedges[_get_latex_string_format(
-            details["latex_equation"])] = details["used_vars"]
-
-    # Create the hypergraph using HyperNetX
-    H = hnx.Hypergraph(hyperedges)
-
-    # Plot the hypergraph with enhanced clarity
-    plt.figure(figsize=(16, 12))
-
-    # Draw the hypergraph with node and edge labels
-    hnx.draw(
-        H, 
-        with_edge_labels=True, 
-        edge_labels_on_edge=False,
-        node_labels_kwargs={'fontsize': 14}, 
-        edge_labels_kwargs={'fontsize': 14},
-        layout_kwargs={'seed': 42, 'scale': 2.5}  
-    )
-
-    node_labels = list(H.nodes)
-    symbol_explanations = _get_node_names_for_node_lables(node_labels, api_requirements)
-
-    # Adding the symbol explanations as a legend
-    explanation_text = "\n".join([f"${symbol}$: {desc}" for symbol, desc in symbol_explanations])
-    plt.annotate(
-        explanation_text, 
-        xy=(1.05, 0.5), 
-        xycoords='axes fraction', 
-        fontsize=14, 
-        verticalalignment='center'
-    )
-
-    plt.title(r"Enhanced Hypergraph of Equations and Variables", fontsize=20)
-    plt.show()
-
-
-def _get_node_names_for_node_lables(node_labels, api_requirements):
-
-    # Create the output list
-    node_names = []
-
-    # Iterate through each symbol in S
-    for symbol in node_labels:
-        # Search for the matching requirement
-        symbol = symbol.replace("$", "")
-        for req in api_requirements:
-            if req['latex_symbol'] == symbol:
-                # Add the matching tuple to SS
-                node_names.append((req["latex_symbol"], req["requirement_name"]))
-                break  # Stop searching once a match is found
-
-    return node_names
+        display(
+            HTML(
+                '<p style="color:green; '
+                "font-weight:bold; "
+                "font-family:'Times New Roman'; "
+                'font-size:16px;">'
+                "Requirements you provided do not cause any conflicts"
+                "</p>"
+            )
+        )
