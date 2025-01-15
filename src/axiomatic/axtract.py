@@ -2,10 +2,10 @@ import ipywidgets as widgets  # type: ignore
 from IPython.display import display, Math, HTML  # type: ignore
 from dataclasses import dataclass, field
 import re
-import hypernetx as hnx
-import matplotlib.pyplot as plt
-import sympy
-from latex2sympy2 import latex2sympy
+import hypernetx as hnx  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
+import sympy  # type: ignore
+from latex2sympy2 import latex2sympy  # type: ignore
 
 
 OPTION_LIST = {
@@ -137,7 +137,9 @@ def get_eq_hypergraph(api_results, api_requirements, with_printing=True):
     # Prepare the data for HyperNetX visualization
     hyperedges = {}
     for _eq, details in api_results["results"].items():
-        hyperedges[_get_latex_string_format(details["latex_equation"])] = details["used_vars"]
+        hyperedges[_get_latex_string_format(details["latex_equation"])] = details[
+            "used_vars"
+        ]
 
     # Create the hypergraph using HyperNetX
     h = hnx.Hypergraph(hyperedges)
@@ -159,7 +161,9 @@ def get_eq_hypergraph(api_results, api_requirements, with_printing=True):
     symbol_explanations = _get_node_names_for_node_lables(node_labels, api_requirements)
 
     # Adding the symbol explanations as a legend
-    explanation_text = "\n".join([f"${symbol}$: {desc}" for symbol, desc in symbol_explanations])
+    explanation_text = "\n".join(
+        [f"${symbol}$: {desc}" for symbol, desc in symbol_explanations]
+    )
     plt.annotate(
         explanation_text,
         xy=(1.05, 0.5),
@@ -225,6 +229,7 @@ def _add_used_vars_to_results(api_results, api_requirements):
             api_results["results"][key]["used_vars"] = used_vars
 
     return api_results
+
 
 ############################################################################################################
 
@@ -372,7 +377,9 @@ def interactive_table(variables):
                     value=default_value,
                     layout=widgets.Layout(width="150px"),
                 )
-                units_text = widgets.Text(layout=widgets.Layout(width="150px"), value=default_unit)
+                units_text = widgets.Text(
+                    layout=widgets.Layout(width="150px"), value=default_unit
+                )
 
                 # Combine widgets into a horizontal box
                 row = widgets.HBox(
@@ -420,7 +427,9 @@ def interactive_table(variables):
 
     # Function to add a new requirement row
     def add_req(_):
-        unique_key = f"req_{len([k for k in value_widgets if k.startswith('req_')]) + 1}"
+        unique_key = (
+            f"req_{len([k for k in value_widgets if k.startswith('req_')]) + 1}"
+        )
 
         # Create a dropdown for variable selection with dynamic width
         variable_dropdown = widgets.Dropdown(
@@ -434,7 +443,9 @@ def interactive_table(variables):
             layout=widgets.Layout(width="150px"),
         )
 
-        units_text = widgets.Text(placeholder="Units", layout=widgets.Layout(width="150px"))
+        units_text = widgets.Text(
+            placeholder="Units", layout=widgets.Layout(width="150px")
+        )
 
         new_row = widgets.HBox([variable_dropdown, value_text, units_text])
 
