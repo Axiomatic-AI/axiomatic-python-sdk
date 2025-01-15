@@ -3,12 +3,12 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import pydantic
 import typing
-from .function_call_arguments_value import FunctionCallArgumentsValue
-from .function_call_expected_result import FunctionCallExpectedResult
+from .structure_function_call_arguments_value import StructureFunctionCallArgumentsValue
+from .structure_function_call_expected_result import StructureFunctionCallExpectedResult
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class FunctionCall(UniversalBaseModel):
+class StructureFunctionCall(UniversalBaseModel):
     """
     The model describing a function call.
     """
@@ -18,12 +18,12 @@ class FunctionCall(UniversalBaseModel):
     The name of the function that is called.
     """
 
-    arguments: typing.Dict[str, FunctionCallArgumentsValue] = pydantic.Field()
+    arguments: typing.Dict[str, StructureFunctionCallArgumentsValue] = pydantic.Field()
     """
     The arguments of the function that is called.
     """
 
-    expected_result: FunctionCallExpectedResult = pydantic.Field()
+    expected_result: StructureFunctionCallExpectedResult = pydantic.Field()
     """
     The expected result of calling the function with the given arguments on a PIC model.
     """

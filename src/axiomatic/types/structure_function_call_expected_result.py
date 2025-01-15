@@ -2,4 +2,4 @@
 
 import typing
 
-FunctionCallExpectedResult = typing.Union[float, int, str]
+StructureFunctionCallExpectedResult = typing.Union[float, int, str]

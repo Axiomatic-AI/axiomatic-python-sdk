@@ -9,9 +9,6 @@ from .formalization import Formalization
 from .formalization_error import FormalizationError
 from .formalize_circuit_response import FormalizeCircuitResponse
 from .formalize_response import FormalizeResponse
-from .function_call import FunctionCall
-from .function_call_arguments_value import FunctionCallArgumentsValue
-from .function_call_expected_result import FunctionCallExpectedResult
 from .generate_code_response import GenerateCodeResponse
 from .generate_component_code_response import GenerateComponentCodeResponse
 from .http_validation_error import HttpValidationError
@@ -34,8 +31,14 @@ from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
 from .statement import Statement
 from .statement_dictionary import StatementDictionary
+from .statement_feedback import StatementFeedback
+from .statement_feedback_dictionary import StatementFeedbackDictionary
 from .statement_type import StatementType
+from .structure_function_call import StructureFunctionCall
+from .structure_function_call_arguments_value import StructureFunctionCallArgumentsValue
+from .structure_function_call_expected_result import StructureFunctionCallExpectedResult
 from .summarizer_response import SummarizerResponse
+from .validate_netlist_response import ValidateNetlistResponse
 from .validate_response import ValidateResponse
 from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
@@ -53,9 +56,6 @@ __all__ = [
     "FormalizationError",
     "FormalizeCircuitResponse",
     "FormalizeResponse",
-    "FunctionCall",
-    "FunctionCallArgumentsValue",
-    "FunctionCallExpectedResult",
     "GenerateCodeResponse",
     "GenerateComponentCodeResponse",
     "HttpValidationError",
@@ -78,8 +78,14 @@ __all__ = [
     "SolutionResponseSolutionValue",
     "Statement",
     "StatementDictionary",
+    "StatementFeedback",
+    "StatementFeedbackDictionary",
     "StatementType",
+    "StructureFunctionCall",
+    "StructureFunctionCallArgumentsValue",
+    "StructureFunctionCallExpectedResult",
     "SummarizerResponse",
+    "ValidateNetlistResponse",
     "ValidateResponse",
     "ValidationError",
     "ValidationErrorLocItem",

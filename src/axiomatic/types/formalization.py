@@ -2,7 +2,7 @@
 
 import typing
 from .z_3_expression import Z3Expression
-from .function_call import FunctionCall
+from .structure_function_call import StructureFunctionCall
 from .formalization_error import FormalizationError
 
-Formalization = typing.Union[Z3Expression, FunctionCall, FormalizationError]
+Formalization = typing.Union[Z3Expression, StructureFunctionCall, FormalizationError]

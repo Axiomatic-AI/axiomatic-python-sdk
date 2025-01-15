@@ -156,100 +156,6 @@ client.requirements.check(
 </dl>
 </details>
 
-## pic
-<details><summary><code>client.pic.<a href="src/axiomatic/pic/client.py">find_mapping</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Map variables in the constraints to computations on the netlist.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic, Netlist, PicInstance, StatementDictionary
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.find_mapping(
-    statements=StatementDictionary(),
-    netlist=Netlist(
-        instances={
-            "key": PicInstance(
-                component="component",
-            )
-        },
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**statements:** `StatementDictionary` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**netlist:** `Netlist` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**max_iter:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 ## lean
 <details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">execute</a>(...)</code></summary>
 <dl>
@@ -1201,6 +1107,111 @@ client.pic.document.summarize(
 </details>
 
 ## Pic Circuit
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">validate</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Validates a set of statements against a netlist.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import (
+    Axiomatic,
+    Computation,
+    Netlist,
+    PicInstance,
+    StatementDictionary,
+)
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.validate(
+    netlist=Netlist(
+        instances={
+            "key": PicInstance(
+                component="component",
+            )
+        },
+    ),
+    statements=StatementDictionary(),
+    mapping={
+        "key": Computation(
+            name="name",
+            arguments={"key": 1.1},
+        )
+    },
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**statements:** `StatementDictionary` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**mapping:** `typing.Dict[str, Computation]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">formalize</a>(...)</code></summary>
 <dl>
 <dd>
@@ -1252,6 +1263,99 @@ client.pic.circuit.formalize(
 <dd>
 
 **query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">mapping</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Map variables in the constraints to computations on the netlist.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, Netlist, PicInstance, StatementDictionary
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.mapping(
+    statements=StatementDictionary(),
+    netlist=Netlist(
+        instances={
+            "key": PicInstance(
+                component="component",
+            )
+        },
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**statements:** `StatementDictionary` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max_iter:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -1475,7 +1579,7 @@ client.pic.circuit.optimize(
         },
     ),
     statements=StatementDictionary(),
-    mappings={
+    mapping={
         "key": Computation(
             name="name",
             arguments={"key": 1.1},
@@ -1518,7 +1622,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**mappings:** `typing.Dict[str, Computation]` 
+**mapping:** `typing.Dict[str, Computation]` 
     
 </dd>
 </dl>

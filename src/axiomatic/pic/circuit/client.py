@@ -2,21 +2,23 @@
 
 import typing
 from ...core.client_wrapper import SyncClientWrapper
+from ...types.netlist import Netlist
+from ...types.statement_dictionary import StatementDictionary
+from ...types.computation import Computation
 from ...core.request_options import RequestOptions
-from ...types.formalize_circuit_response import FormalizeCircuitResponse
+from ...types.validate_netlist_response import ValidateNetlistResponse
+from ...core.serialization import convert_and_respect_annotation_metadata
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from ...types.formalize_circuit_response import FormalizeCircuitResponse
+from ...types.find_mapping_response import FindMappingResponse
 from ...types.generate_code_response import GenerateCodeResponse
 from ...types.refine_code_response import RefineCodeResponse
-from ...types.netlist import Netlist
-from ...types.statement_dictionary import StatementDictionary
-from ...types.computation import Computation
 from ...types.parameter import Parameter
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
-from ...core.serialization import convert_and_respect_annotation_metadata
 from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
@@ -27,6 +29,107 @@ OMIT = typing.cast(typing.Any, ...)
 class CircuitClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    def validate(
+        self,
+        *,
+        netlist: Netlist,
+        statements: StatementDictionary,
+        mapping: typing.Dict[str, Computation],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ValidateNetlistResponse:
+        """
+        Validates a set of statements against a netlist.
+
+        Parameters
+        ----------
+        netlist : Netlist
+
+        statements : StatementDictionary
+
+        mapping : typing.Dict[str, Computation]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ValidateNetlistResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import (
+            Axiomatic,
+            Computation,
+            Netlist,
+            PicInstance,
+            StatementDictionary,
+        )
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.validate(
+            netlist=Netlist(
+                instances={
+                    "key": PicInstance(
+                        component="component",
+                    )
+                },
+            ),
+            statements=StatementDictionary(),
+            mapping={
+                "key": Computation(
+                    name="name",
+                    arguments={"key": 1.1},
+                )
+            },
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/validate",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=StatementDictionary, direction="write"
+                ),
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ValidateNetlistResponse,
+                    parse_obj_as(
+                        type_=ValidateNetlistResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def formalize(
         self, *, query: str, request_options: typing.Optional[RequestOptions] = None
@@ -75,6 +178,95 @@ class CircuitClient:
                     FormalizeCircuitResponse,
                     parse_obj_as(
                         type_=FormalizeCircuitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def mapping(
+        self,
+        *,
+        statements: StatementDictionary,
+        netlist: Netlist,
+        max_iter: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FindMappingResponse:
+        """
+        Map variables in the constraints to computations on the netlist.
+
+        Parameters
+        ----------
+        statements : StatementDictionary
+
+        netlist : Netlist
+
+        max_iter : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FindMappingResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, Netlist, PicInstance, StatementDictionary
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.mapping(
+            statements=StatementDictionary(),
+            netlist=Netlist(
+                instances={
+                    "key": PicInstance(
+                        component="component",
+                    )
+                },
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/mapping/find",
+            method="POST",
+            params={
+                "max_iter": max_iter,
+            },
+            json={
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=StatementDictionary, direction="write"
+                ),
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    FindMappingResponse,
+                    parse_obj_as(
+                        type_=FindMappingResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -237,7 +429,7 @@ class CircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mappings: typing.Dict[str, Computation],
+        mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
@@ -250,7 +442,7 @@ class CircuitClient:
 
         statements : StatementDictionary
 
-        mappings : typing.Dict[str, Computation]
+        mapping : typing.Dict[str, Computation]
 
         parameters : typing.Sequence[Parameter]
 
@@ -285,7 +477,7 @@ class CircuitClient:
                 },
             ),
             statements=StatementDictionary(),
-            mappings={
+            mapping={
                 "key": Computation(
                     name="name",
                     arguments={"key": 1.1},
@@ -308,8 +500,8 @@ class CircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
-                "mappings": convert_and_respect_annotation_metadata(
-                    object_=mappings, annotation=typing.Dict[str, Computation], direction="write"
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
                 ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
@@ -415,6 +607,115 @@ class AsyncCircuitClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
+    async def validate(
+        self,
+        *,
+        netlist: Netlist,
+        statements: StatementDictionary,
+        mapping: typing.Dict[str, Computation],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ValidateNetlistResponse:
+        """
+        Validates a set of statements against a netlist.
+
+        Parameters
+        ----------
+        netlist : Netlist
+
+        statements : StatementDictionary
+
+        mapping : typing.Dict[str, Computation]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ValidateNetlistResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import (
+            AsyncAxiomatic,
+            Computation,
+            Netlist,
+            PicInstance,
+            StatementDictionary,
+        )
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.validate(
+                netlist=Netlist(
+                    instances={
+                        "key": PicInstance(
+                            component="component",
+                        )
+                    },
+                ),
+                statements=StatementDictionary(),
+                mapping={
+                    "key": Computation(
+                        name="name",
+                        arguments={"key": 1.1},
+                    )
+                },
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/validate",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=StatementDictionary, direction="write"
+                ),
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ValidateNetlistResponse,
+                    parse_obj_as(
+                        type_=ValidateNetlistResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     async def formalize(
         self, *, query: str, request_options: typing.Optional[RequestOptions] = None
     ) -> FormalizeCircuitResponse:
@@ -470,6 +771,103 @@ class AsyncCircuitClient:
                     FormalizeCircuitResponse,
                     parse_obj_as(
                         type_=FormalizeCircuitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def mapping(
+        self,
+        *,
+        statements: StatementDictionary,
+        netlist: Netlist,
+        max_iter: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FindMappingResponse:
+        """
+        Map variables in the constraints to computations on the netlist.
+
+        Parameters
+        ----------
+        statements : StatementDictionary
+
+        netlist : Netlist
+
+        max_iter : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FindMappingResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic, Netlist, PicInstance, StatementDictionary
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.mapping(
+                statements=StatementDictionary(),
+                netlist=Netlist(
+                    instances={
+                        "key": PicInstance(
+                            component="component",
+                        )
+                    },
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/mapping/find",
+            method="POST",
+            params={
+                "max_iter": max_iter,
+            },
+            json={
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=StatementDictionary, direction="write"
+                ),
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    FindMappingResponse,
+                    parse_obj_as(
+                        type_=FindMappingResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -650,7 +1048,7 @@ class AsyncCircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mappings: typing.Dict[str, Computation],
+        mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
@@ -663,7 +1061,7 @@ class AsyncCircuitClient:
 
         statements : StatementDictionary
 
-        mappings : typing.Dict[str, Computation]
+        mapping : typing.Dict[str, Computation]
 
         parameters : typing.Sequence[Parameter]
 
@@ -703,7 +1101,7 @@ class AsyncCircuitClient:
                     },
                 ),
                 statements=StatementDictionary(),
-                mappings={
+                mapping={
                     "key": Computation(
                         name="name",
                         arguments={"key": 1.1},
@@ -729,8 +1127,8 @@ class AsyncCircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
-                "mappings": convert_and_respect_annotation_metadata(
-                    object_=mappings, annotation=typing.Dict[str, Computation], direction="write"
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
                 ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
