@@ -229,8 +229,8 @@ def _add_used_vars_to_results(api_results, api_requirements):
 ############################################################################################################
 
 
-def _find_symbol(name):
-    matching_keys = [key for key, value in VARIABLES.items() if name in value["name"]]
+def _find_symbol(name, variables):
+    matching_keys = [key for key, value in variables.items() if name in value["name"]]
 
     if not matching_keys:
         matching_keys.append("unknown")
@@ -238,11 +238,11 @@ def _find_symbol(name):
     return matching_keys[0]
 
 
-def requirements_from_table(results):
+def requirements_from_table(results, variables):
     requirements = []
 
     for key, value in results["values"].items():
-        latex_symbol = _find_symbol(key)
+        latex_symbol = _find_symbol(key, variables)
 
         name = key
         numerical_value = value["Value"]
@@ -261,7 +261,7 @@ def requirements_from_table(results):
     return requirements
 
 
-def interactive_table():
+def interactive_table(variables):
     """
     Creates an interactive table with a dropdown for selecting options.
 
@@ -272,7 +272,7 @@ def interactive_table():
     Returns:
     dict: A dictionary containing user inputs for the selected rows.
     """
-    variable_dict = VARIABLES
+    variable_dict = variables
     preset_options_dict = OPTION_LIST
     variable_names = [details["name"] for details in variable_dict.values()]
 
