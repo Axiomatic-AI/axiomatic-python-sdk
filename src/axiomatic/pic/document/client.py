@@ -20,7 +20,7 @@ class DocumentClient:
         self._client_wrapper = client_wrapper
 
     def summarize(
-        self, *, query: str, images: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
+        self, *, query: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
     ) -> SummarizerResponse:
         """
         Generate GDS factory code to create a PIC component
@@ -29,7 +29,7 @@ class DocumentClient:
         ----------
         query : str
 
-        images : typing.Sequence[str]
+        images : typing.Dict[str, str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -48,7 +48,7 @@ class DocumentClient:
         )
         client.pic.document.summarize(
             query="query",
-            images=["images"],
+            images={"key": "value"},
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -94,7 +94,7 @@ class AsyncDocumentClient:
         self._client_wrapper = client_wrapper
 
     async def summarize(
-        self, *, query: str, images: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
+        self, *, query: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
     ) -> SummarizerResponse:
         """
         Generate GDS factory code to create a PIC component
@@ -103,7 +103,7 @@ class AsyncDocumentClient:
         ----------
         query : str
 
-        images : typing.Sequence[str]
+        images : typing.Dict[str, str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -127,7 +127,7 @@ class AsyncDocumentClient:
         async def main() -> None:
             await client.pic.document.summarize(
                 query="query",
-                images=["images"],
+                images={"key": "value"},
             )
 
 

@@ -754,7 +754,7 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
-Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory
+Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory, z3, json
 </dd>
 </dl>
 </dd>
@@ -1061,7 +1061,7 @@ client = Axiomatic(
 )
 client.pic.document.summarize(
     query="query",
-    images=["images"],
+    images={"key": "value"},
 )
 
 ```
@@ -1086,7 +1086,7 @@ client.pic.document.summarize(
 <dl>
 <dd>
 
-**images:** `typing.Sequence[str]` 
+**images:** `typing.Dict[str, str]` 
     
 </dd>
 </dl>

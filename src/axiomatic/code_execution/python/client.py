@@ -21,7 +21,7 @@ class PythonClient:
 
     def execute(self, *, code: str, request_options: typing.Optional[RequestOptions] = None) -> ExecuteCodeResponse:
         """
-        Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory
+        Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory, z3, json
 
         Parameters
         ----------
@@ -91,7 +91,7 @@ class AsyncPythonClient:
         self, *, code: str, request_options: typing.Optional[RequestOptions] = None
     ) -> ExecuteCodeResponse:
         """
-        Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory
+        Execute python code, and return the standard output. If an error occurs, it will be returned in the error_trace field. Importing from the following modules is supported: gdsfactory, z3, json
 
         Parameters
         ----------

@@ -2,9 +2,11 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .pdk import Pdk
+from .pdk_type import PdkType
 from .pic_instance import PicInstance
+from .net import Net
 from .netlist_placements_value_value import NetlistPlacementsValueValue
+from .bundle import Bundle
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -15,12 +17,12 @@ class Netlist(UniversalBaseModel):
     """
 
     name: typing.Optional[str] = None
-    pdk: typing.Optional[Pdk] = None
+    pdk: typing.Optional[PdkType] = None
     instances: typing.Dict[str, PicInstance]
-    connections: typing.Optional[typing.Dict[str, str]] = None
+    nets: typing.Optional[typing.List[Net]] = None
     ports: typing.Optional[typing.Dict[str, str]] = None
     placements: typing.Optional[typing.Dict[str, typing.Dict[str, NetlistPlacementsValueValue]]] = None
-    nets: typing.Optional[typing.List[typing.Dict[str, str]]] = None
+    routes: typing.Optional[typing.Dict[str, Bundle]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
