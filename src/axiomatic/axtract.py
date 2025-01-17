@@ -1,13 +1,13 @@
-import ipywidgets as widgets
+import ipywidgets as widgets  # type: ignore
 from IPython.display import display, Math, HTML  # type: ignore
-import json
+import json  # type: ignore
 import os
-import hypernetx as hnx
-import matplotlib.pyplot as plt
+import hypernetx as hnx  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
 import re
 from dataclasses import dataclass, field
-from latex2sympy2 import latex2sympy
-import sympy
+from latex2sympy2 import latex2sympy  # type: ignore
+import sympy  # type: ignore
 
 
 @dataclass
