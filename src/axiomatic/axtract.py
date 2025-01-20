@@ -288,8 +288,7 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # 8) add_req(): Adds a new, blank row to the bottom
     # ---------------------------------------------------------------
     def add_req(_):
-        unique_key = (f"req_{len([kk for kk in value_widgets if kk.startswith(
-            'req_')]) + 1}")
+        unique_key = (f"req_{len([kk for kk in value_widgets if kk.startswith('req_')]) + 1}")
 
         variable_dropdown = widgets.Dropdown(
             options=variable_names,
