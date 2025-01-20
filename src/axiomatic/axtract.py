@@ -5,51 +5,16 @@ import os
 import hypernetx as hnx  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import re
-from dataclasses import dataclass, field
-from latex2sympy2 import latex2sympy  # type: ignore
-import sympy  # type: ignore
+from dataclasses import dataclass
 
 
 @dataclass
-class Requirement:
+class RequirementUserInput:
     requirement_name: str
     latex_symbol: str
-    # TODO: probably this should be really the latex symbol,
-    # e.g. \text{GSD}_{\text{p}}
     value: int
     units: str
     tolerance: float
-    sympy_symbol: str = field(init=False)
-
-    def __post_init__(self):
-        self.sympy_symbol = self.latex_symbol.replace("{", "").replace("}", "")
-        self.sympy_symbol = latex2sympy(self.latex_symbol)
-        eq = sympy.Eq(self.sympy_symbol, self.value)
-        free_symbols = eq.free_symbols
-        if len(free_symbols) > 1:
-            raise Warning(
-                f"""
-                The latex symbol of the requirement {self.latex_symbol}
-                is parsed as {free_symbols} in sympy
-                instead of a single symbol."""
-            )
-
-    @property
-    def is_fixed(self):
-        """Check if the requirement has tolerance set to zero."""
-        return self.tolerance == 0.0
-
-    @property
-    def equations(self, strict=False):
-        if self.is_fixed:
-            return [sympy.Eq(self.sympy_symbol, self.value)]
-        else:
-            signs = [">=", "<="] if not strict else [">", "<"]
-            bounds = [self.value - self.tolerance, self.value + self.tolerance]
-            return [
-                sympy.Rel(self.sympy_symbol, bound, sign)
-                for bound, sign in zip(bounds, signs)
-            ]
 
 
 def _find_symbol(name, variable_dict):
@@ -76,7 +41,7 @@ def requirements_from_table(results, variable_dict):
         unit = value["Units"]
 
         requirements.append(
-            Requirement(
+            RequirementUserInput(
                 requirement_name=name,
                 latex_symbol=latex_symbol,
                 value=numerical_value,
@@ -323,7 +288,8 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # 8) add_req(): Adds a new, blank row to the bottom
     # ---------------------------------------------------------------
     def add_req(_):
-        unique_key = (f"req_{len([kk for kk in value_widgets if kk.startswith('req_')]) + 1}")
+        unique_key = (f"req_{len([kk for kk in value_widgets
+                                  if kk.startswith('req_')]) + 1}")
 
         variable_dropdown = widgets.Dropdown(
             options=variable_names,
