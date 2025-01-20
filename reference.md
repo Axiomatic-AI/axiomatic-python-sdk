@@ -1060,7 +1060,7 @@ client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.pic.document.summarize(
-    query="query",
+    markdown="markdown",
     images={"key": "value"},
 )
 
@@ -1078,7 +1078,7 @@ client.pic.document.summarize(
 <dl>
 <dd>
 
-**query:** `str` 
+**markdown:** `str` 
     
 </dd>
 </dl>
