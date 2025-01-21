@@ -20,14 +20,14 @@ class DocumentClient:
         self._client_wrapper = client_wrapper
 
     def summarize(
-        self, *, query: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
+        self, *, markdown: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
     ) -> SummarizerResponse:
         """
         Generate GDS factory code to create a PIC component
 
         Parameters
         ----------
-        query : str
+        markdown : str
 
         images : typing.Dict[str, str]
 
@@ -47,7 +47,7 @@ class DocumentClient:
             api_key="YOUR_API_KEY",
         )
         client.pic.document.summarize(
-            query="query",
+            markdown="markdown",
             images={"key": "value"},
         )
         """
@@ -55,7 +55,7 @@ class DocumentClient:
             "pic/circuit/summarize",
             method="POST",
             json={
-                "query": query,
+                "markdown": markdown,
                 "images": images,
             },
             headers={
@@ -94,14 +94,14 @@ class AsyncDocumentClient:
         self._client_wrapper = client_wrapper
 
     async def summarize(
-        self, *, query: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
+        self, *, markdown: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
     ) -> SummarizerResponse:
         """
         Generate GDS factory code to create a PIC component
 
         Parameters
         ----------
-        query : str
+        markdown : str
 
         images : typing.Dict[str, str]
 
@@ -126,7 +126,7 @@ class AsyncDocumentClient:
 
         async def main() -> None:
             await client.pic.document.summarize(
-                query="query",
+                markdown="markdown",
                 images={"key": "value"},
             )
 
@@ -137,7 +137,7 @@ class AsyncDocumentClient:
             "pic/circuit/summarize",
             method="POST",
             json={
-                "query": query,
+                "markdown": markdown,
                 "images": images,
             },
             headers={
