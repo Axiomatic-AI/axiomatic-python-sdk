@@ -5,7 +5,7 @@ import os
 import hypernetx as hnx  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -436,13 +436,16 @@ def display_results(equations_dict):
         )
 
 
-def get_eq_hypergraph(api_results, api_requirements, with_printing=True):
+def get_eq_hypergraph(api_results, requirements, with_printing=True):
+
+    list_api_requirements = [asdict(req) for req in requirements]
+
     # Disable external LaTeX rendering, using matplotlib's mathtext instead
     plt.rcParams["text.usetex"] = False
     plt.rcParams["mathtext.fontset"] = "stix"
     plt.rcParams["font.family"] = "serif"
 
-    api_results = _add_used_vars_to_results(api_results, api_requirements)
+    api_results = _add_used_vars_to_results(api_results, list_api_requirements)
 
     # Prepare the data for HyperNetX visualization
     hyperedges = {}
@@ -471,7 +474,7 @@ def get_eq_hypergraph(api_results, api_requirements, with_printing=True):
     node_labels = list(H.nodes)
     symbol_explanations = _get_node_names_for_node_lables(
         node_labels,
-        api_requirements)
+        list_api_requirements)
 
     # Adding the symbol explanations as a legend
     explanation_text = "\n".join(
