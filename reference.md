@@ -577,7 +577,7 @@ client.generic.statement(
 </details>
 
 ## Document
-<details><summary><code>client.document.<a href="src/axiomatic/document/client.py">extract_text</a>(...)</code></summary>
+<details><summary><code>client.document.<a href="src/axiomatic/document/client.py">text</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -609,7 +609,7 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.document.extract_text()
+client.document.text()
 
 ```
 </dd>
@@ -635,7 +635,7 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
-**method:** `typing.Optional[str]` — Method to use for text-only extraction.It uses a very simple pdf parser. 
+**method:** `typing.Optional[str]` — Method to use for text-only extraction.It uses a very simple pdf text extractor. 
     
 </dd>
 </dl>
@@ -722,6 +722,14 @@ core.File` — See core.File for more documentation
 <dd>
 
 **ocr:** `typing.Optional[bool]` — Whether to use OCR
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**layout_model:** `typing.Optional[str]` — Method for layout parsing
     
 </dd>
 </dl>

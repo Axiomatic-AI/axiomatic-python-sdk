@@ -21,7 +21,7 @@ class DocumentClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def extract_text(
+    def text(
         self,
         *,
         file: core.File,
@@ -37,7 +37,7 @@ class DocumentClient:
             See core.File for more documentation
 
         method : typing.Optional[str]
-            Method to use for text-only extraction.It uses a very simple pdf parser.
+            Method to use for text-only extraction.It uses a very simple pdf text extractor.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -54,10 +54,10 @@ class DocumentClient:
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.document.extract_text()
+        client.document.text()
         """
         _response = self._client_wrapper.httpx_client.request(
-            "document/extract_text",
+            "document/text",
             method="POST",
             params={
                 "method": method,
@@ -99,6 +99,7 @@ class DocumentClient:
         file: core.File,
         method: typing.Optional[str] = None,
         ocr: typing.Optional[bool] = None,
+        layout_model: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
@@ -114,6 +115,9 @@ class DocumentClient:
 
         ocr : typing.Optional[bool]
             Whether to use OCR
+
+        layout_model : typing.Optional[str]
+            Method for layout parsing
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -138,6 +142,7 @@ class DocumentClient:
             params={
                 "method": method,
                 "ocr": ocr,
+                "layout_model": layout_model,
             },
             data={},
             files={
@@ -175,7 +180,7 @@ class AsyncDocumentClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def extract_text(
+    async def text(
         self,
         *,
         file: core.File,
@@ -191,7 +196,7 @@ class AsyncDocumentClient:
             See core.File for more documentation
 
         method : typing.Optional[str]
-            Method to use for text-only extraction.It uses a very simple pdf parser.
+            Method to use for text-only extraction.It uses a very simple pdf text extractor.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -213,13 +218,13 @@ class AsyncDocumentClient:
 
 
         async def main() -> None:
-            await client.document.extract_text()
+            await client.document.text()
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "document/extract_text",
+            "document/text",
             method="POST",
             params={
                 "method": method,
@@ -261,6 +266,7 @@ class AsyncDocumentClient:
         file: core.File,
         method: typing.Optional[str] = None,
         ocr: typing.Optional[bool] = None,
+        layout_model: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
@@ -276,6 +282,9 @@ class AsyncDocumentClient:
 
         ocr : typing.Optional[bool]
             Whether to use OCR
+
+        layout_model : typing.Optional[str]
+            Method for layout parsing
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -308,6 +317,7 @@ class AsyncDocumentClient:
             params={
                 "method": method,
                 "ocr": ocr,
+                "layout_model": layout_model,
             },
             data={},
             files={
