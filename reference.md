@@ -1,5 +1,5 @@
 # Reference
-<details><summary><code>client.<a href="src/axiomatic/client.py">trigger_error_sentry_debug_get</a>()</code></summary>
+<details><summary><code>client.<a href="src/axiomatic/base_client.py">trigger_error_sentry_debug_get</a>()</code></summary>
 <dl>
 <dd>
 
@@ -45,7 +45,7 @@ client.trigger_error_sentry_debug_get()
 </dl>
 </details>
 
-<details><summary><code>client.<a href="src/axiomatic/client.py">health_check_health_check_get</a>()</code></summary>
+<details><summary><code>client.<a href="src/axiomatic/base_client.py">health_check_health_check_get</a>()</code></summary>
 <dl>
 <dd>
 

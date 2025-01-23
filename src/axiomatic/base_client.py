@@ -28,7 +28,7 @@ from .code_execution.client import AsyncCodeExecutionClient
 from .pic.client import AsyncPicClient
 
 
-class Axiomatic:
+class BaseClient:
     """
     Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
 
@@ -184,7 +184,7 @@ class Axiomatic:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
 
-class AsyncAxiomatic:
+class AsyncBaseClient:
     """
     Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
 
