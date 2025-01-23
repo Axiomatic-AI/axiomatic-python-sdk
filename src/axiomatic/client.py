@@ -4,7 +4,7 @@ import os
 from typing import Dict
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import MdResponse
+from . import ParseResponse
 
 
 class Axiomatic(BaseClient):
@@ -24,18 +24,18 @@ class DocumentHelper:
     def __init__(self, ax_client: Axiomatic):
         self._ax_client = ax_client
 
-    def pdf_from_url(self, url: str) -> MdResponse:
+    def pdf_from_url(self, url: str) -> ParseResponse:
         """Download a PDF document from a URL and parse it into a Markdown response."""
         file = requests.get(url)
         response = self._ax_client.document.parse(file=file.content)
-        return response.content
+        return response
 
-    def pdf_from_file(self, path: str) -> MdResponse:
+    def pdf_from_file(self, path: str) -> ParseResponse:
         """Open a PDF document from a file path and parse it into a Markdown response."""
         with open(path, "rb") as f:
             file = f.read()
         response = self._ax_client.document.parse(file=file)
-        return response.content
+        return response
 
     def plot_b64_images(self, images: Dict[str, str]):
         """Plot a dictionary of base64 images."""
@@ -65,7 +65,7 @@ class DocumentHelper:
         display(layout)
         display_base64_image(current_index[0])
 
-    def save_parsed_pdf(self, response: MdResponse, path: str):
+    def save_parsed_pdf(self, response: ParseResponse, path: str):
         """Save a parsed PDF response to a file."""
         os.makedirs(path, exist_ok=True)
         for img_name, img in response.images.items():
@@ -75,7 +75,7 @@ class DocumentHelper:
         with open(os.path.join(path, "text.md"), "w") as f:
             f.write(response.markdown)
 
-    def load_parsed_pdf(self, path: str) -> MdResponse:
+    def load_parsed_pdf(self, path: str) -> ParseResponse:
         """Load a parsed PDF response from a file."""
         with open(os.path.join(path, "text.md"), "r") as f:
             markdown = f.read()
@@ -86,7 +86,7 @@ class DocumentHelper:
                 with open(os.path.join(path, img_name), "rb") as img_file:
                     images[img_name] = base64.b64encode(img_file.read()).decode("utf-8")
 
-        return MdResponse(markdown=markdown, images=images)
+        return ParseResponse(markdown=markdown, images=images)
 
 
 class AsyncAxiomatic(AsyncBaseClient): ...
