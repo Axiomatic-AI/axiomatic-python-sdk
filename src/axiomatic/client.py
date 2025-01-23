@@ -22,7 +22,7 @@ class DocumentHelper:
     def pdf_from_url(self, url: str) -> MdResponse:
         """Download a PDF document from a URL and parse it into a Markdown response."""
         file = requests.get(url)
-        response = self.ax_client.document.parse(file=file)
+        response = self.ax_client.document.parse(file=file.content)
         return response.content
 
     def pdf_from_file(self, path: str) -> MdResponse:
