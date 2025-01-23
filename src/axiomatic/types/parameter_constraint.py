@@ -2,15 +2,19 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from .z_3_expression import Z3Expression
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class MdResponse(UniversalBaseModel):
-    markdown: str
-    images: typing.Dict[str, str]
-    interline_equations: typing.List[str]
-    inline_equations: typing.List[str]
+class ParameterConstraint(UniversalBaseModel):
+    type: typing.Optional[typing.Literal["PARAMETER_CONSTRAINT"]] = None
+    text: str = pydantic.Field()
+    """
+    The natural language content of the statement.
+    """
+
+    formalization: typing.Optional[Z3Expression] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -2,18 +2,20 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class OptimizationHistory(UniversalBaseModel):
+class StatementValidationDictionary(UniversalBaseModel):
     """
-    The history of the optimization process
-    containing all the settings and costs.
+    A dictionary of statement statuses by type.
     """
 
-    all_settings: typing.List[typing.Dict[str, typing.Optional[typing.Any]]]
-    all_costs: typing.List[typing.List[float]]
+    cost_functions: typing.Optional[typing.List[StatementValidation]] = None
+    structure_constraints: typing.Optional[typing.List[StatementValidation]] = None
+    parameter_constraints: typing.Optional[typing.List[StatementValidation]] = None
+    unformalizable_statements: typing.Optional[typing.List[StatementValidation]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

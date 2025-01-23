@@ -2,30 +2,23 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import pydantic
-from .statement_type import StatementType
-import typing
-from .formalization import Formalization
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import typing
 
 
-class Statement(UniversalBaseModel):
+class StatementValidation(UniversalBaseModel):
     """
-    The model for a statement.
-    """
-
-    text: str = pydantic.Field()
-    """
-    The natural language content of the statement.
+    The status of a statement.
     """
 
-    type: StatementType = pydantic.Field()
+    holds: bool = pydantic.Field()
     """
-    The type/category of the statement.
+    Whether the statement holds or not.
     """
 
-    formalization: typing.Optional[Formalization] = pydantic.Field(default=None)
+    message: str = pydantic.Field()
     """
-    The formalization of the statement.
+    The feeedback message.
     """
 
     if IS_PYDANTIC_V2:
