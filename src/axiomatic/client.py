@@ -68,9 +68,10 @@ class DocumentHelper:
     def save_parsed_pdf(self, response: ParseResponse, path: str):
         """Save a parsed PDF response to a file."""
         os.makedirs(path, exist_ok=True)
-        for img_name, img in response.images.items():
-            with open(os.path.join(path, f"{img_name}.png"), "wb") as f:
-                f.write(base64.b64decode(img))
+        if response.images:
+            for img_name, img in response.images.items():
+                with open(os.path.join(path, f"{img_name}.png"), "wb") as f:
+                    f.write(base64.b64decode(img))
 
         with open(os.path.join(path, "text.md"), "w") as f:
             f.write(response.markdown)
