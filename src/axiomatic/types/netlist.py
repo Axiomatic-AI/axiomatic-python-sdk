@@ -7,6 +7,7 @@ from .pic_instance import PicInstance
 from .net import Net
 from .netlist_placements_value_value import NetlistPlacementsValueValue
 from .bundle import Bundle
+from .pic_warnings import PicWarnings
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -17,12 +18,13 @@ class Netlist(UniversalBaseModel):
     """
 
     name: typing.Optional[str] = None
-    pdk: typing.Optional[PdkType] = None
+    pdk_type: typing.Optional[PdkType] = None
     instances: typing.Dict[str, PicInstance]
     nets: typing.Optional[typing.List[Net]] = None
     ports: typing.Optional[typing.Dict[str, str]] = None
     placements: typing.Optional[typing.Dict[str, typing.Dict[str, NetlistPlacementsValueValue]]] = None
     routes: typing.Optional[typing.Dict[str, Bundle]] = None
+    warnings: typing.Optional[PicWarnings] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

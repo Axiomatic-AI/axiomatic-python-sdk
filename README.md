@@ -20,14 +20,14 @@ A full reference for this library is available [here](./reference.md).
 Instantiate and use the client with the following:
 
 ```python
-from axiomatic import Axiomatic, RequirementBody
+from axiomatic import Axiomatic, UserRequirement
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.requirements.check(
     request=[
-        RequirementBody(
+        UserRequirement(
             latex_symbol="latex_symbol",
             requirement_name="requirement_name",
             tolerance=1.1,
@@ -45,7 +45,7 @@ The SDK also exports an `async` client so that you can make non-blocking calls t
 ```python
 import asyncio
 
-from axiomatic import AsyncAxiomatic, RequirementBody
+from axiomatic import AsyncAxiomatic, UserRequirement
 
 client = AsyncAxiomatic(
     api_key="YOUR_API_KEY",
@@ -55,7 +55,7 @@ client = AsyncAxiomatic(
 async def main() -> None:
     await client.requirements.check(
         request=[
-            RequirementBody(
+            UserRequirement(
                 latex_symbol="latex_symbol",
                 requirement_name="requirement_name",
                 tolerance=1.1,

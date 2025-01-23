@@ -27,9 +27,9 @@ from .pdk_type import PdkType
 from .pic_instance import PicInstance
 from .pic_instance_info_value import PicInstanceInfoValue
 from .pic_instance_settings_value import PicInstanceSettingsValue
+from .pic_warnings import PicWarnings
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
-from .requirement_body import RequirementBody
 from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
 from .statement import Statement
@@ -41,6 +41,7 @@ from .structure_function_call import StructureFunctionCall
 from .structure_function_call_arguments_value import StructureFunctionCallArgumentsValue
 from .structure_function_call_expected_result import StructureFunctionCallExpectedResult
 from .summarizer_response import SummarizerResponse
+from .user_requirement import UserRequirement
 from .validate_netlist_response import ValidateNetlistResponse
 from .validate_response import ValidateResponse
 from .validation_error import ValidationError
@@ -77,9 +78,9 @@ __all__ = [
     "PicInstance",
     "PicInstanceInfoValue",
     "PicInstanceSettingsValue",
+    "PicWarnings",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
-    "RequirementBody",
     "SolutionResponse",
     "SolutionResponseSolutionValue",
     "Statement",
@@ -91,6 +92,7 @@ __all__ = [
     "StructureFunctionCallArgumentsValue",
     "StructureFunctionCallExpectedResult",
     "SummarizerResponse",
+    "UserRequirement",
     "ValidateNetlistResponse",
     "ValidateResponse",
     "ValidationError",

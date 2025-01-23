@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from .data_files.client import DataFilesClient
-from ..types.requirement_body import RequirementBody
+from ..types.user_requirement import UserRequirement
 from ..core.request_options import RequestOptions
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..core.pydantic_utilities import parse_obj_as
@@ -24,12 +24,12 @@ class RequirementsClient:
         self.data_files = DataFilesClient(client_wrapper=self._client_wrapper)
 
     def check(
-        self, *, request: typing.Sequence[RequirementBody], request_options: typing.Optional[RequestOptions] = None
+        self, *, request: typing.Sequence[UserRequirement], request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[typing.Any]:
         """
         Parameters
         ----------
-        request : typing.Sequence[RequirementBody]
+        request : typing.Sequence[UserRequirement]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -41,14 +41,14 @@ class RequirementsClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, RequirementBody
+        from axiomatic import Axiomatic, UserRequirement
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
         client.requirements.check(
             request=[
-                RequirementBody(
+                UserRequirement(
                     latex_symbol="latex_symbol",
                     requirement_name="requirement_name",
                     tolerance=1.1,
@@ -62,7 +62,7 @@ class RequirementsClient:
             "requirements/check",
             method="POST",
             json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=typing.Sequence[RequirementBody], direction="write"
+                object_=request, annotation=typing.Sequence[UserRequirement], direction="write"
             ),
             request_options=request_options,
             omit=OMIT,
@@ -98,12 +98,12 @@ class AsyncRequirementsClient:
         self.data_files = AsyncDataFilesClient(client_wrapper=self._client_wrapper)
 
     async def check(
-        self, *, request: typing.Sequence[RequirementBody], request_options: typing.Optional[RequestOptions] = None
+        self, *, request: typing.Sequence[UserRequirement], request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[typing.Any]:
         """
         Parameters
         ----------
-        request : typing.Sequence[RequirementBody]
+        request : typing.Sequence[UserRequirement]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -117,7 +117,7 @@ class AsyncRequirementsClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, RequirementBody
+        from axiomatic import AsyncAxiomatic, UserRequirement
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -127,7 +127,7 @@ class AsyncRequirementsClient:
         async def main() -> None:
             await client.requirements.check(
                 request=[
-                    RequirementBody(
+                    UserRequirement(
                         latex_symbol="latex_symbol",
                         requirement_name="requirement_name",
                         tolerance=1.1,
@@ -144,7 +144,7 @@ class AsyncRequirementsClient:
             "requirements/check",
             method="POST",
             json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=typing.Sequence[RequirementBody], direction="write"
+                object_=request, annotation=typing.Sequence[UserRequirement], direction="write"
             ),
             request_options=request_options,
             omit=OMIT,

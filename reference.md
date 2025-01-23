@@ -105,14 +105,14 @@ client.health_check_health_check_get()
 <dd>
 
 ```python
-from axiomatic import Axiomatic, RequirementBody
+from axiomatic import Axiomatic, UserRequirement
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.requirements.check(
     request=[
-        RequirementBody(
+        UserRequirement(
             latex_symbol="latex_symbol",
             requirement_name="requirement_name",
             tolerance=1.1,
@@ -136,7 +136,7 @@ client.requirements.check(
 <dl>
 <dd>
 
-**request:** `typing.Sequence[RequirementBody]` 
+**request:** `typing.Sequence[UserRequirement]` 
     
 </dd>
 </dl>
