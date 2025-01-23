@@ -1,4 +1,4 @@
-import iklayout
+import iklayout  # type: ignore
 
 
 def plot_circuit(component):
