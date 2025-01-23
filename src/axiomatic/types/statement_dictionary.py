@@ -2,35 +2,23 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .statement import Statement
-import pydantic
+from .cost_function import CostFunction
+from .structure_constraint import StructureConstraint
+from .parameter_constraint import ParameterConstraint
+from .unformalizable_statement import UnformalizableStatement
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import pydantic
 
 
 class StatementDictionary(UniversalBaseModel):
     """
-    A dictionary of statements with their ids by type.
+    A dictionary of statements by type.
     """
 
-    cost_functions: typing.Optional[typing.List[Statement]] = pydantic.Field(default=None)
-    """
-    The cost functions.
-    """
-
-    structure_constraints: typing.Optional[typing.List[Statement]] = pydantic.Field(default=None)
-    """
-    The structure constraints.
-    """
-
-    parameter_constraints: typing.Optional[typing.List[Statement]] = pydantic.Field(default=None)
-    """
-    The parameter constraints.
-    """
-
-    query_summarizers: typing.Optional[typing.List[Statement]] = pydantic.Field(default=None)
-    """
-    The query summarizers.
-    """
+    cost_functions: typing.Optional[typing.List[CostFunction]] = None
+    structure_constraints: typing.Optional[typing.List[StructureConstraint]] = None
+    parameter_constraints: typing.Optional[typing.List[ParameterConstraint]] = None
+    unformalizable_statements: typing.Optional[typing.List[UnformalizableStatement]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
