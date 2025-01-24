@@ -19,6 +19,7 @@ from .netlist import Netlist
 from .netlist_placements_value_value import NetlistPlacementsValueValue
 from .optimization_history import OptimizationHistory
 from .optimize_netlist_response import OptimizeNetlistResponse
+from .optimize_placement_body_response import OptimizePlacementBodyResponse
 from .parameter import Parameter
 from .parameter_constraint import ParameterConstraint
 from .parse_response import ParseResponse
@@ -69,6 +70,7 @@ __all__ = [
     "NetlistPlacementsValueValue",
     "OptimizationHistory",
     "OptimizeNetlistResponse",
+    "OptimizePlacementBodyResponse",
     "Parameter",
     "ParameterConstraint",
     "ParseResponse",

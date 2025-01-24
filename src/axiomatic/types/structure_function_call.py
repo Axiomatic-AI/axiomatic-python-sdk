@@ -13,7 +13,7 @@ class StructureFunctionCall(UniversalBaseModel):
     The model describing a function call.
     """
 
-    type: typing.Optional[typing.Literal["Z3_EXPRESSION"]] = None
+    type: typing.Optional[typing.Literal["STRUCTURE_FUNCTION_CALL"]] = None
     function_name: str = pydantic.Field()
     """
     The name of the function that is called.

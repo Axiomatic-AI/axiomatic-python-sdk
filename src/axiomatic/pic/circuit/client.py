@@ -20,6 +20,7 @@ from ...types.refine_code_response import RefineCodeResponse
 from ...types.parameter import Parameter
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
 from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
+from ...types.optimize_placement_body_response import OptimizePlacementBodyResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -584,6 +585,79 @@ class CircuitClient:
                     VerifyCircuitCodeResponse,
                     parse_obj_as(
                         type_=VerifyCircuitCodeResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def placementoptimize(
+        self,
+        *,
+        netlist: typing.Dict[str, typing.Optional[typing.Any]],
+        method: str,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> OptimizePlacementBodyResponse:
+        """
+        Optimizes the placement of a circuit
+
+        Parameters
+        ----------
+        netlist : typing.Dict[str, typing.Optional[typing.Any]]
+
+        method : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        OptimizePlacementBodyResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.placementoptimize(
+            netlist={"key": "value"},
+            method="method",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/optimize/placement",
+            method="POST",
+            json={
+                "netlist": netlist,
+                "method": method,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    OptimizePlacementBodyResponse,
+                    parse_obj_as(
+                        type_=OptimizePlacementBodyResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1219,6 +1293,87 @@ class AsyncCircuitClient:
                     VerifyCircuitCodeResponse,
                     parse_obj_as(
                         type_=VerifyCircuitCodeResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def placementoptimize(
+        self,
+        *,
+        netlist: typing.Dict[str, typing.Optional[typing.Any]],
+        method: str,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> OptimizePlacementBodyResponse:
+        """
+        Optimizes the placement of a circuit
+
+        Parameters
+        ----------
+        netlist : typing.Dict[str, typing.Optional[typing.Any]]
+
+        method : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        OptimizePlacementBodyResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.placementoptimize(
+                netlist={"key": "value"},
+                method="method",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/optimize/placement",
+            method="POST",
+            json={
+                "netlist": netlist,
+                "method": method,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    OptimizePlacementBodyResponse,
+                    parse_obj_as(
+                        type_=OptimizePlacementBodyResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
