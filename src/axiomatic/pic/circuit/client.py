@@ -21,6 +21,8 @@ from ...types.parameter import Parameter
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
 from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from ...types.optimize_placement_body_response import OptimizePlacementBodyResponse
+from .types.settings import Settings
+from ...types.get_spectrum_response import GetSpectrumResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -633,6 +635,88 @@ class CircuitClient:
                     OptimizePlacementBodyResponse,
                     parse_obj_as(
                         type_=OptimizePlacementBodyResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get_sax_spectrum(
+        self,
+        *,
+        netlist: Netlist,
+        settings: Settings,
+        wls: typing.Sequence[float],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetSpectrumResponse:
+        """
+        Get the spectrum of a circuit over various wavelengths and settings
+
+        Parameters
+        ----------
+        netlist : Netlist
+
+        settings : Settings
+
+        wls : typing.Sequence[float]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetSpectrumResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, Netlist
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.get_sax_spectrum(
+            netlist=Netlist(),
+            settings={"key": "value"},
+            wls=[1.1],
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/get_sax_spectrum",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+                "settings": convert_and_respect_annotation_metadata(
+                    object_=settings, annotation=Settings, direction="write"
+                ),
+                "wls": wls,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    GetSpectrumResponse,
+                    parse_obj_as(
+                        type_=GetSpectrumResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1324,6 +1408,96 @@ class AsyncCircuitClient:
                     OptimizePlacementBodyResponse,
                     parse_obj_as(
                         type_=OptimizePlacementBodyResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_sax_spectrum(
+        self,
+        *,
+        netlist: Netlist,
+        settings: Settings,
+        wls: typing.Sequence[float],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetSpectrumResponse:
+        """
+        Get the spectrum of a circuit over various wavelengths and settings
+
+        Parameters
+        ----------
+        netlist : Netlist
+
+        settings : Settings
+
+        wls : typing.Sequence[float]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetSpectrumResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic, Netlist
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.get_sax_spectrum(
+                netlist=Netlist(),
+                settings={"key": "value"},
+                wls=[1.1],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/get_sax_spectrum",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+                "settings": convert_and_respect_annotation_metadata(
+                    object_=settings, annotation=Settings, direction="write"
+                ),
+                "wls": wls,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    GetSpectrumResponse,
+                    parse_obj_as(
+                        type_=GetSpectrumResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

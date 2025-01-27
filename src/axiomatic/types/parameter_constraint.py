@@ -3,7 +3,7 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import pydantic
-from .z_3_expression_output import Z3ExpressionOutput
+from .z_3_expression import Z3Expression
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -14,8 +14,7 @@ class ParameterConstraint(UniversalBaseModel):
     The natural language content of the statement.
     """
 
-    formalization: typing.Optional[Z3ExpressionOutput] = None
-    formalized: bool
+    formalization: typing.Optional[Z3Expression] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

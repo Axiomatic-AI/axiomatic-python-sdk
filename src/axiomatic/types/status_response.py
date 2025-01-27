@@ -2,18 +2,17 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import pydantic
 
 
-class UnformalizableStatement(UniversalBaseModel):
-    type: typing.Optional[typing.Literal["UNFORMALIZABLE_STATEMENT"]] = None
-    text: str = pydantic.Field()
-    """
-    The natural language content of the statement.
-    """
-
-    formalization: typing.Optional[str] = None
+class StatusResponse(UniversalBaseModel):
+    job_id: str
+    status: str
+    job_type: str
+    payload: typing.Optional[str] = None
+    output: typing.Optional[str] = None
+    error_trace: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

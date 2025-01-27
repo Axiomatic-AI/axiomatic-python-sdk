@@ -749,6 +749,156 @@ core.File` — See core.File for more documentation
 </dl>
 </details>
 
+## Tools
+<details><summary><code>client.tools.<a href="src/axiomatic/tools/client.py">schedule</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Schedule a job to execute python code for long running executions and return the standard output. If an error occurs, it will be returned in the error_trace field. The Following tools are currently supported: fdtd, femwell, optiland, jaxfem
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.tools.schedule(
+    tool_name="tool_name",
+    code="code",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**tool_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**code:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.tools.<a href="src/axiomatic/tools/client.py">status</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get the status of the remote execution job for a given tool using the job_id
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.tools.status(
+    job_id="job_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**job_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## CodeExecution Python
 <details><summary><code>client.code_execution.python.<a href="src/axiomatic/code_execution/python/client.py">execute</a>(...)</code></summary>
 <dl>
@@ -1834,6 +1984,94 @@ client.pic.circuit.placementoptimize(
 <dd>
 
 **method:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">get_sax_spectrum</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get the spectrum of a circuit over various wavelengths and settings
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, Netlist
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.get_sax_spectrum(
+    netlist=Netlist(),
+    settings={"key": "value"},
+    wls=[1.1],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**settings:** `Settings` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**wls:** `typing.Sequence[float]` 
     
 </dd>
 </dl>

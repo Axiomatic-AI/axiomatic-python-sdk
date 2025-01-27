@@ -13,6 +13,13 @@ from .formalize_response import FormalizeResponse
 from .generate_code_response import GenerateCodeResponse
 from .generate_component_code_response import GenerateComponentCodeResponse
 from .generate_lens_code_response import GenerateLensCodeResponse
+from .get_spectrum_response import GetSpectrumResponse
+from .get_spectrum_response_spectrum_item_value import GetSpectrumResponseSpectrumItemValue
+from .get_spectrum_response_spectrum_item_value_imag import GetSpectrumResponseSpectrumItemValueImag
+from .get_spectrum_response_spectrum_item_value_item import GetSpectrumResponseSpectrumItemValueItem
+from .get_spectrum_response_spectrum_one_value import GetSpectrumResponseSpectrumOneValue
+from .get_spectrum_response_spectrum_one_value_imag import GetSpectrumResponseSpectrumOneValueImag
+from .get_spectrum_response_spectrum_one_value_item import GetSpectrumResponseSpectrumOneValueItem
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
 from .net import Net
@@ -31,11 +38,14 @@ from .pic_instance_settings_value import PicInstanceSettingsValue
 from .pic_warnings import PicWarnings
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
+from .schedule_job_response import ScheduleJobResponse
 from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
+from .spectrum import Spectrum
 from .statement_dictionary import StatementDictionary
 from .statement_validation import StatementValidation
 from .statement_validation_dictionary import StatementValidationDictionary
+from .status_response import StatusResponse
 from .structure_constraint import StructureConstraint
 from .structure_function_call import StructureFunctionCall
 from .structure_function_call_arguments_value import StructureFunctionCallArgumentsValue
@@ -49,8 +59,7 @@ from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
 from .verify_circuit_code_response import VerifyCircuitCodeResponse
 from .verify_response import VerifyResponse
-from .z_3_expression_input import Z3ExpressionInput
-from .z_3_expression_output import Z3ExpressionOutput
+from .z_3_expression import Z3Expression
 
 __all__ = [
     "Bundle",
@@ -66,6 +75,13 @@ __all__ = [
     "GenerateCodeResponse",
     "GenerateComponentCodeResponse",
     "GenerateLensCodeResponse",
+    "GetSpectrumResponse",
+    "GetSpectrumResponseSpectrumItemValue",
+    "GetSpectrumResponseSpectrumItemValueImag",
+    "GetSpectrumResponseSpectrumItemValueItem",
+    "GetSpectrumResponseSpectrumOneValue",
+    "GetSpectrumResponseSpectrumOneValueImag",
+    "GetSpectrumResponseSpectrumOneValueItem",
     "HttpValidationError",
     "InteractiveResponse",
     "Net",
@@ -84,11 +100,14 @@ __all__ = [
     "PicWarnings",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
+    "ScheduleJobResponse",
     "SolutionResponse",
     "SolutionResponseSolutionValue",
+    "Spectrum",
     "StatementDictionary",
     "StatementValidation",
     "StatementValidationDictionary",
+    "StatusResponse",
     "StructureConstraint",
     "StructureFunctionCall",
     "StructureFunctionCallArgumentsValue",
@@ -102,6 +121,5 @@ __all__ = [
     "ValidationErrorLocItem",
     "VerifyCircuitCodeResponse",
     "VerifyResponse",
-    "Z3ExpressionInput",
-    "Z3ExpressionOutput",
+    "Z3Expression",
 ]

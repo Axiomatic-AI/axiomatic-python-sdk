@@ -2,18 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import pydantic
 
 
-class UnformalizableStatement(UniversalBaseModel):
-    type: typing.Optional[typing.Literal["UNFORMALIZABLE_STATEMENT"]] = None
-    text: str = pydantic.Field()
-    """
-    The natural language content of the statement.
-    """
-
-    formalization: typing.Optional[str] = None
+class GetSpectrumResponseSpectrumItemValueItem(UniversalBaseModel):
+    real: typing.Optional[float] = None
+    imag: typing.Optional[float] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
