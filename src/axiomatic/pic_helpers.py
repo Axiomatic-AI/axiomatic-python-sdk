@@ -1,7 +1,7 @@
 import iklayout  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 from ipywidgets import interactive, IntSlider  # type: ignore
-
+from typing import List
 
 def plot_circuit(component):
     """
@@ -21,7 +21,7 @@ def plot_circuit(component):
     return iklayout.show(path)
 
 
-def plot_losses(losses: list[float], iterations: list[int] = []):
+def plot_losses(losses: List[float], iterations: List[int] = []):
     """
     Plot a list of losses with labels.
 
@@ -37,7 +37,7 @@ def plot_losses(losses: list[float], iterations: list[int] = []):
     plt.show()
 
 
-def plot_constraints(constraints: list[list[float]], constraints_labels: list[str], iterations: list[int] = []):
+def plot_constraints(constraints: List[List[float]], constraints_labels: List[str], iterations: List[int] = []):
     """
     Plot a list of constraints with labels.
 
@@ -60,10 +60,10 @@ def plot_constraints(constraints: list[list[float]], constraints_labels: list[st
     plt.show()
 
 
-def plot_single_spectrum(spectrum: list[float],
-                         wavelengths: list[float],
-                         vlines: list[float] = [],
-                         hlines: list[float] = []):
+def plot_single_spectrum(spectrum: List[float],
+                         wavelengths: List[float],
+                         vlines: List[float] = [],
+                         hlines: List[float] = []):
     """
     Plot a single spectrum with vertical and horizontal lines.
     """
@@ -84,12 +84,12 @@ def plot_single_spectrum(spectrum: list[float],
 
 
 def plot_interactive_spectrums(
-    spectrums: list[list[list[float]]],
-    wavelengths: list[float],
-    spectrum_labels: list[str] = [],
-    slider_index: list[int] = [],
-    vlines: list[float] = [],
-    hlines: list[float] = [],
+    spectrums: List[List[List[float]]],
+    wavelengths: List[float],
+    spectrum_labels: List[str] = [],
+    slider_index: List[int] = [],
+    vlines: List[float] = [],
+    hlines: List[float] = [],
 ):
     """
     Creates an interactive plot of spectrums with a slider to select different indices.
