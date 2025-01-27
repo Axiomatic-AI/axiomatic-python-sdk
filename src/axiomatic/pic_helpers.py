@@ -21,23 +21,25 @@ def plot_circuit(component):
     return iklayout.show(path)
 
 
-def plot_losses(losses: List[float], iterations: List[int] = []):
+def plot_losses(losses: List[float], iterations: List[int] | None = None, return_fig: bool = False):
     """
     Plot a list of losses with labels.
 
     Args:
         losses: List of loss values.
     """
-    iterations = list(range(len(losses))) if iterations == [] else iterations
+    iterations = iterations or list(range(len(losses)))
     plt.figure(figsize=(10, 5))
     plt.title("Losses vs. Iterations")
     plt.xlabel("Iterations")
     plt.ylabel("Losses")
     plt.plot(iterations, losses)
+    if return_fig:
+        return plt.gcf()
     plt.show()
 
 
-def plot_constraints(constraints: List[List[float]], constraints_labels: List[str], iterations: List[int] = []):
+def plot_constraints(constraints: List[List[float]], constraints_labels: List[str] | None = None, iterations: List[int] | None = None, return_fig: bool = False):
     """
     Plot a list of constraints with labels.
 
@@ -57,16 +59,21 @@ def plot_constraints(constraints: List[List[float]], constraints_labels: List[st
         plt.plot(iterations, constraint, label=constraints_labels[i])
     plt.legend()
     plt.grid(True)
+    if return_fig:
+        return plt.gcf()
     plt.show()
 
 
 def plot_single_spectrum(spectrum: List[float],
                          wavelengths: List[float],
-                         vlines: List[float] = [],
-                         hlines: List[float] = []):
+                         vlines: List[float] | None = None,
+                         hlines: List[float] | None = None):
     """
     Plot a single spectrum with vertical and horizontal lines.
     """
+    hlines = hlines or []
+    vlines = vlines or []
+
     plt.figure(figsize=(10, 5))
     plt.title("Losses vs. Iterations")
     plt.xlabel("Iterations")
@@ -86,10 +93,10 @@ def plot_single_spectrum(spectrum: List[float],
 def plot_interactive_spectrums(
     spectrums: List[List[List[float]]],
     wavelengths: List[float],
-    spectrum_labels: List[str] = [],
-    slider_index: List[int] = [],
-    vlines: List[float] = [],
-    hlines: List[float] = [],
+    spectrum_labels: List[str] | None = None,
+    slider_index: List[int] | None = None,
+    vlines: List[float] | None = None,
+    hlines: List[float] | None = None,
 ):
     """
     Creates an interactive plot of spectrums with a slider to select different indices.
@@ -124,8 +131,10 @@ def plot_interactive_spectrums(
     y_min = min(min(min(arr2) for arr2 in arr1) for arr1 in spectrums)
     y_max = max(max(max(arr2) for arr2 in arr1) for arr1 in spectrums)
 
-    slider_index = slider_index if slider_index != [] else list(range(len(spectrums[0])))
-    spectrum_labels = spectrum_labels if spectrum_labels != [] else [f"Spectrum{i}" for i in range(len(spectrums))]
+    slider_index = slider_index or list(range(len(spectrums[0])))
+    spectrum_labels = spectrum_labels or [f"Spectrum{i}" for i in range(len(spectrums))]
+    vlines = vlines or []
+    hlines = hlines or []
 
     # Function to update the plot
     def plot_array(index=0):
