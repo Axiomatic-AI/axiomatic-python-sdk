@@ -1,7 +1,7 @@
 import iklayout  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 from ipywidgets import interactive, IntSlider  # type: ignore
-from typing import List
+from typing import List, Optional
 
 
 def plot_circuit(component):
@@ -23,7 +23,7 @@ def plot_circuit(component):
 
 
 def plot_losses(
-    losses: List[float], iterations: List[int] | None = None, return_fig: bool = True
+    losses: List[float], iterations: Optional[List[int]] = None, return_fig: bool = True
 ):
     """
     Plot a list of losses with labels.
@@ -45,8 +45,8 @@ def plot_losses(
 
 def plot_constraints(
     constraints: List[List[float]],
-    constraints_labels: List[str] | None = None,
-    iterations: List[int] | None = None,
+    constraints_labels: Optional[List[str]] = None,
+    iterations: Optional[List[int]] = None,
     return_fig: bool = True,
 ):
     """
@@ -80,8 +80,8 @@ def plot_constraints(
 def plot_single_spectrum(
     spectrum: List[float],
     wavelengths: List[float],
-    vlines: List[float] | None = None,
-    hlines: List[float] | None = None,
+    vlines: Optional[List[float]] = None,
+    hlines: Optional[List[float]] = None,
     return_fig: bool = True,
 ):
     """
@@ -112,10 +112,10 @@ def plot_single_spectrum(
 def plot_interactive_spectrums(
     spectrums: List[List[List[float]]],
     wavelengths: List[float],
-    spectrum_labels: List[str] | None = None,
-    slider_index: List[int] | None = None,
-    vlines: List[float] | None = None,
-    hlines: List[float] | None = None,
+    spectrum_labels: Optional[List[str]] = None,
+    slider_index: Optional[List[int]] = None,
+    vlines: Optional[List[float]] = None,
+    hlines: Optional[List[float]] = None,
 ):
     """
     Creates an interactive plot of spectrums with a slider to select different indices.
