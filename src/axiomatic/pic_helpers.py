@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt  # type: ignore
 from ipywidgets import interactive, IntSlider  # type: ignore
 from typing import List
 
+
 def plot_circuit(component):
     """
     Show the interactive component layout with iKlayout.
@@ -21,7 +22,9 @@ def plot_circuit(component):
     return iklayout.show(path)
 
 
-def plot_losses(losses: List[float], iterations: List[int] | None = None, return_fig: bool = False):
+def plot_losses(
+    losses: List[float], iterations: List[int] | None = None, return_fig: bool = False
+):
     """
     Plot a list of losses with labels.
 
@@ -39,7 +42,12 @@ def plot_losses(losses: List[float], iterations: List[int] | None = None, return
     plt.show()
 
 
-def plot_constraints(constraints: List[List[float]], constraints_labels: List[str] | None = None, iterations: List[int] | None = None, return_fig: bool = False):
+def plot_constraints(
+    constraints: List[List[float]],
+    constraints_labels: List[str] | None = None,
+    iterations: List[int] | None = None,
+    return_fig: bool = False,
+):
     """
     Plot a list of constraints with labels.
 
@@ -48,7 +56,9 @@ def plot_constraints(constraints: List[List[float]], constraints_labels: List[st
         labels: List of labels for each constraint value.
     """
 
-    constraints_labels = constraints_labels or [f"Constraint {i}" for i in range(len(constraints[0]))]
+    constraints_labels = constraints_labels or [
+        f"Constraint {i}" for i in range(len(constraints[0]))
+    ]
     iterations = iterations or list(range(len(constraints[0])))
 
     plt.figure(figsize=(10, 5))
@@ -64,10 +74,12 @@ def plot_constraints(constraints: List[List[float]], constraints_labels: List[st
     plt.show()
 
 
-def plot_single_spectrum(spectrum: List[float],
-                         wavelengths: List[float],
-                         vlines: List[float] | None = None,
-                         hlines: List[float] | None = None):
+def plot_single_spectrum(
+    spectrum: List[float],
+    wavelengths: List[float],
+    vlines: List[float] | None = None,
+    hlines: List[float] | None = None,
+):
     """
     Plot a single spectrum with vertical and horizontal lines.
     """
@@ -157,5 +169,7 @@ def plot_interactive_spectrums(
         plt.grid(True)
         plt.show()
 
-    slider = IntSlider(value=0, min=0, max=len(spectrums[0]) - 1, step=1, description="Index")
+    slider = IntSlider(
+        value=0, min=0, max=len(spectrums[0]) - 1, step=1, description="Index"
+    )
     return interactive(plot_array, index=slider)
