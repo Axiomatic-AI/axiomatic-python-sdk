@@ -72,6 +72,14 @@ def plot_single_spectrum(spectrum: list[float],
     plt.xlabel("Iterations")
     plt.ylabel("Losses")
     plt.plot(wavelengths, spectrum)
+    for x_val in vlines:
+        plt.axvline(
+            x=x_val, color="red", linestyle="--", label=f"Wavelength (x={x_val})"
+        )  # Add vertical line
+    for y_val in hlines:
+        plt.axvline(
+            x=y_val, color="red", linestyle="--", label=f"Transmission (y={y_val})"
+        )  # Add vertical line
     plt.show()
 
 
