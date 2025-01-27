@@ -156,7 +156,7 @@ def plot_interactive_spectrums(
 
     # Function to update the plot
     def plot_array(index=0):
-        plt.clf()
+        plt.close("all")
         plt.figure(figsize=(8, 4))
         for i, array in enumerate(spectrums):
             plt.plot(wavelengths, array[index], lw=2, label=spectrum_labels[i])
