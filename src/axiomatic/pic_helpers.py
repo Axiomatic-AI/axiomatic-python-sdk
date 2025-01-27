@@ -1,6 +1,6 @@
 import iklayout  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
-from ipywidgets import interact  # type: ignore
+from ipywidgets import interactive, IntSlider  # type: ignore
 
 
 def plot_circuit(component):
@@ -60,8 +60,23 @@ def plot_constraints(constraints: list[list[float]], constraints_labels: list[st
     plt.show()
 
 
-def interactive_spectrum_plot(
-    spectrums: list[list[list[float]]],
+def plot_single_spectrum(spectrum: list[float],
+                         wavelengths: list[float],
+                         vlines: list[float] = None,
+                         hlines: list[float] = None):
+    """
+    Plot a single spectrum with vertical and horizontal lines.
+    """
+    plt.figure(figsize=(10, 5))
+    plt.title("Losses vs. Iterations")
+    plt.xlabel("Iterations")
+    plt.ylabel("Losses")
+    plt.plot(wavelengths, spectrum)
+    plt.show()
+
+
+def plot_interactive_spectrums(
+    spectrums: list[list[list[float]]] | list[list[float]],
     wavelengths: list[float],
     spectrum_labels: list[str] = None,
     slider_index: list[int] = None,
@@ -127,4 +142,5 @@ def interactive_spectrum_plot(
         plt.grid(True)
         plt.show()
 
-    return interact(plot_array, index=slider_index)
+    slider = IntSlider(value=0, min=0, max=len(spectrums[0]) - 1, step=1, description="Index")
+    return interactive(plot_array, index=slider)
