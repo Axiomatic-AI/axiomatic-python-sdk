@@ -23,7 +23,7 @@ def plot_circuit(component):
 
 
 def plot_losses(
-    losses: List[float], iterations: List[int] | None = None, return_fig: bool = False
+    losses: List[float], iterations: List[int] | None = None, return_fig: bool = True
 ):
     """
     Plot a list of losses with labels.
@@ -32,6 +32,7 @@ def plot_losses(
         losses: List of loss values.
     """
     iterations = iterations or list(range(len(losses)))
+    plt.clf()
     plt.figure(figsize=(10, 5))
     plt.title("Losses vs. Iterations")
     plt.xlabel("Iterations")
@@ -46,7 +47,7 @@ def plot_constraints(
     constraints: List[List[float]],
     constraints_labels: List[str] | None = None,
     iterations: List[int] | None = None,
-    return_fig: bool = False,
+    return_fig: bool = True,
 ):
     """
     Plot a list of constraints with labels.
@@ -61,6 +62,8 @@ def plot_constraints(
     ]
     iterations = iterations or list(range(len(constraints[0])))
 
+
+    plt.clf()
     plt.figure(figsize=(10, 5))
     plt.title("Losses vs. Iterations")
     plt.xlabel("Iterations")
@@ -79,6 +82,7 @@ def plot_single_spectrum(
     wavelengths: List[float],
     vlines: List[float] | None = None,
     hlines: List[float] | None = None,
+    return_fig: bool = True,
 ):
     """
     Plot a single spectrum with vertical and horizontal lines.
@@ -86,6 +90,7 @@ def plot_single_spectrum(
     hlines = hlines or []
     vlines = vlines or []
 
+    plt.clf()
     plt.figure(figsize=(10, 5))
     plt.title("Losses vs. Iterations")
     plt.xlabel("Iterations")
@@ -96,9 +101,11 @@ def plot_single_spectrum(
             x=x_val, color="red", linestyle="--", label=f"Wavelength (x={x_val})"
         )  # Add vertical line
     for y_val in hlines:
-        plt.axvline(
+        plt.axhline(
             x=y_val, color="red", linestyle="--", label=f"Transmission (y={y_val})"
         )  # Add vertical line
+    if return_fig:
+        return plt.gcf()
     plt.show()
 
 
@@ -138,7 +145,6 @@ def plot_interactive_spectrums(
     - Vertical and horizontal lines can be added to the plot using the `vlines` and `hlines`
     parameters.
     """
-
     # Calculate global y-limits across all arrays
     y_min = min(min(min(arr2) for arr2 in arr1) for arr1 in spectrums)
     y_max = max(max(max(arr2) for arr2 in arr1) for arr1 in spectrums)
@@ -150,6 +156,7 @@ def plot_interactive_spectrums(
 
     # Function to update the plot
     def plot_array(index=0):
+        plt.clf()
         plt.figure(figsize=(8, 4))
         for i, array in enumerate(spectrums):
             plt.plot(wavelengths, array[index], lw=2, label=spectrum_labels[i])
@@ -158,7 +165,7 @@ def plot_interactive_spectrums(
                 x=x_val, color="red", linestyle="--", label=f"Wavelength (x={x_val})"
             )  # Add vertical line
         for y_val in hlines:
-            plt.axvline(
+            plt.axhline(
                 x=y_val, color="red", linestyle="--", label=f"Transmission (y={y_val})"
             )  # Add vertical line
         plt.title(f"Iteration: {index}")
