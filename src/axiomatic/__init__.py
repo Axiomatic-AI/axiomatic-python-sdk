@@ -13,6 +13,7 @@ from .types import (
     FormalizeResponse,
     GenerateCodeResponse,
     GenerateComponentCodeResponse,
+    GenerateLensCodeResponse,
     HttpValidationError,
     InteractiveResponse,
     Net,
@@ -49,10 +50,11 @@ from .types import (
     ValidationErrorLocItem,
     VerifyCircuitCodeResponse,
     VerifyResponse,
-    Z3Expression,
+    Z3ExpressionInput,
+    Z3ExpressionOutput,
 )
 from .errors import UnprocessableEntityError
-from . import code_execution, document, experimental, formalization, generic, lean, pic, requirements
+from . import code_execution, document, experimental, formalization, fso, generic, lean, pic, requirements
 from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
 from .version import __version__
@@ -73,6 +75,7 @@ __all__ = [
     "FormalizeResponse",
     "GenerateCodeResponse",
     "GenerateComponentCodeResponse",
+    "GenerateLensCodeResponse",
     "HttpValidationError",
     "InteractiveResponse",
     "Net",
@@ -110,12 +113,14 @@ __all__ = [
     "ValidationErrorLocItem",
     "VerifyCircuitCodeResponse",
     "VerifyResponse",
-    "Z3Expression",
+    "Z3ExpressionInput",
+    "Z3ExpressionOutput",
     "__version__",
     "code_execution",
     "document",
     "experimental",
     "formalization",
+    "fso",
     "generic",
     "lean",
     "pic",

@@ -7,7 +7,7 @@ from .computation import Computation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class Z3Expression(UniversalBaseModel):
+class Z3ExpressionOutput(UniversalBaseModel):
     """
     The model for a Z3 expression.
     """
@@ -26,6 +26,12 @@ class Z3Expression(UniversalBaseModel):
     mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = pydantic.Field(default=None)
     """
     A mapping of the variables used in the expression to Computations.
+    """
+
+    satisfiable: bool
+    tolerance: float = pydantic.Field()
+    """
+    Return the tolerance to be used when evaluating if the equality holds.
     """
 
     if IS_PYDANTIC_V2:

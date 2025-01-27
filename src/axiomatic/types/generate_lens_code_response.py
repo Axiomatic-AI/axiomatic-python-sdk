@@ -2,20 +2,16 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-import pydantic
-from .z_3_expression_output import Z3ExpressionOutput
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import pydantic
 
 
-class CostFunction(UniversalBaseModel):
-    type: typing.Optional[typing.Literal["COST_FUNCTION"]] = None
-    text: str = pydantic.Field()
-    """
-    The natural language content of the statement.
-    """
-
-    formalization: typing.Optional[Z3ExpressionOutput] = None
-    formalized: bool
+class GenerateLensCodeResponse(UniversalBaseModel):
+    raw_content: typing.List[str]
+    code: str
+    outcome_success: bool
+    feedback_text: typing.Optional[str] = None
+    thought_text: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

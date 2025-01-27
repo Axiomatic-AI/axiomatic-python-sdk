@@ -60,25 +60,13 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import (
-            Axiomatic,
-            Computation,
-            Netlist,
-            PicInstance,
-            StatementDictionary,
-        )
+        from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
         client.pic.circuit.validate(
-            netlist=Netlist(
-                instances={
-                    "key": PicInstance(
-                        component="component",
-                    )
-                },
-            ),
+            netlist=Netlist(),
             statements=StatementDictionary(),
             mapping={
                 "key": Computation(
@@ -226,20 +214,14 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, Netlist, PicInstance, StatementDictionary
+        from axiomatic import Axiomatic, Netlist, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
         client.pic.circuit.mapping(
             statements=StatementDictionary(),
-            netlist=Netlist(
-                instances={
-                    "key": PicInstance(
-                        component="component",
-                    )
-                },
-            ),
+            netlist=Netlist(),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -462,7 +444,6 @@ class CircuitClient:
             Computation,
             Netlist,
             Parameter,
-            PicInstance,
             StatementDictionary,
         )
 
@@ -470,13 +451,7 @@ class CircuitClient:
             api_key="YOUR_API_KEY",
         )
         client.pic.circuit.optimize(
-            netlist=Netlist(
-                instances={
-                    "key": PicInstance(
-                        component="component",
-                    )
-                },
-            ),
+            netlist=Netlist(),
             statements=StatementDictionary(),
             mapping={
                 "key": Computation(
@@ -712,13 +687,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import (
-            AsyncAxiomatic,
-            Computation,
-            Netlist,
-            PicInstance,
-            StatementDictionary,
-        )
+        from axiomatic import AsyncAxiomatic, Computation, Netlist, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -727,13 +696,7 @@ class AsyncCircuitClient:
 
         async def main() -> None:
             await client.pic.circuit.validate(
-                netlist=Netlist(
-                    instances={
-                        "key": PicInstance(
-                            component="component",
-                        )
-                    },
-                ),
+                netlist=Netlist(),
                 statements=StatementDictionary(),
                 mapping={
                     "key": Computation(
@@ -894,7 +857,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, Netlist, PicInstance, StatementDictionary
+        from axiomatic import AsyncAxiomatic, Netlist, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -904,13 +867,7 @@ class AsyncCircuitClient:
         async def main() -> None:
             await client.pic.circuit.mapping(
                 statements=StatementDictionary(),
-                netlist=Netlist(
-                    instances={
-                        "key": PicInstance(
-                            component="component",
-                        )
-                    },
-                ),
+                netlist=Netlist(),
             )
 
 
@@ -1156,7 +1113,6 @@ class AsyncCircuitClient:
             Computation,
             Netlist,
             Parameter,
-            PicInstance,
             StatementDictionary,
         )
 
@@ -1167,13 +1123,7 @@ class AsyncCircuitClient:
 
         async def main() -> None:
             await client.pic.circuit.optimize(
-                netlist=Netlist(
-                    instances={
-                        "key": PicInstance(
-                            component="component",
-                        )
-                    },
-                ),
+                netlist=Netlist(),
                 statements=StatementDictionary(),
                 mapping={
                     "key": Computation(

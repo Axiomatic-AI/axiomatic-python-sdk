@@ -19,7 +19,7 @@ class Netlist(UniversalBaseModel):
 
     name: typing.Optional[str] = None
     pdk_type: typing.Optional[PdkType] = None
-    instances: typing.Dict[str, PicInstance]
+    instances: typing.Optional[typing.Dict[str, PicInstance]] = None
     nets: typing.Optional[typing.List[Net]] = None
     ports: typing.Optional[typing.Dict[str, str]] = None
     placements: typing.Optional[typing.Dict[str, typing.Dict[str, NetlistPlacementsValueValue]]] = None

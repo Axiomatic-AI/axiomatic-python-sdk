@@ -13,6 +13,7 @@ from .formalization.client import FormalizationClient
 from .generic.client import GenericClient
 from .document.client import DocumentClient
 from .code_execution.client import CodeExecutionClient
+from .fso.client import FsoClient
 from .pic.client import PicClient
 from .core.request_options import RequestOptions
 from .core.pydantic_utilities import parse_obj_as
@@ -25,6 +26,7 @@ from .formalization.client import AsyncFormalizationClient
 from .generic.client import AsyncGenericClient
 from .document.client import AsyncDocumentClient
 from .code_execution.client import AsyncCodeExecutionClient
+from .fso.client import AsyncFsoClient
 from .pic.client import AsyncPicClient
 
 
@@ -97,6 +99,7 @@ class BaseClient:
         self.generic = GenericClient(client_wrapper=self._client_wrapper)
         self.document = DocumentClient(client_wrapper=self._client_wrapper)
         self.code_execution = CodeExecutionClient(client_wrapper=self._client_wrapper)
+        self.fso = FsoClient(client_wrapper=self._client_wrapper)
         self.pic = PicClient(client_wrapper=self._client_wrapper)
 
     def trigger_error_sentry_debug_get(
@@ -253,6 +256,7 @@ class AsyncBaseClient:
         self.generic = AsyncGenericClient(client_wrapper=self._client_wrapper)
         self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)
         self.code_execution = AsyncCodeExecutionClient(client_wrapper=self._client_wrapper)
+        self.fso = AsyncFsoClient(client_wrapper=self._client_wrapper)
         self.pic = AsyncPicClient(client_wrapper=self._client_wrapper)
 
     async def trigger_error_sentry_debug_get(

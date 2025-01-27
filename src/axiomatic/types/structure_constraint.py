@@ -15,6 +15,7 @@ class StructureConstraint(UniversalBaseModel):
     """
 
     formalization: typing.Optional[StructureFunctionCall] = None
+    formalized: bool
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

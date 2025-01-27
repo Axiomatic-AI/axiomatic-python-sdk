@@ -977,6 +977,77 @@ client.formalization.solution.find(
 </dl>
 </details>
 
+## Fso Lens
+<details><summary><code>client.fso.lens.<a href="src/axiomatic/fso/lens/client.py">generate</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Generate GDS factory code to create a PIC component
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.fso.lens.generate(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Lean Z3
 <details><summary><code>client.lean.z_3.<a href="src/axiomatic/lean/z_3/client.py">execute</a>(...)</code></summary>
 <dl>
@@ -1142,25 +1213,13 @@ Validates a set of statements against a netlist.
 <dd>
 
 ```python
-from axiomatic import (
-    Axiomatic,
-    Computation,
-    Netlist,
-    PicInstance,
-    StatementDictionary,
-)
+from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.pic.circuit.validate(
-    netlist=Netlist(
-        instances={
-            "key": PicInstance(
-                component="component",
-            )
-        },
-    ),
+    netlist=Netlist(),
     statements=StatementDictionary(),
     mapping={
         "key": Computation(
@@ -1317,20 +1376,14 @@ Map variables in the constraints to computations on the netlist.
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Netlist, PicInstance, StatementDictionary
+from axiomatic import Axiomatic, Netlist, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.pic.circuit.mapping(
     statements=StatementDictionary(),
-    netlist=Netlist(
-        instances={
-            "key": PicInstance(
-                component="component",
-            )
-        },
-    ),
+    netlist=Netlist(),
 )
 
 ```
@@ -1571,7 +1624,6 @@ from axiomatic import (
     Computation,
     Netlist,
     Parameter,
-    PicInstance,
     StatementDictionary,
 )
 
@@ -1579,13 +1631,7 @@ client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.pic.circuit.optimize(
-    netlist=Netlist(
-        instances={
-            "key": PicInstance(
-                component="component",
-            )
-        },
-    ),
+    netlist=Netlist(),
     statements=StatementDictionary(),
     mapping={
         "key": Computation(

@@ -12,6 +12,7 @@ from .formalize_circuit_response import FormalizeCircuitResponse
 from .formalize_response import FormalizeResponse
 from .generate_code_response import GenerateCodeResponse
 from .generate_component_code_response import GenerateComponentCodeResponse
+from .generate_lens_code_response import GenerateLensCodeResponse
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
 from .net import Net
@@ -48,7 +49,8 @@ from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
 from .verify_circuit_code_response import VerifyCircuitCodeResponse
 from .verify_response import VerifyResponse
-from .z_3_expression import Z3Expression
+from .z_3_expression_input import Z3ExpressionInput
+from .z_3_expression_output import Z3ExpressionOutput
 
 __all__ = [
     "Bundle",
@@ -63,6 +65,7 @@ __all__ = [
     "FormalizeResponse",
     "GenerateCodeResponse",
     "GenerateComponentCodeResponse",
+    "GenerateLensCodeResponse",
     "HttpValidationError",
     "InteractiveResponse",
     "Net",
@@ -99,5 +102,6 @@ __all__ = [
     "ValidationErrorLocItem",
     "VerifyCircuitCodeResponse",
     "VerifyResponse",
-    "Z3Expression",
+    "Z3ExpressionInput",
+    "Z3ExpressionOutput",
 ]
