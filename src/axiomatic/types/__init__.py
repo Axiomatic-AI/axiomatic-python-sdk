@@ -15,11 +15,7 @@ from .generate_component_code_response import GenerateComponentCodeResponse
 from .generate_lens_code_response import GenerateLensCodeResponse
 from .get_spectrum_response import GetSpectrumResponse
 from .get_spectrum_response_spectrum_item_value import GetSpectrumResponseSpectrumItemValue
-from .get_spectrum_response_spectrum_item_value_imag import GetSpectrumResponseSpectrumItemValueImag
-from .get_spectrum_response_spectrum_item_value_item import GetSpectrumResponseSpectrumItemValueItem
 from .get_spectrum_response_spectrum_one_value import GetSpectrumResponseSpectrumOneValue
-from .get_spectrum_response_spectrum_one_value_imag import GetSpectrumResponseSpectrumOneValueImag
-from .get_spectrum_response_spectrum_one_value_item import GetSpectrumResponseSpectrumOneValueItem
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
 from .net import Net
@@ -77,11 +73,7 @@ __all__ = [
     "GenerateLensCodeResponse",
     "GetSpectrumResponse",
     "GetSpectrumResponseSpectrumItemValue",
-    "GetSpectrumResponseSpectrumItemValueImag",
-    "GetSpectrumResponseSpectrumItemValueItem",
     "GetSpectrumResponseSpectrumOneValue",
-    "GetSpectrumResponseSpectrumOneValueImag",
-    "GetSpectrumResponseSpectrumOneValueItem",
     "HttpValidationError",
     "InteractiveResponse",
     "Net",
