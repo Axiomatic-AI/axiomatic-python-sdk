@@ -23,7 +23,7 @@ def plot_circuit(component):
 
 
 def plot_losses(
-    losses: List[float], iterations: Optional[List[int]] = None, return_fig: bool = True
+    losses: List[float], iterations: Optional[List[int]] = None, return_fig: bool = False
 ):
     """
     Plot a list of losses with labels.
@@ -47,7 +47,7 @@ def plot_constraints(
     constraints: List[List[float]],
     constraints_labels: Optional[List[str]] = None,
     iterations: Optional[List[int]] = None,
-    return_fig: bool = True,
+    return_fig: bool = False,
 ):
     """
     Plot a list of constraints with labels.
@@ -82,7 +82,7 @@ def plot_single_spectrum(
     wavelengths: List[float],
     vlines: Optional[List[float]] = None,
     hlines: Optional[List[float]] = None,
-    return_fig: bool = True,
+    return_fig: bool = False,
 ):
     """
     Plot a single spectrum with vertical and horizontal lines.
