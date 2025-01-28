@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt  # type: ignore
 from ipywidgets import interactive, IntSlider  # type: ignore
 from typing import List, Optional
 
+from . import Parameter
+
 
 def plot_circuit(component):
     """
@@ -99,7 +101,7 @@ def plot_single_spectrum(
 
 
 def plot_interactive_spectra(
-    spectrums: List[List[List[float]]],
+    spectra: List[List[List[float]]],
     wavelengths: List[float],
     spectrum_labels: Optional[List[str]] = None,
     slider_index: Optional[List[int]] = None,
@@ -110,13 +112,13 @@ def plot_interactive_spectra(
     Creates an interactive plot of spectra with a slider to select different indices.
     Parameters:
     -----------
-    spectrums : list of list of float
-        A list of spectrums, where each spectrum is a list of lists of float values, each
+    spectra : list of list of float
+        A list of spectra, where each spectrum is a list of lists of float values, each
         corresponding to the transmission of a single wavelength.
     wavelengths : list of float
         A list of wavelength values corresponding to the x-axis of the plot.
     slider_index : list of int, optional
-        A list of indices for the slider. Defaults to range(len(spectrums[0])).
+        A list of indices for the slider. Defaults to range(len(spectra[0])).
     vlines : list of float, optional
         A list of x-values where vertical lines should be drawn. Defaults to an empty list.
     hlines : list of float, optional
@@ -130,16 +132,16 @@ def plot_interactive_spectra(
     - The function uses matplotlib for plotting and ipywidgets for creating the interactive
     slider.
     - The y-axis limits are fixed based on the global minimum and maximum values across all
-    spectrums.
+    spectra.
     - Vertical and horizontal lines can be added to the plot using the `vlines` and `hlines`
     parameters.
     """
     # Calculate global y-limits across all arrays
-    y_min = min(min(min(arr2) for arr2 in arr1) for arr1 in spectrums)
-    y_max = max(max(max(arr2) for arr2 in arr1) for arr1 in spectrums)
+    y_min = min(min(min(arr2) for arr2 in arr1) for arr1 in spectra)
+    y_max = max(max(max(arr2) for arr2 in arr1) for arr1 in spectra)
 
-    slider_index = slider_index or list(range(len(spectrums[0])))
-    spectrum_labels = spectrum_labels or [f"Spectrum {i}" for i in range(len(spectrums))]
+    slider_index = slider_index or list(range(len(spectra[0])))
+    spectrum_labels = spectrum_labels or [f"Spectrum {i}" for i in range(len(spectra))]
     vlines = vlines or []
     hlines = hlines or []
 
@@ -147,7 +149,7 @@ def plot_interactive_spectra(
     def plot_array(index=0):
         plt.close("all")
         plt.figure(figsize=(8, 4))
-        for i, array in enumerate(spectrums):
+        for i, array in enumerate(spectra):
             plt.plot(wavelengths, array[index], lw=2, label=spectrum_labels[i])
         for x_val in vlines:
             plt.axvline(
@@ -166,6 +168,36 @@ def plot_interactive_spectra(
         plt.show()
 
     slider = IntSlider(
-        value=0, min=0, max=len(spectrums[0]) - 1, step=1, description="Index"
+        value=0, min=0, max=len(spectra[0]) - 1, step=1, description="Index"
     )
     return interactive(plot_array, index=slider)
+
+
+def plot_parameter_history(parameters: list[Parameter], parameter_history: list[dict]):
+    """
+    Plots the history of specified parameters over iterations.
+    Args:
+        parameters (list): A list of parameter objects, each having a 'path' attribute.
+        parameter_history (list): A list of dictionaries containing parameter values
+                                  for each iteration. Each dictionary should be
+                                  structured such that the keys correspond to the
+                                  first part of the parameter path, and the values
+                                  are dictionaries where keys correspond to the
+                                  second part of the parameter path.
+    Returns:
+        None: This function displays the plots and does not return any value.
+    """
+
+    for param in parameters:
+        plt.figure(figsize=(10, 5))
+        plt.title(f"Parameter {param.path} vs. Iterations")
+        plt.xlabel("Iterations")
+        plt.ylabel(param.path)
+        split_param = param.path.split(",")
+        plt.plot(
+            [
+                parameter_history[i][split_param[0]][split_param[1]]
+                for i in range(len(parameter_history))
+            ]
+        )
+        plt.show()
