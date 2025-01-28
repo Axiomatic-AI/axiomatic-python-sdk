@@ -12,8 +12,8 @@ class OptimizationHistory(UniversalBaseModel):
     containing all the settings and costs.
     """
 
-    all_settings: typing.List[typing.Dict[str, typing.Optional[typing.Any]]]
-    all_costs: typing.List[typing.List[float]]
+    parameters: typing.List[typing.Dict[str, typing.Optional[typing.Any]]]
+    costs: typing.List[typing.List[float]]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
