@@ -22,9 +22,7 @@ def plot_circuit(component):
     return iklayout.show(path)
 
 
-def plot_losses(
-    losses: List[float], iterations: Optional[List[int]] = None, return_fig: bool = False
-):
+def plot_losses(losses: List[float], iterations: Optional[List[int]] = None):
     """
     Plot a list of losses with labels.
 
@@ -38,16 +36,13 @@ def plot_losses(
     plt.xlabel("Iterations")
     plt.ylabel("Losses")
     plt.plot(iterations, losses)
-    if return_fig:
-        return plt.gcf()
-    plt.show()
+    return plt.gcf()
 
 
 def plot_constraints(
     constraints: List[List[float]],
     constraints_labels: Optional[List[str]] = None,
     iterations: Optional[List[int]] = None,
-    return_fig: bool = False,
 ):
     """
     Plot a list of constraints with labels.
@@ -62,7 +57,6 @@ def plot_constraints(
     ]
     iterations = iterations or list(range(len(constraints[0])))
 
-
     plt.clf()
     plt.figure(figsize=(10, 5))
     plt.title("Losses vs. Iterations")
@@ -72,9 +66,7 @@ def plot_constraints(
         plt.plot(iterations, constraint, label=constraints_labels[i])
     plt.legend()
     plt.grid(True)
-    if return_fig:
-        return plt.gcf()
-    plt.show()
+    return plt.gcf()
 
 
 def plot_single_spectrum(
@@ -82,7 +74,6 @@ def plot_single_spectrum(
     wavelengths: List[float],
     vlines: Optional[List[float]] = None,
     hlines: Optional[List[float]] = None,
-    return_fig: bool = False,
 ):
     """
     Plot a single spectrum with vertical and horizontal lines.
@@ -104,12 +95,10 @@ def plot_single_spectrum(
         plt.axhline(
             x=y_val, color="red", linestyle="--", label=f"Transmission (y={y_val})"
         )  # Add vertical line
-    if return_fig:
-        return plt.gcf()
-    plt.show()
+    return plt.gcf()
 
 
-def plot_interactive_spectrums(
+def plot_interactive_spectra(
     spectrums: List[List[List[float]]],
     wavelengths: List[float],
     spectrum_labels: Optional[List[str]] = None,
@@ -118,7 +107,7 @@ def plot_interactive_spectrums(
     hlines: Optional[List[float]] = None,
 ):
     """
-    Creates an interactive plot of spectrums with a slider to select different indices.
+    Creates an interactive plot of spectra with a slider to select different indices.
     Parameters:
     -----------
     spectrums : list of list of float
@@ -150,7 +139,7 @@ def plot_interactive_spectrums(
     y_max = max(max(max(arr2) for arr2 in arr1) for arr1 in spectrums)
 
     slider_index = slider_index or list(range(len(spectrums[0])))
-    spectrum_labels = spectrum_labels or [f"Spectrum{i}" for i in range(len(spectrums))]
+    spectrum_labels = spectrum_labels or [f"Spectrum {i}" for i in range(len(spectrums))]
     vlines = vlines or []
     hlines = hlines or []
 
