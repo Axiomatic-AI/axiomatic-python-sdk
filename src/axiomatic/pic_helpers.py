@@ -173,7 +173,7 @@ def plot_interactive_spectra(
     return interactive(plot_array, index=slider)
 
 
-def plot_parameter_history(parameters: list[Parameter], parameter_history: list[dict]):
+def plot_parameter_history(parameters: List[Parameter], parameter_history: List[dict]):
     """
     Plots the history of specified parameters over iterations.
     Args:
