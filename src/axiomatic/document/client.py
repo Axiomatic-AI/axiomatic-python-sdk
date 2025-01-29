@@ -11,6 +11,7 @@ from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..types.parse_response import ParseResponse
+from ..types.extract_constants_response import ExtractConstantsResponse
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -157,6 +158,69 @@ class DocumentClient:
                     ParseResponse,
                     parse_obj_as(
                         type_=ParseResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def constants(
+        self,
+        *,
+        file: core.File,
+        constants: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExtractConstantsResponse:
+        """
+        Extracts specific constants from documents
+
+        Parameters
+        ----------
+        file : core.File
+            See core.File for more documentation
+
+        constants : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            List of constants to extract
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExtractConstantsResponse
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "document/constants",
+            method="POST",
+            params={
+                "constants": constants,
+            },
+            data={},
+            files={
+                "file": file,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ExtractConstantsResponse,
+                    parse_obj_as(
+                        type_=ExtractConstantsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -332,6 +396,69 @@ class AsyncDocumentClient:
                     ParseResponse,
                     parse_obj_as(
                         type_=ParseResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def constants(
+        self,
+        *,
+        file: core.File,
+        constants: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExtractConstantsResponse:
+        """
+        Extracts specific constants from documents
+
+        Parameters
+        ----------
+        file : core.File
+            See core.File for more documentation
+
+        constants : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            List of constants to extract
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExtractConstantsResponse
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "document/constants",
+            method="POST",
+            params={
+                "constants": constants,
+            },
+            data={},
+            files={
+                "file": file,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ExtractConstantsResponse,
+                    parse_obj_as(
+                        type_=ExtractConstantsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

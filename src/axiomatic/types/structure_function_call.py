@@ -11,6 +11,8 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 class StructureFunctionCall(UniversalBaseModel):
     """
     The model describing a function call.
+    The validation is such that an instance contains a function name and a set of arguments that are valid to instantiate a function and a satisfiability check from the available functions.
+    The resulting function and satisfiability check can always be called on any Netlist.
     """
 
     type: typing.Optional[typing.Literal["STRUCTURE_FUNCTION_CALL"]] = None

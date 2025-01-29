@@ -2,4 +2,4 @@
 
 import typing
 
-StructureFunctionCallArgumentsValue = typing.Union[float, int, str]
+StructureFunctionCallArgumentsValue = typing.Union[float, int, str, bool]

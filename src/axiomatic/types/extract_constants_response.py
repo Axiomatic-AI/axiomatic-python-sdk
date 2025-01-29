@@ -2,29 +2,12 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import pydantic
 
 
-class StatementValidation(UniversalBaseModel):
-    """
-    The status of a statement.
-    """
-
-    satisfiable: typing.Optional[bool] = pydantic.Field(default=None)
-    """
-    Whether the statement is satisfiable or not.
-    """
-
-    holds: typing.Optional[bool] = pydantic.Field(default=None)
-    """
-    Whether the statement holds or not.
-    """
-
-    message: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    The feeedback message.
-    """
+class ExtractConstantsResponse(UniversalBaseModel):
+    constants: typing.Dict[str, str]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -10,6 +10,8 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 class Computation(UniversalBaseModel):
     """
     A class describing a computation.
+    The validation is such that an instance contains a name and a set of arguments that are valid to instantiate a function from the available computations.
+    It does not check if the resulting computation can be called, this depends on the target Netlist.
     """
 
     name: str = pydantic.Field()

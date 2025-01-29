@@ -10,6 +10,8 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 class Z3Expression(UniversalBaseModel):
     """
     The model for a Z3 expression.
+    The validation is such that an instance contains a code that can be parsed into a z3 expression and, if mapping is set, it contains a valid Computation for every variable in the expression.
+    It does not check if the expression can be evaluated, this depends on the target Netlist.
     """
 
     type: typing.Optional[typing.Literal["Z3_EXPRESSION"]] = None
