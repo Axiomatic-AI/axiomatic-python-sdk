@@ -657,6 +657,8 @@ class CircuitClient:
         self,
         *,
         netlist: Netlist,
+        port_in: str,
+        port_out: str,
         settings: Settings,
         wls: typing.Sequence[float],
         request_options: typing.Optional[RequestOptions] = None,
@@ -667,6 +669,10 @@ class CircuitClient:
         Parameters
         ----------
         netlist : Netlist
+
+        port_in : str
+
+        port_out : str
 
         settings : Settings
 
@@ -689,6 +695,8 @@ class CircuitClient:
         )
         client.pic.circuit.get_sax_spectrum(
             netlist=Netlist(),
+            port_in="port_in",
+            port_out="port_out",
             settings={"key": "value"},
             wls=[1.1],
         )
@@ -700,6 +708,8 @@ class CircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "port_in": port_in,
+                "port_out": port_out,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),
@@ -1430,6 +1440,8 @@ class AsyncCircuitClient:
         self,
         *,
         netlist: Netlist,
+        port_in: str,
+        port_out: str,
         settings: Settings,
         wls: typing.Sequence[float],
         request_options: typing.Optional[RequestOptions] = None,
@@ -1440,6 +1452,10 @@ class AsyncCircuitClient:
         Parameters
         ----------
         netlist : Netlist
+
+        port_in : str
+
+        port_out : str
 
         settings : Settings
 
@@ -1467,6 +1483,8 @@ class AsyncCircuitClient:
         async def main() -> None:
             await client.pic.circuit.get_sax_spectrum(
                 netlist=Netlist(),
+                port_in="port_in",
+                port_out="port_out",
                 settings={"key": "value"},
                 wls=[1.1],
             )
@@ -1481,6 +1499,8 @@ class AsyncCircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "port_in": port_in,
+                "port_out": port_out,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),

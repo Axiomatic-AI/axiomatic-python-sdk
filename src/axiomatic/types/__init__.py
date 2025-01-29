@@ -8,14 +8,14 @@ from .cost_function import CostFunction
 from .execute_code_response import ExecuteCodeResponse
 from .extract_text_response import ExtractTextResponse
 from .find_mapping_response import FindMappingResponse
+from .find_user_response import FindUserResponse
 from .formalize_circuit_response import FormalizeCircuitResponse
 from .formalize_response import FormalizeResponse
 from .generate_code_response import GenerateCodeResponse
 from .generate_component_code_response import GenerateComponentCodeResponse
 from .generate_lens_code_response import GenerateLensCodeResponse
 from .get_spectrum_response import GetSpectrumResponse
-from .get_spectrum_response_spectrum_item_value import GetSpectrumResponseSpectrumItemValue
-from .get_spectrum_response_spectrum_one_value import GetSpectrumResponseSpectrumOneValue
+from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
 from .net import Net
@@ -66,14 +66,14 @@ __all__ = [
     "ExecuteCodeResponse",
     "ExtractTextResponse",
     "FindMappingResponse",
+    "FindUserResponse",
     "FormalizeCircuitResponse",
     "FormalizeResponse",
     "GenerateCodeResponse",
     "GenerateComponentCodeResponse",
     "GenerateLensCodeResponse",
     "GetSpectrumResponse",
-    "GetSpectrumResponseSpectrumItemValue",
-    "GetSpectrumResponseSpectrumOneValue",
+    "GetSpectrumResponseSpectrumItem",
     "HttpValidationError",
     "InteractiveResponse",
     "Net",

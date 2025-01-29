@@ -2037,6 +2037,8 @@ client = Axiomatic(
 )
 client.pic.circuit.get_sax_spectrum(
     netlist=Netlist(),
+    port_in="port_in",
+    port_out="port_out",
     settings={"key": "value"},
     wls=[1.1],
 )
@@ -2056,6 +2058,22 @@ client.pic.circuit.get_sax_spectrum(
 <dd>
 
 **netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port_in:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port_out:** `str` 
     
 </dd>
 </dl>

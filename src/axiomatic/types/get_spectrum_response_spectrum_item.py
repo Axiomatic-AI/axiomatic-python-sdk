@@ -2,4 +2,4 @@
 
 import typing
 
-GetSpectrumResponseSpectrumItemValue = typing.Union[typing.List[float], float]
+GetSpectrumResponseSpectrumItem = typing.Union[typing.List[float], float]
