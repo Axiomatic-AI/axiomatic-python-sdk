@@ -11,7 +11,7 @@ class Axiomatic(BaseClient):
 
     def __init__(self, *args, **kwargs):
         if "timeout" not in kwargs:
-            kwargs["timeout"] = 600
+            kwargs["timeout"] = 1200
         super().__init__(*args, **kwargs)
 
         self.document_helper = DocumentHelper(self)
