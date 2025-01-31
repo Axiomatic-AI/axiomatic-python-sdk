@@ -126,6 +126,8 @@ class AXMagic:
                         time.sleep(3)
                     else:
                         if result.status == "SUCCEEDED":
+                            os.environ["TOOL_RESULT"] = result.output
+                            get_ipython().user_ns['tool_result'] = result.output
                             print(result.output)
                         else:
                             print(result.error_trace)
