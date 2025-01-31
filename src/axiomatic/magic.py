@@ -5,6 +5,7 @@ from IPython.display import HTML, display  # type: ignore
 import platformdirs  # type: ignore
 import os
 import sys
+import time
 from . import Axiomatic
 
 
@@ -68,7 +69,6 @@ class AXMagic:
                 # When running in jupyter
                 get_ipython().set_next_input(f"# %%ax_fix\n{code}", replace=False)
 
-
     def ax_query(self, query, cell=None):
         # Updates the target circuit query
         self.query = query
@@ -77,6 +77,61 @@ class AXMagic:
     def ax_fix(self, query, cell=None):
         # Runs again without updating the query
         return self.axquery(query, cell)
+
+    def ax_tool(self, tool, cell):
+        """
+        A custom IPython cell magic that sends python code in a cell to the tools scheduling API
+        using Axiomatic's `client.tools.schedule` and wait for the tool execution to finish and 
+        show the 'stdout' of the script
+
+        Usage:
+
+            %%tool_schedule [optional_tool_name]
+            <some code here>
+
+        Example:
+
+            %%tool_schedule fdtd
+            print("Hello from this cell!")
+            x = 1 + 2
+
+        This cell won't run as Python code; instead, the text will be sent to the tool_schedule method
+        of the Axiomatic client.
+
+        Available Tools:
+            - fdtd
+            - femwell
+            - jaxfem
+            - optiland
+            - pyspice
+            - sax-gdsfactory       
+        """
+        if not tool.strip():
+            print("Please provider a tool name when calling this magic like:  %%tool_schedule [optional_tool_name]")
+        else:
+            tool_name = tool.strip()
+            code_string = cell
+
+            output = self.client.tools.schedule(
+                tool_name=tool_name,
+                code=code_string,
+                )
+            if output.is_success is True:
+                job_id = output.job_id
+                result = self.client.tools.status(job_id=output.job_id)
+                print(f"job_id: {job_id}")
+                while True:
+                    result = self.client.tools.status(job_id=output.job_id)
+                    if result.status == "PENDING" or result.status == "RUNNING":
+                        time.sleep(3)
+                    else:
+                        if result.status == "SUCCEEDED":
+                            print(result.output)
+                        else:
+                            print(result.error_trace)
+                        break
+            else:
+                print(output.error_trace)
 
 
 def ax_help(value: str):
@@ -87,6 +142,8 @@ Available commands:
 - `%load_ext axiomatic_pic` loads the ipython extension.
 - `%ax_query` returns the requested circuit using our experimental API
 - `%%ax_fix` edit the given code
+- `%%ax_tool tool_name` executes python code for a given tool. Available tools are:
+  `fdtd, femwell, jaxfem, optiland, pyspice and sax-gdsfactory`
 """
     )
 
@@ -96,4 +153,5 @@ def load_ipython_extension(ipython):
     ipython.register_magic_function(ax_magic.ax_query, "line_cell")
     ipython.register_magic_function(ax_magic.ax_fix, "line_cell")
     ipython.register_magic_function(ax_magic.ax_api, "line")
+    ipython.register_magic_function(ax_magic.ax_tool, "cell")
     ipython.register_magic_function(ax_help, "line")
