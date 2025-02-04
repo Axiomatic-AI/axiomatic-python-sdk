@@ -2,14 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .netlist import Netlist
+from .points import Points
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class OptimizePlacementBodyResponse(UniversalBaseModel):
-    circuit: typing.Optional[Netlist] = None
-    success: bool
+class MultiPoints(UniversalBaseModel):
+    color_points: typing.Dict[str, Points]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

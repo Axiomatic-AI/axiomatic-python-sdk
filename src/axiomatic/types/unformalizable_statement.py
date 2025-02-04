@@ -3,6 +3,7 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import pydantic
+from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -14,6 +15,10 @@ class UnformalizableStatement(UniversalBaseModel):
     """
 
     formalization: typing.Optional[str] = None
+    validation: typing.Optional[StatementValidation] = pydantic.Field(default=None)
+    """
+    The validation result of the statement.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

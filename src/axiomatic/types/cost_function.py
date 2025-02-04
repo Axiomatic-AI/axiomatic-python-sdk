@@ -4,6 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import pydantic
 from .z_3_expression import Z3Expression
+from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -15,6 +16,10 @@ class CostFunction(UniversalBaseModel):
     """
 
     formalization: typing.Optional[Z3Expression] = None
+    validation: typing.Optional[StatementValidation] = pydantic.Field(default=None)
+    """
+    The validation result of the statement.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

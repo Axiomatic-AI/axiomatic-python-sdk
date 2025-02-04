@@ -4,6 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import pydantic
 from .structure_function_call import StructureFunctionCall
+from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -15,6 +16,10 @@ class StructureConstraint(UniversalBaseModel):
     """
 
     formalization: typing.Optional[StructureFunctionCall] = None
+    validation: typing.Optional[StatementValidation] = pydantic.Field(default=None)
+    """
+    The validation result of the statement.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

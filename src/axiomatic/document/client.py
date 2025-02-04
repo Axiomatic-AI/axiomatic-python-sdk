@@ -2,6 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from .plot.client import PlotClient
 from .. import core
 from ..core.request_options import RequestOptions
 from ..types.extract_text_response import ExtractTextResponse
@@ -13,6 +14,7 @@ from ..core.api_error import ApiError
 from ..types.parse_response import ParseResponse
 from ..types.extract_constants_response import ExtractConstantsResponse
 from ..core.client_wrapper import AsyncClientWrapper
+from .plot.client import AsyncPlotClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -21,6 +23,7 @@ OMIT = typing.cast(typing.Any, ...)
 class DocumentClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.plot = PlotClient(client_wrapper=self._client_wrapper)
 
     def text(
         self,
@@ -243,6 +246,7 @@ class DocumentClient:
 class AsyncDocumentClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.plot = AsyncPlotClient(client_wrapper=self._client_wrapper)
 
     async def text(
         self,

@@ -970,6 +970,93 @@ client.code_execution.python.execute(
 </dl>
 </details>
 
+## Document Plot
+<details><summary><code>client.document.plot.<a href="src/axiomatic/document/plot/client.py">points</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Extracts points from plots
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.plot.points(
+    b_64_img_str="b64_img_str",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**b_64_img_str:** `str` — Img of plot as a base64 string
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**method:** `typing.Optional[int]` — Can specify specific method to extract points
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**plot_info:** `typing.Optional[str]` — Can add specific plot info
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Formalization Constraints
 <details><summary><code>client.formalization.constraints.<a href="src/axiomatic/formalization/constraints/client.py">verify</a>(...)</code></summary>
 <dl>
@@ -1644,6 +1731,14 @@ client.pic.circuit.generate(
 <dl>
 <dd>
 
+**max_iterations:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -1842,6 +1937,14 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
+**config:** `typing.Optional[OptimizeConfig]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -1958,7 +2061,6 @@ client = Axiomatic(
 )
 client.pic.circuit.placementoptimize(
     netlist={"key": "value"},
-    method="method",
 )
 
 ```
@@ -1983,7 +2085,7 @@ client.pic.circuit.placementoptimize(
 <dl>
 <dd>
 
-**method:** `str` 
+**method:** `typing.Optional[str]` 
     
 </dd>
 </dl>

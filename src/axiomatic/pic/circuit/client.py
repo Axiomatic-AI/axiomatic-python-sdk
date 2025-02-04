@@ -18,6 +18,7 @@ from ...types.find_mapping_response import FindMappingResponse
 from ...types.generate_code_response import GenerateCodeResponse
 from ...types.refine_code_response import RefineCodeResponse
 from ...types.parameter import Parameter
+from ...types.optimize_config import OptimizeConfig
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
 from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from ...types.optimize_placement_body_response import OptimizePlacementBodyResponse
@@ -270,13 +271,21 @@ class CircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def generate(self, *, query: str, request_options: typing.Optional[RequestOptions] = None) -> GenerateCodeResponse:
+    def generate(
+        self,
+        *,
+        query: str,
+        max_iterations: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GenerateCodeResponse:
         """
         Generate GDS factory code to create a circuit
 
         Parameters
         ----------
         query : str
+
+        max_iterations : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -302,6 +311,7 @@ class CircuitClient:
             method="POST",
             json={
                 "query": query,
+                "max_iterations": max_iterations,
             },
             headers={
                 "content-type": "application/json",
@@ -416,6 +426,7 @@ class CircuitClient:
         statements: StatementDictionary,
         mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
+        config: typing.Optional[OptimizeConfig] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -430,6 +441,8 @@ class CircuitClient:
         mapping : typing.Dict[str, Computation]
 
         parameters : typing.Sequence[Parameter]
+
+        config : typing.Optional[OptimizeConfig]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -483,6 +496,9 @@ class CircuitClient:
                 ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
+                "config": convert_and_respect_annotation_metadata(
+                    object_=config, annotation=OptimizeConfig, direction="write"
                 ),
             },
             headers={
@@ -584,7 +600,7 @@ class CircuitClient:
         self,
         *,
         netlist: typing.Dict[str, typing.Optional[typing.Any]],
-        method: str,
+        method: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizePlacementBodyResponse:
         """
@@ -594,7 +610,7 @@ class CircuitClient:
         ----------
         netlist : typing.Dict[str, typing.Optional[typing.Any]]
 
-        method : str
+        method : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -613,7 +629,6 @@ class CircuitClient:
         )
         client.pic.circuit.placementoptimize(
             netlist={"key": "value"},
-            method="method",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1012,7 +1027,11 @@ class AsyncCircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def generate(
-        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        query: str,
+        max_iterations: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
         Generate GDS factory code to create a circuit
@@ -1020,6 +1039,8 @@ class AsyncCircuitClient:
         Parameters
         ----------
         query : str
+
+        max_iterations : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1053,6 +1074,7 @@ class AsyncCircuitClient:
             method="POST",
             json={
                 "query": query,
+                "max_iterations": max_iterations,
             },
             headers={
                 "content-type": "application/json",
@@ -1175,6 +1197,7 @@ class AsyncCircuitClient:
         statements: StatementDictionary,
         mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
+        config: typing.Optional[OptimizeConfig] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -1189,6 +1212,8 @@ class AsyncCircuitClient:
         mapping : typing.Dict[str, Computation]
 
         parameters : typing.Sequence[Parameter]
+
+        config : typing.Optional[OptimizeConfig]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1250,6 +1275,9 @@ class AsyncCircuitClient:
                 ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
+                "config": convert_and_respect_annotation_metadata(
+                    object_=config, annotation=OptimizeConfig, direction="write"
                 ),
             },
             headers={
@@ -1359,7 +1387,7 @@ class AsyncCircuitClient:
         self,
         *,
         netlist: typing.Dict[str, typing.Optional[typing.Any]],
-        method: str,
+        method: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizePlacementBodyResponse:
         """
@@ -1369,7 +1397,7 @@ class AsyncCircuitClient:
         ----------
         netlist : typing.Dict[str, typing.Optional[typing.Any]]
 
-        method : str
+        method : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1393,7 +1421,6 @@ class AsyncCircuitClient:
         async def main() -> None:
             await client.pic.circuit.placementoptimize(
                 netlist={"key": "value"},
-                method="method",
             )
 
 

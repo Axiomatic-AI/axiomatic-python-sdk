@@ -5,6 +5,10 @@ from .bundle_settings_value import BundleSettingsValue
 from .computation import Computation
 from .computation_arguments_value import ComputationArgumentsValue
 from .cost_function import CostFunction
+from .create_api_key_response import CreateApiKeyResponse
+from .create_api_keyrequest import CreateApiKeyrequest
+from .create_user_request import CreateUserRequest
+from .create_user_response import CreateUserResponse
 from .execute_code_response import ExecuteCodeResponse
 from .extract_constants_response import ExtractConstantsResponse
 from .extract_text_response import ExtractTextResponse
@@ -19,10 +23,12 @@ from .get_spectrum_response import GetSpectrumResponse
 from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
+from .multi_points import MultiPoints
 from .net import Net
 from .netlist import Netlist
 from .netlist_placements_value_value import NetlistPlacementsValueValue
 from .optimization_history import OptimizationHistory
+from .optimize_config import OptimizeConfig
 from .optimize_netlist_response import OptimizeNetlistResponse
 from .optimize_placement_body_response import OptimizePlacementBodyResponse
 from .parameter import Parameter
@@ -33,6 +39,7 @@ from .pic_instance import PicInstance
 from .pic_instance_info_value import PicInstanceInfoValue
 from .pic_instance_settings_value import PicInstanceSettingsValue
 from .pic_warnings import PicWarnings
+from .points import Points
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
 from .schedule_job_response import ScheduleJobResponse
@@ -64,6 +71,10 @@ __all__ = [
     "Computation",
     "ComputationArgumentsValue",
     "CostFunction",
+    "CreateApiKeyResponse",
+    "CreateApiKeyrequest",
+    "CreateUserRequest",
+    "CreateUserResponse",
     "ExecuteCodeResponse",
     "ExtractConstantsResponse",
     "ExtractTextResponse",
@@ -78,10 +89,12 @@ __all__ = [
     "GetSpectrumResponseSpectrumItem",
     "HttpValidationError",
     "InteractiveResponse",
+    "MultiPoints",
     "Net",
     "Netlist",
     "NetlistPlacementsValueValue",
     "OptimizationHistory",
+    "OptimizeConfig",
     "OptimizeNetlistResponse",
     "OptimizePlacementBodyResponse",
     "Parameter",
@@ -92,6 +105,7 @@ __all__ = [
     "PicInstanceInfoValue",
     "PicInstanceSettingsValue",
     "PicWarnings",
+    "Points",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
     "ScheduleJobResponse",

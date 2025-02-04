@@ -2,14 +2,12 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .netlist import Netlist
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class OptimizePlacementBodyResponse(UniversalBaseModel):
-    circuit: typing.Optional[Netlist] = None
-    success: bool
+class Points(UniversalBaseModel):
+    points: typing.List[typing.List[typing.Optional[typing.Any]]]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
