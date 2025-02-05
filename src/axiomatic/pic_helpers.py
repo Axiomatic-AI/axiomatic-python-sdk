@@ -1,9 +1,11 @@
+import re
+import numpy as np  # type: ignore
 import iklayout  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 from ipywidgets import interactive, IntSlider  # type: ignore
-from typing import List, Optional
+from typing import List, Optional, Tuple, Dict, Set
 
-from . import Parameter, StatementDictionary, StatementValidationDictionary, StatementValidation
+from . import Parameter, StatementDictionary, StatementValidationDictionary, StatementValidation, Computation
 
 
 def plot_circuit(component):
@@ -250,7 +252,7 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
             print(f"Satisfiable: {val.satisfiable}")
             print(val.message)
         print("\n-----------------------------------\n")
-    for param_stmt, param_val in zip(statements.cost_functions or [], validation.cost_functions or []):
+    for param_stmt, param_val in zip(statements.parameter_constraints or [], validation.parameter_constraints or []):
         print("Type:", param_stmt.type)
         print("Statement:", param_stmt.text)
         print("Formalization:", end=" ")
@@ -301,3 +303,66 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
         print("Statement:", unf_stmt.text)
         print("Formalization: UNFORMALIZABLE")
         print("\n-----------------------------------\n")
+
+
+def _str_units_to_float(str_units: str) -> float:
+    unit_conversions = {
+        "nm": 1e-3,
+        "um": 1,
+        "mm": 1e3,
+        "m": 1e6,
+    }
+    match = re.match(r"([\d\.]+)\s*([a-zA-Z]+)", str_units)
+    numeric_value = float(match.group(1) if match else 1.55)
+    unit = match.group(2) if match else "um"
+    return float(numeric_value * unit_conversions[unit])
+
+
+def get_wavelengths_to_plot(
+    statements: StatementDictionary, num_samples: int = 100
+) -> Tuple[List[float], List[float]]:
+    """
+    Get the wavelengths to plot based on the statements.
+
+    Returns a list of wavelengths to plot the spectra and a list of vertical lines to plot on top the spectra.
+    """
+
+    min_wl = float("inf")
+    max_wl = float("-inf")
+    vlines: set = set()
+
+    def update_wavelengths(mapping: Dict[str, Optional[Computation]], min_wl: float, max_wl: float, vlines: Set):
+        for comp in mapping.values():
+            if comp is None:
+                continue
+            if "wavelengths" in comp.arguments:
+                vlines = vlines | {
+                    _str_units_to_float(wl) for wl in (comp.arguments["wavelengths"] if isinstance(comp.arguments["wavelengths"], list) else []) if isinstance(wl, str)
+                }
+            if "wavelength_range" in comp.arguments:
+                if isinstance(comp.arguments["wavelength_range"], list) and len(comp.arguments["wavelength_range"]) == 2 and all(isinstance(wl, str) for wl in comp.arguments["wavelength_range"]):
+                    min_wl = min(min_wl, _str_units_to_float(comp.arguments["wavelength_range"][0]))
+                    max_wl = max(max_wl, _str_units_to_float(comp.arguments["wavelength_range"][1]))
+        return min_wl, max_wl, vlines
+
+    for cost_stmt in statements.cost_functions or []:
+        if cost_stmt.formalization is not None and cost_stmt.formalization.mapping is not None:
+            min_wl, max_wl, vlines = update_wavelengths(cost_stmt.formalization.mapping, min_wl, max_wl, vlines)
+
+    for param_stmt in statements.parameter_constraints or []:
+        if param_stmt.formalization is not None and param_stmt.formalization.mapping is not None:
+            min_wl, max_wl, vlines = update_wavelengths(param_stmt.formalization.mapping, min_wl, max_wl, vlines)
+
+    if vlines:
+        min_wl = min(min_wl, min(vlines))
+        max_wl = max(max_wl, max(vlines))
+    if min_wl >= max_wl:
+        avg_wl = sum(vlines) / len(vlines) if vlines else 1550
+        min_wl, max_wl = avg_wl - 0.1, avg_wl + 0.1
+    else:
+        range_size = max_wl - min_wl
+        min_wl -= 0.2 * range_size
+        max_wl += 0.2 * range_size
+
+    wls = np.linspace(min_wl, max_wl, num_samples)
+    return [float(wl) for wl in wls], list(vlines)
