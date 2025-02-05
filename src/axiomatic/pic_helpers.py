@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt  # type: ignore
 from ipywidgets import interactive, IntSlider  # type: ignore
 from typing import List, Optional
 
-from . import Parameter
+from . import Parameter, StatementDictionary, StatementValidationDictionary, StatementValidation
 
 
 def plot_circuit(component):
@@ -201,3 +201,104 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
             ]
         )
         plt.show()
+
+
+def print_statements(statements: StatementDictionary, validation: Optional[StatementValidationDictionary] = None):
+    """
+    Print a list of statements in nice readable format.
+    """
+
+    validation = StatementValidationDictionary(
+        cost_functions=(validation.cost_functions if validation is not None else None) or [StatementValidation()]*len(statements.cost_functions or []),
+        parameter_constraints=(validation.parameter_constraints if validation is not None else None) or [StatementValidation()]*len(statements.parameter_constraints or []),
+        structure_constraints=(validation.structure_constraints if validation is not None else None) or [StatementValidation()]*len(statements.structure_constraints or []),
+        unformalizable_statements=(validation.unformalizable_statements if validation is not None else None) or [StatementValidation()]*len(statements.unformalizable_statements or [])
+    )
+
+    if len(validation.cost_functions or []) != len(statements.cost_functions or []):
+        raise ValueError("Number of cost functions and validations do not match.")
+    if len(validation.parameter_constraints or []) != len(statements.parameter_constraints or []):
+        raise ValueError("Number of parameter constraints and validations do not match.")
+    if len(validation.structure_constraints or []) != len(statements.structure_constraints or []):
+        raise ValueError("Number of structure constraints and validations do not match.")
+    if len(validation.unformalizable_statements or []) != len(statements.unformalizable_statements or []):
+        raise ValueError("Number of unformalizable statements and validations do not match.")
+
+# (statements.parameter_constraints or []),(validation.parameter_constraints or []))
+    print("-----------------------------------\n")
+    for cost_stmt, cost_val in zip(statements.cost_functions or [], validation.cost_functions or []):
+        print("Type:", cost_stmt.type)
+        print("Statement:", cost_stmt.text)
+        print("Formalization:", end=" ")
+        if cost_stmt.formalization is None:
+            print("UNFORMALIZED")
+        else:
+            code = cost_stmt.formalization.code
+            if cost_stmt.formalization.mapping is not None:
+                for var_name, computation in cost_stmt.formalization.mapping.items():
+                    if computation is not None:
+                        args_str = ", ".join(
+                            [
+                                f"{argname}="
+                                + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
+                                for argname, argvalue in computation.arguments.items()
+                            ]
+                        )
+                        code = code.replace(var_name, f"{computation.name}({args_str})")
+            print(code)
+        val = cost_stmt.validation or cost_val
+        if val.satisfiable is not None and val.message is not None:
+            print(f"Satisfiable: {val.satisfiable}")
+            print(val.message)
+        print("\n-----------------------------------\n")
+    for param_stmt, param_val in zip(statements.cost_functions or [], validation.cost_functions or []):
+        print("Type:", param_stmt.type)
+        print("Statement:", param_stmt.text)
+        print("Formalization:", end=" ")
+        if param_stmt.formalization is None:
+            print("UNFORMALIZED")
+        else:
+            code = param_stmt.formalization.code
+            if param_stmt.formalization.mapping is not None:
+                for var_name, computation in param_stmt.formalization.mapping.items():
+                    if computation is not None:
+                        args_str = ", ".join(
+                            [
+                                f"{argname}="
+                                + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
+                                for argname, argvalue in computation.arguments.items()
+                            ]
+                        )
+                        code = code.replace(var_name, f"{computation.name}({args_str})")
+            print(code)
+        val = param_stmt.validation or param_val
+        if val.satisfiable is not None and val.message is not None and val.holds is not None:
+            print(f"Satisfiable: {val.satisfiable}")
+            print(f"Holds: {val.holds} ({val.message})")
+        print("\n-----------------------------------\n")
+    for struct_stmt, struct_val in zip(statements.structure_constraints or [], validation.structure_constraints or []):
+        print("Type:", struct_stmt.type)
+        print("Statement:", struct_stmt.text)
+        print("Formalization:", end=" ")
+        if struct_stmt.formalization is None:
+            print("UNFORMALIZED")
+        else:
+            func_constr = struct_stmt.formalization
+            args_str = ", ".join(
+                [
+                    f"{argname}=" + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
+                    for argname, argvalue in func_constr.arguments.items()
+                ]
+            )
+            func_str = f"{func_constr.function_name}({args_str}) == {func_constr.expected_result}"
+            print(func_str)
+        val = struct_stmt.validation or struct_val
+        if val.satisfiable is not None and val.holds is not None:
+            print(f"Satisfiable: {val.satisfiable}")
+            print(f"Holds: {val.holds}")
+        print("\n-----------------------------------\n")
+    for unf_stmt in statements.unformalizable_statements or []:
+        print("Type:", unf_stmt.type)
+        print("Statement:", unf_stmt.text)
+        print("Formalization: UNFORMALIZABLE")
+        print("\n-----------------------------------\n")
