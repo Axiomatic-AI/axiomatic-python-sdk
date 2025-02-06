@@ -224,7 +224,6 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
     if len(validation.unformalizable_statements or []) != len(statements.unformalizable_statements or []):
         raise ValueError("Number of unformalizable statements and validations do not match.")
 
-# (statements.parameter_constraints or []),(validation.parameter_constraints or []))
     print("-----------------------------------\n")
     for cost_stmt, cost_val in zip(statements.cost_functions or [], validation.cost_functions or []):
         print("Type:", cost_stmt.type)
