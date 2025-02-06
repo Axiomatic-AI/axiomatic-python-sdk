@@ -26,6 +26,7 @@ class PlotClient:
         plot_img: core.File,
         method: typing.Optional[int] = None,
         plot_info: typing.Optional[str] = None,
+        get_img_coords: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ColorToPoints:
         """
@@ -41,6 +42,9 @@ class PlotClient:
 
         plot_info : typing.Optional[str]
             Can add specific plot info
+
+        get_img_coords : typing.Optional[bool]
+            Whether to get coords of points on image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -65,6 +69,7 @@ class PlotClient:
             params={
                 "method": method,
                 "plot_info": plot_info,
+                "get_img_coords": get_img_coords,
             },
             data={},
             files={
@@ -108,6 +113,7 @@ class AsyncPlotClient:
         plot_img: core.File,
         method: typing.Optional[int] = None,
         plot_info: typing.Optional[str] = None,
+        get_img_coords: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ColorToPoints:
         """
@@ -123,6 +129,9 @@ class AsyncPlotClient:
 
         plot_info : typing.Optional[str]
             Can add specific plot info
+
+        get_img_coords : typing.Optional[bool]
+            Whether to get coords of points on image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -155,6 +164,7 @@ class AsyncPlotClient:
             params={
                 "method": method,
                 "plot_info": plot_info,
+                "get_img_coords": get_img_coords,
             },
             data={},
             files={

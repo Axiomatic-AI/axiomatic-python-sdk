@@ -13,6 +13,7 @@ class ColorToPoints(UniversalBaseModel):
     """
 
     color_points: typing.Dict[str, Points]
+    img_coords: typing.Optional[typing.Dict[str, typing.Optional[Points]]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

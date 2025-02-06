@@ -1125,6 +1125,14 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
+**get_img_coords:** `typing.Optional[bool]` — Whether to get coords of points on image
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
