@@ -1739,6 +1739,14 @@ client.pic.circuit.generate(
 <dl>
 <dd>
 
+**apply_routing:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -1818,6 +1826,22 @@ client.pic.circuit.refine(
 <dd>
 
 **code:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max_iterations:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**apply_routing:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
