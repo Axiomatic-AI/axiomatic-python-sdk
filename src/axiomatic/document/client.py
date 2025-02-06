@@ -180,11 +180,7 @@ class DocumentClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def constants(
-        self,
-        *,
-        file: core.File,
-        constants: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
-        request_options: typing.Optional[RequestOptions] = None,
+        self, *, file: core.File, constants: typing.List[str], request_options: typing.Optional[RequestOptions] = None
     ) -> ExtractConstantsResponse:
         """
         Extracts specific constants from documents
@@ -194,8 +190,7 @@ class DocumentClient:
         file : core.File
             See core.File for more documentation
 
-        constants : typing.Optional[typing.Union[str, typing.Sequence[str]]]
-            List of constants to extract
+        constants : typing.List[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -204,14 +199,24 @@ class DocumentClient:
         -------
         ExtractConstantsResponse
             Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.document.constants(
+            constants=["constants"],
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
             "document/constants",
             method="POST",
-            params={
+            data={
                 "constants": constants,
             },
-            data={},
             files={
                 "file": file,
             },
@@ -419,11 +424,7 @@ class AsyncDocumentClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def constants(
-        self,
-        *,
-        file: core.File,
-        constants: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
-        request_options: typing.Optional[RequestOptions] = None,
+        self, *, file: core.File, constants: typing.List[str], request_options: typing.Optional[RequestOptions] = None
     ) -> ExtractConstantsResponse:
         """
         Extracts specific constants from documents
@@ -433,8 +434,7 @@ class AsyncDocumentClient:
         file : core.File
             See core.File for more documentation
 
-        constants : typing.Optional[typing.Union[str, typing.Sequence[str]]]
-            List of constants to extract
+        constants : typing.List[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -443,14 +443,32 @@ class AsyncDocumentClient:
         -------
         ExtractConstantsResponse
             Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.document.constants(
+                constants=["constants"],
+            )
+
+
+        asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
             "document/constants",
             method="POST",
-            params={
+            data={
                 "constants": constants,
             },
-            data={},
             files={
                 "file": file,
             },

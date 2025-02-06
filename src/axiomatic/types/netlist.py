@@ -5,7 +5,7 @@ import typing
 from .pdk_type import PdkType
 from .pic_instance import PicInstance
 from .net import Net
-from .netlist_placements_value_value import NetlistPlacementsValueValue
+from .placement import Placement
 from .bundle import Bundle
 from .pic_warnings import PicWarnings
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
@@ -22,7 +22,7 @@ class Netlist(UniversalBaseModel):
     instances: typing.Optional[typing.Dict[str, PicInstance]] = None
     nets: typing.Optional[typing.List[Net]] = None
     ports: typing.Optional[typing.Dict[str, str]] = None
-    placements: typing.Optional[typing.Dict[str, typing.Dict[str, NetlistPlacementsValueValue]]] = None
+    placements: typing.Optional[typing.Dict[str, Placement]] = None
     routes: typing.Optional[typing.Dict[str, Bundle]] = None
     warnings: typing.Optional[PicWarnings] = None
 

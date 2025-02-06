@@ -749,6 +749,86 @@ core.File` — See core.File for more documentation
 </dl>
 </details>
 
+<details><summary><code>client.document.<a href="src/axiomatic/document/client.py">constants</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Extracts specific constants from documents
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.constants(
+    constants=["constants"],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `from __future__ import annotations
+
+core.File` — See core.File for more documentation
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**constants:** `typing.List[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Tools
 <details><summary><code>client.tools.<a href="src/axiomatic/tools/client.py">schedule</a>(...)</code></summary>
 <dl>
@@ -1003,9 +1083,7 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.document.plot.points(
-    b_64_img_str="b64_img_str",
-)
+client.document.plot.points()
 
 ```
 </dd>
@@ -1021,7 +1099,9 @@ client.document.plot.points(
 <dl>
 <dd>
 
-**b_64_img_str:** `str` — Img of plot as a base64 string
+**plot_img:** `from __future__ import annotations
+
+core.File` — See core.File for more documentation
     
 </dd>
 </dl>
@@ -1029,7 +1109,7 @@ client.document.plot.points(
 <dl>
 <dd>
 
-**method:** `typing.Optional[int]` — Can specify specific method to extract points
+**method:** `typing.Optional[int]` — Can specify a specific method to extract points
     
 </dd>
 </dl>
@@ -1740,6 +1820,14 @@ client.pic.circuit.generate(
 <dd>
 
 **apply_routing:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**apply_orientation:** `typing.Optional[bool]` 
     
 </dd>
 </dl>

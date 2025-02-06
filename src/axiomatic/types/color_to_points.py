@@ -2,16 +2,17 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .points import Points
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class ExtractConstantsResponse(UniversalBaseModel):
+class ColorToPoints(UniversalBaseModel):
     """
-    Constants Extraction Output
+    Pydantic model of multiple list of points
     """
 
-    constants: typing.Dict[str, typing.Optional[str]]
+    color_points: typing.Dict[str, Points]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

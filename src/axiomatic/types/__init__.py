@@ -2,6 +2,7 @@
 
 from .bundle import Bundle
 from .bundle_settings_value import BundleSettingsValue
+from .color_to_points import ColorToPoints
 from .computation import Computation
 from .computation_arguments_value import ComputationArgumentsValue
 from .cost_function import CostFunction
@@ -23,10 +24,8 @@ from .get_spectrum_response import GetSpectrumResponse
 from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
 from .http_validation_error import HttpValidationError
 from .interactive_response import InteractiveResponse
-from .multi_points import MultiPoints
 from .net import Net
 from .netlist import Netlist
-from .netlist_placements_value_value import NetlistPlacementsValueValue
 from .optimization_history import OptimizationHistory
 from .optimize_config import OptimizeConfig
 from .optimize_netlist_response import OptimizeNetlistResponse
@@ -39,6 +38,7 @@ from .pic_instance import PicInstance
 from .pic_instance_info_value import PicInstanceInfoValue
 from .pic_instance_settings_value import PicInstanceSettingsValue
 from .pic_warnings import PicWarnings
+from .placement import Placement
 from .points import Points
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
@@ -68,6 +68,7 @@ from .z_3_expression import Z3Expression
 __all__ = [
     "Bundle",
     "BundleSettingsValue",
+    "ColorToPoints",
     "Computation",
     "ComputationArgumentsValue",
     "CostFunction",
@@ -89,10 +90,8 @@ __all__ = [
     "GetSpectrumResponseSpectrumItem",
     "HttpValidationError",
     "InteractiveResponse",
-    "MultiPoints",
     "Net",
     "Netlist",
-    "NetlistPlacementsValueValue",
     "OptimizationHistory",
     "OptimizeConfig",
     "OptimizeNetlistResponse",
@@ -105,6 +104,7 @@ __all__ = [
     "PicInstanceInfoValue",
     "PicInstanceSettingsValue",
     "PicWarnings",
+    "Placement",
     "Points",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",

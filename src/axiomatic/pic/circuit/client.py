@@ -277,6 +277,7 @@ class CircuitClient:
         query: str,
         max_iterations: typing.Optional[int] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
+        apply_orientation: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -289,6 +290,8 @@ class CircuitClient:
         max_iterations : typing.Optional[int]
 
         apply_routing : typing.Optional[bool]
+
+        apply_orientation : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -316,6 +319,7 @@ class CircuitClient:
                 "query": query,
                 "max_iterations": max_iterations,
                 "apply_routing": apply_routing,
+                "apply_orientation": apply_orientation,
             },
             headers={
                 "content-type": "application/json",
@@ -1044,6 +1048,7 @@ class AsyncCircuitClient:
         query: str,
         max_iterations: typing.Optional[int] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
+        apply_orientation: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -1056,6 +1061,8 @@ class AsyncCircuitClient:
         max_iterations : typing.Optional[int]
 
         apply_routing : typing.Optional[bool]
+
+        apply_orientation : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1091,6 +1098,7 @@ class AsyncCircuitClient:
                 "query": query,
                 "max_iterations": max_iterations,
                 "apply_routing": apply_routing,
+                "apply_orientation": apply_orientation,
             },
             headers={
                 "content-type": "application/json",

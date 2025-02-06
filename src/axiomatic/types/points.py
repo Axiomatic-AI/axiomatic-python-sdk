@@ -7,6 +7,10 @@ import pydantic
 
 
 class Points(UniversalBaseModel):
+    """
+    Pydantic model of list of points
+    """
+
     points: typing.List[typing.List[typing.Optional[typing.Any]]]
 
     if IS_PYDANTIC_V2:
