@@ -114,11 +114,12 @@ class ToolsHelper:
                 code=code_string,
                 )
             if output.is_success is True:
-                result = self._ax_client.tools.status(job_id=output.job_id)
+                job_id: str = output.job_id
+                result = self._ax_client.tools.status(job_id=job_id)
                 if debug:
-                    print(f"job_id: {output.job_id}")
+                    print(f"job_id: {job_id}")
                 while True:
-                    result = self._ax_client.tools.status(job_id=output.job_id)
+                    result = self._ax_client.tools.status(job_id=job_id)
                     if result.status == "PENDING" or result.status == "RUNNING":
                         if debug:
                             print(f"status: {result.status}")
