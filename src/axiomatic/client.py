@@ -114,7 +114,7 @@ class ToolsHelper:
                 code=code_string,
                 )
             if output.is_success is True:
-                job_id: str = output.job_id
+                job_id = str(output.job_id)
                 result = self._ax_client.tools.status(job_id=job_id)
                 if debug:
                     print(f"job_id: {job_id}")
