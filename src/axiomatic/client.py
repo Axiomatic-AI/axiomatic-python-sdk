@@ -1,6 +1,7 @@
 import base64
 import requests
 import os
+import time
 from typing import Dict
 
 from .base_client import BaseClient, AsyncBaseClient
@@ -15,6 +16,7 @@ class Axiomatic(BaseClient):
         super().__init__(*args, **kwargs)
 
         self.document_helper = DocumentHelper(self)
+        self.tools_helper = ToolsHelper(self)
 
 
 class DocumentHelper:
@@ -88,6 +90,49 @@ class DocumentHelper:
                     images[img_name] = base64.b64encode(img_file.read()).decode("utf-8")
 
         return ParseResponse(markdown=markdown, images=images)
+
+
+class ToolsHelper:
+    _ax_client: Axiomatic
+
+    def __init__(self, ax_client: Axiomatic):
+        self._ax_client = ax_client
+
+    def tool_exec(self, tool: str, code: str, poll_interval: int = 3, debug: bool = False):
+        """
+        Helper function to schedule code execution for a specific tool and wait
+        the execution to finish and return the output or error trace
+        """
+        if not tool.strip():
+            return "Please specify a tool"
+        else:
+            tool_name = tool.strip()
+            code_string = code
+
+            output = self._ax_client.tools.schedule(
+                tool_name=tool_name,
+                code=code_string,
+                )
+            if output.is_success is True:
+                job_id = str(output.job_id)
+                result = self._ax_client.tools.status(job_id=job_id)
+                if debug:
+                    print(f"job_id: {job_id}")
+                while True:
+                    result = self._ax_client.tools.status(job_id=job_id)
+                    if result.status == "PENDING" or result.status == "RUNNING":
+                        if debug:
+                            print(f"status: {result.status}")
+                        time.sleep(poll_interval)
+                    else:
+                        if debug:
+                            print(f"status: {result.status}")
+                        if result.status == "SUCCEEDED":
+                            return result.output
+                        else:
+                            return result.error_trace
+            else:
+                return output.error_trace
 
 
 class AsyncAxiomatic(AsyncBaseClient): ...
