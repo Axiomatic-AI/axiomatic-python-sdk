@@ -98,7 +98,7 @@ class ToolsHelper:
     def __init__(self, ax_client: Axiomatic):
         self._ax_client = ax_client
 
-    def tool_exec(self, tool: str, code: str, poll_interval: int = 3, debug: bool = False) -> str:
+    def tool_exec(self, tool: str, code: str, poll_interval: int = 3, debug: bool = False):
         """
         Helper function to schedule code execution for a specific tool and wait
         the execution to finish and return the output or error trace
