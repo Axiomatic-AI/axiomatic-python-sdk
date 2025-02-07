@@ -141,8 +141,9 @@ def plot_interactive_spectra(
     # Calculate global y-limits across all arrays
     y_min = min(min(min(arr2) for arr2 in arr1) for arr1 in spectra)
     y_max = max(max(max(arr2) for arr2 in arr1) for arr1 in spectra)
-    y_min = min(hlines + [y_min])*0.95
-    y_max = max(hlines + [y_max])*1.05
+    if hlines:
+        y_min = min(hlines + [y_min])*0.95
+        y_max = max(hlines + [y_max])*1.05
 
     slider_index = slider_index or list(range(len(spectra[0])))
     spectrum_labels = spectrum_labels or [f"Spectrum {i}" for i in range(len(spectra))]
