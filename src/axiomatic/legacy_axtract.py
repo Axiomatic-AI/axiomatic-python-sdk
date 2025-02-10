@@ -80,21 +80,6 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     # 1) Define built-in templates and units directly inside the function
     # ---------------------------------------------------------------
-    IMAGING_TELESCOPE_template = {
-        "Resolution (panchromatic)": 0,
-        "Ground sampling distance (panchromatic)":0,
-        "Resolution (multispectral)": 0,
-        "Ground sampling distance (multispectral)": 0,
-        "Altitude": 0,
-        "Half field of view": 0,
-        "Mirror aperture": 0,
-        "F-number": 0,
-        "Focal length": 0,
-        "Pixel size (panchromatic)": 0,
-        "Pixel size (multispectral)": 0,
-        "Swath width": 0,
-    }
-
     IMAGING_TELESCOPE = {
         "Resolution (panchromatic)": 1.23529,
         "Ground sampling distance (panchromatic)": 0.61765,
@@ -145,7 +130,6 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     preset_options_dict = {
         "Select a template": [],
         "IMAGING TELESCOPE": list(IMAGING_TELESCOPE.keys()),
-        "IMAGING TELESCOPE template": list(IMAGING_TELESCOPE_template.keys()),
         "PAYLOAD": list(PAYLOAD_1.keys()),
     }
 
@@ -412,79 +396,45 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
 
 
 def display_results(equations_dict):
-    """Display equation validation results in a clear, organized format."""
+
     results = equations_dict.get("results", {})
-    
-    # Helper function to convert Eq(LHS,RHS) to LHS=RHS format
-    def format_equation(latex_eq):
-        # Remove 'Eq(' from start and ')' from end
-        inner = latex_eq[3:-1]
-        # Split by comma and join with equals sign
-        lhs, rhs = inner.split(',', 1)
-        return f"{lhs} = {rhs}"
-    
-    # Split results into matching and non-matching equations
-    matching = []
-    non_matching = []
-    
+    not_match_counter = 0
+
     for key, value in results.items():
-        equation_data = {
-            'latex': format_equation(value.get('latex_equation')),
-            'lhs': value.get('lhs'),
-            'rhs': value.get('rhs'),
-            'diff': abs(value.get('lhs', 0) - value.get('rhs', 0)),
-            'percent_diff': abs(value.get('lhs', 0) - value.get('rhs', 0)) / max(abs(value.get('rhs', 0)), 1e-10) * 100
-        }
-        if value.get('match'):
-            matching.append(equation_data)
-        else:
-            non_matching.append(equation_data)
+        match = value.get("match")
+        latex_equation = value.get("latex_equation")
+        lhs = value.get("lhs")
+        rhs = value.get("rhs")
+        if not match:
+            not_match_counter += 1
+            display(
+                HTML(
+                    '<p style="color:red; '
+                    "font-weight:bold; "
+                    "font-family:'Times New Roman'; "
+                    'font-size:16px;">'
+                    "Provided requirements DO NOT fulfill"
+                    "the following mathematical relation:"
+                    "</p>"
+                )
+            )
+            display(Math(latex_equation))
+            print(
+                f"""For provided values:
+                  \nleft hand side = {lhs}\nright hand side = {rhs}"""
+            )
+    if not_match_counter == 0:
+        display(
+            HTML(
+                '<p style="color:green; '
+                "font-weight:bold; "
+                "font-family:'Times New Roman'; "
+                'font-size:16px;">'
+                "Requirements you provided do not cause any conflicts"
+                "</p>"
+            )
+        )
 
-    # Display summary header
-    total = len(results)
-    display(HTML(
-        f'<h3 style="font-family:Arial">Equation Validation Summary</h3>'
-        f'<p style="font-family:Arial">Total equations checked: {total}<br>'
-        f'✅ Matching equations: {len(matching)}<br>'
-        f'❌ Non-matching equations: {len(non_matching)}</p>'
-    ))
-
-    # Display non-matching equations first (if any)
-    if non_matching:
-        display(HTML(
-            '<div style="background-color:#fff0f0; padding:10px; border-radius:5px; margin:10px 0;">'
-            '<h4 style="color:#cc0000; font-family:Arial">⚠️ Equations Not Satisfied:</h4>'
-        ))
-        
-        for eq in non_matching:
-            display(Math(eq['latex']))
-            display(HTML(
-                f'<div style="font-family:monospace; margin-left:20px; margin-bottom:15px">'
-                f'Left side  = {eq["lhs"]:.6g}<br>'
-                f'Right side = {eq["rhs"]:.6g}<br>'
-                f'Difference = {eq["diff"]:.6g}<br>'
-                f'Percent difference = {eq["percent_diff"]:.2f}%'
-                '</div>'
-            ))
-        
-        display(HTML('</div>'))
-
-    # Display matching equations (if any)
-    if matching:
-        display(HTML(
-            '<div style="background-color:#f0fff0; padding:10px; border-radius:5px; margin:10px 0;">'
-            '<h4 style="color:#006600; font-family:Arial">✅ Satisfied Equations:</h4>'
-        ))
-        
-        for eq in matching:
-            display(Math(eq['latex']))
-            display(HTML(
-                f'<div style="font-family:monospace; margin-left:20px; margin-bottom:15px">'
-                f'Value = {eq["lhs"]:.6g}'
-                '</div>'
-            ))
-            
-        display(HTML('</div>')) 
 
 def get_eq_hypergraph(api_results, requirements, with_printing=True):
 
@@ -599,146 +549,3 @@ def _add_used_vars_to_results(api_results, api_requirements):
             api_results["results"][key]["used_vars"] = used_vars
 
     return api_results
-
-
-def display_full_results(equations_dict, requirements=None, show_hypergraph=True):
-    """Display equation validation results optimized for dark theme notebooks."""
-    results = equations_dict.get("results", {})
-    
-    def format_equation(latex_eq):
-        inner = latex_eq[3:-1]
-        lhs, rhs = inner.split(',', 1)
-        return f"{lhs} = {rhs}"
-    
-    matching = []
-    non_matching = []
-    
-    for key, value in results.items():
-        equation_data = {
-            'latex': format_equation(value.get('latex_equation')),
-            'lhs': value.get('lhs'),
-            'rhs': value.get('rhs'),
-            'diff': abs(value.get('lhs', 0) - value.get('rhs', 0)),
-            'percent_diff': abs(value.get('lhs', 0) - value.get('rhs', 0)) / max(abs(value.get('rhs', 0)), 1e-10) * 100
-        }
-        if value.get('match'):
-            matching.append(equation_data)
-        else:
-            non_matching.append(equation_data)
-
-    # Summary header with dark theme
-    total = len(results)
-    display(HTML(
-        '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-        'border:1px solid #3e3e3e;">'
-        f'<h2 style="font-family:Arial; color:#e0e0e0; margin-bottom:15px">Equation Validation Analysis</h2>'
-        f'<p style="font-family:Arial; font-size:16px; color:#e0e0e0">'
-        f'<b>Total equations analyzed:</b> {total}<br>'
-        f'<span style="color:#4caf50">✅ Matching equations: {len(matching)}</span><br>'
-        f'<span style="color:#ff5252">❌ Non-matching equations: {len(non_matching)}</span></p>'
-        '</div>'
-    ))
-
-    # Non-matching equations
-    if non_matching:
-        display(HTML(
-            '<div style="background-color:#2d1f1f; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #4a2f2f;">'
-            '<h3 style="color:#ff5252; font-family:Arial">⚠️ Equations Not Satisfied</h3>'
-        ))
-        
-        for eq in non_matching:
-            display(Math(eq['latex']))
-            display(HTML(
-                '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                'background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; '
-                'border-left:4px solid #ff5252">'
-                f'Left side  = {eq["lhs"]:.6g}<br>'
-                f'Right side = {eq["rhs"]:.6g}<br>'
-                f'Absolute difference = {eq["diff"]:.6g}<br>'
-                f'Relative difference = {eq["percent_diff"]:.2f}%'
-                '</div>'
-            ))
-        
-        display(HTML('</div>'))
-
-    # Matching equations
-    if matching:
-        display(HTML(
-            '<div style="background-color:#1f2d1f; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #2f4a2f;">'
-            '<h3 style="color:#4caf50; font-family:Arial">✅ Satisfied Equations</h3>'
-        ))
-        
-        for eq in matching:
-            display(Math(eq['latex']))
-            display(HTML(
-                '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                'background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; '
-                'border-left:4px solid #4caf50">'
-                f'Value = {eq["lhs"]:.6g}'
-                '</div>'
-            ))
-            
-        display(HTML('</div>'))
-
-    # Hypergraph visualization
-    if show_hypergraph and requirements:
-        display(HTML(
-            '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #3e3e3e;">'
-            '<h3 style="color:#e0e0e0; font-family:Arial">🔍 Equation Relationship Analysis</h3>'
-            '<p style="font-family:Arial; color:#e0e0e0">The following graph shows how variables are connected through equations:</p>'
-            '</div>'
-        ))
-        
-        list_api_requirements = [asdict(req) for req in requirements]
-        
-        # Match get_eq_hypergraph settings exactly
-        plt.rcParams["text.usetex"] = False
-        plt.rcParams["mathtext.fontset"] = "stix"
-        plt.rcParams["font.family"] = "serif"
-
-        equations_dict = _add_used_vars_to_results(equations_dict, list_api_requirements)
-
-        # Prepare hypergraph data
-        hyperedges = {}
-        for eq, details in equations_dict["results"].items():
-            hyperedges[
-                _get_latex_string_format(details["latex_equation"])] = details["used_vars"]
-
-        # Create and plot the hypergraph
-        H = hnx.Hypergraph(hyperedges)
-        plt.figure(figsize=(16, 12))
-
-        # Draw hypergraph with exact same settings as get_eq_hypergraph
-        hnx.draw(
-            H,
-            with_edge_labels=True,
-            edge_labels_on_edge=False,
-            node_labels_kwargs={"fontsize": 14},
-            edge_labels_kwargs={"fontsize": 14},
-            layout_kwargs={"seed": 42, "scale": 2.5},
-        )
-
-        node_labels = list(H.nodes)
-        symbol_explanations = _get_node_names_for_node_lables(
-            node_labels,
-            list_api_requirements
-        )
-        
-        explanation_text = "\n".join(
-            [f"${symbol}$: {desc}" for symbol, desc in symbol_explanations]
-        )
-        plt.annotate(
-            explanation_text,
-            xy=(1.05, 0.5),
-            xycoords="axes fraction",
-            fontsize=14,
-            verticalalignment="center",
-        )
-        
-        plt.title(r"Enhanced Hypergraph of Equations and Variables", fontsize=20)
-        plt.show()
-
-    return None
