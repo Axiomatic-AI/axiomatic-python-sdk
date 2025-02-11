@@ -610,7 +610,7 @@ def display_full_results(equations_dict, requirements=None, show_hypergraph=True
     return None
 
 
-def get_numerical_values(ax_client, path, constants_of_interest,json_path):  
+def get_numerical_values(ax_client, path, constants_of_interest):  
     with open(path, "rb") as f:
         file = f.read()
 
