@@ -662,6 +662,10 @@ def get_numerical_values(ax_client, path, constants_of_interest):
                 elif unit == "km":  # kilometer
                     value *= 1e3
                     unit = "m"
+                # Handle degree conversions to radians
+                elif unit in ["deg", "°"]:  # degrees
+                    value = value * (3.14159265359 / 180.0)  # convert to radians
+                    unit = "rad"
                 
                 processed_values[constant_name] = {
                     "Value": value,
