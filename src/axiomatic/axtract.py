@@ -663,7 +663,7 @@ def get_numerical_values(ax_client, path, constants_of_interest):
                     value *= 1e3
                     unit = "m"
                 # Handle degree conversions to radians
-                elif unit in ["deg", "°"]:  # degrees
+                elif unit in ["deg", "°", "degree", "degrees"]:  # degrees
                     value = value * (3.14159265359 / 180.0)  # convert to radians
                     unit = "rad"
                 
