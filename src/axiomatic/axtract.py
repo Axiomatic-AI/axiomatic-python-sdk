@@ -615,7 +615,7 @@ def get_numerical_values(ax_client, path, constants_of_interest):
         file = f.read()
 
     constants = ax_client.document.constants(file=file, constants=constants_of_interest).constants
-    
+    print(constants)
     # Create a dictionary to store processed values
     processed_values = {}
     
@@ -636,14 +636,35 @@ def get_numerical_values(ax_client, path, constants_of_interest):
                 "Value": f_number,
                 "Units": "dimensionless"
             }
+        elif 'f/' in value_str:
+            # Handle F-number values
+            f_number = float(value_str.split('/')[-1])
+            processed_values[constant_name] = {
+                "Value": f_number,
+                "Units": "dimensionless"
+            }
         else:
             # Handle normal values with units
             # Split on the last space to separate value and unit
             parts = value_str.rsplit(' ', 1)
             if len(parts) == 2:
                 value, unit = parts
+                # Convert value to float
+                value = float(value)
+                
+                # Handle unit conversions to meters
+                if unit == "\u00b5m":  # micrometer
+                    value *= 1e-6
+                    unit = "m"
+                elif unit == "mm":  # millimeter
+                    value *= 1e-3
+                    unit = "m"
+                elif unit == "km":  # kilometer
+                    value *= 1e3
+                    unit = "m"
+                
                 processed_values[constant_name] = {
-                    "Value": float(value),
+                    "Value": value,
                     "Units": unit
                 }
             else:
