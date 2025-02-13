@@ -2,18 +2,20 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .points import Points
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class ColorToPoints(UniversalBaseModel):
+class AxesInfo(UniversalBaseModel):
     """
-    Pydantic model of multiple list of points
+    Pydantic class for Axes Info
     """
 
-    color_points: typing.Dict[str, Points]
-    img_coords: typing.Optional[typing.Dict[str, typing.Optional[Points]]] = None
+    origin: typing.Optional[typing.List[typing.Optional[typing.Any]]] = None
+    x_axis_len: typing.Optional[float] = None
+    y_axis_len: typing.Optional[float] = None
+    x_contour: typing.Optional[typing.List[typing.List[float]]] = None
+    y_contour: typing.Optional[typing.List[typing.List[float]]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

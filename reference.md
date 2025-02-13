@@ -979,6 +979,66 @@ client.tools.status(
 </dl>
 </details>
 
+<details><summary><code>client.tools.<a href="src/axiomatic/tools/client.py">list</a>()</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get the list of available tools to execute code.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.tools.list()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## CodeExecution Python
 <details><summary><code>client.code_execution.python.<a href="src/axiomatic/code_execution/python/client.py">execute</a>(...)</code></summary>
 <dl>

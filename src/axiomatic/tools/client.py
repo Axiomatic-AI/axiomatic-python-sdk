@@ -11,6 +11,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..types.status_response import StatusResponse
 from ..core.jsonable_encoder import jsonable_encoder
+from ..types.tools_list_response import ToolsListResponse
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -140,6 +141,48 @@ class ToolsClient:
                             object_=_response.json(),
                         ),
                     )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ToolsListResponse:
+        """
+        Get the list of available tools to execute code.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ToolsListResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.tools.list()
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "jobs/list/tools",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ToolsListResponse,
+                    parse_obj_as(
+                        type_=ToolsListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
                 )
             _response_json = _response.json()
         except JSONDecodeError:
@@ -286,6 +329,56 @@ class AsyncToolsClient:
                             object_=_response.json(),
                         ),
                     )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ToolsListResponse:
+        """
+        Get the list of available tools to execute code.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ToolsListResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.tools.list()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "jobs/list/tools",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ToolsListResponse,
+                    parse_obj_as(
+                        type_=ToolsListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
                 )
             _response_json = _response.json()
         except JSONDecodeError:

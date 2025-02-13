@@ -2,16 +2,17 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .extracted_point import ExtractedPoint
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class Points(UniversalBaseModel):
+class ExtractedPoints(UniversalBaseModel):
     """
-    Pydantic model of list of points
+    Maps a color and id of a line to its extracted points
     """
 
-    points: typing.List[typing.List[typing.Optional[typing.Any]]]
+    extracted_points: typing.Dict[str, typing.List[ExtractedPoint]]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

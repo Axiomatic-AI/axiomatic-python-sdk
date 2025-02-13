@@ -6,11 +6,8 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class Placement(UniversalBaseModel):
-    x: typing.Optional[float] = None
-    y: typing.Optional[float] = None
-    rotation: typing.Optional[int] = None
-    mirror: typing.Optional[bool] = None
+class ToolsListResponse(UniversalBaseModel):
+    tools_list: typing.Optional[typing.List[str]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

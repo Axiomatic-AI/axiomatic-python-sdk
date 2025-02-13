@@ -4,7 +4,7 @@ import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ... import core
 from ...core.request_options import RequestOptions
-from ...types.color_to_points import ColorToPoints
+from ...types.plot_parser_output import PlotParserOutput
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
@@ -28,7 +28,7 @@ class PlotClient:
         plot_info: typing.Optional[str] = None,
         get_img_coords: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ColorToPoints:
+    ) -> PlotParserOutput:
         """
         Extracts points from plots
 
@@ -51,7 +51,7 @@ class PlotClient:
 
         Returns
         -------
-        ColorToPoints
+        PlotParserOutput
             Successful Response
 
         Examples
@@ -81,9 +81,9 @@ class PlotClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ColorToPoints,
+                    PlotParserOutput,
                     parse_obj_as(
-                        type_=ColorToPoints,  # type: ignore
+                        type_=PlotParserOutput,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -115,7 +115,7 @@ class AsyncPlotClient:
         plot_info: typing.Optional[str] = None,
         get_img_coords: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ColorToPoints:
+    ) -> PlotParserOutput:
         """
         Extracts points from plots
 
@@ -138,7 +138,7 @@ class AsyncPlotClient:
 
         Returns
         -------
-        ColorToPoints
+        PlotParserOutput
             Successful Response
 
         Examples
@@ -176,9 +176,9 @@ class AsyncPlotClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ColorToPoints,
+                    PlotParserOutput,
                     parse_obj_as(
-                        type_=ColorToPoints,  # type: ignore
+                        type_=PlotParserOutput,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
