@@ -208,7 +208,7 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
         plt.show()
 
 
-def print_statements(statements: StatementDictionary, validation: Optional[StatementValidationDictionary] = None):
+def print_statements(statements: StatementDictionary, validation: Optional[StatementValidationDictionary] = None, only_formalized: bool = False):
     """
     Print a list of statements in nice readable format.
     """
@@ -231,6 +231,8 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
 
     print("-----------------------------------\n")
     for cost_stmt, cost_val in zip(statements.cost_functions or [], validation.cost_functions or []):
+        if (cost_stmt.formalization is None or cost_stmt.formalization.mapping is None) and only_formalized:
+            continue
         print("Type:", cost_stmt.type)
         print("Statement:", cost_stmt.text)
         print("Formalization:", end=" ")
@@ -256,6 +258,8 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
             print(val.message)
         print("\n-----------------------------------\n")
     for param_stmt, param_val in zip(statements.parameter_constraints or [], validation.parameter_constraints or []):
+        if (param_stmt.formalization is None or param_stmt.formalization.mapping is None) and only_formalized:
+            continue
         print("Type:", param_stmt.type)
         print("Statement:", param_stmt.text)
         print("Formalization:", end=" ")
@@ -281,6 +285,8 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
             print(f"Holds: {val.holds} ({val.message})")
         print("\n-----------------------------------\n")
     for struct_stmt, struct_val in zip(statements.structure_constraints or [], validation.structure_constraints or []):
+        if struct_stmt.formalization is None and only_formalized:
+            continue
         print("Type:", struct_stmt.type)
         print("Statement:", struct_stmt.text)
         print("Formalization:", end=" ")
@@ -301,11 +307,12 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
             print(f"Satisfiable: {val.satisfiable}")
             print(f"Holds: {val.holds}")
         print("\n-----------------------------------\n")
-    for unf_stmt in statements.unformalizable_statements or []:
-        print("Type:", unf_stmt.type)
-        print("Statement:", unf_stmt.text)
-        print("Formalization: UNFORMALIZABLE")
-        print("\n-----------------------------------\n")
+    if not only_formalized:
+        for unf_stmt in statements.unformalizable_statements or []:
+            print("Type:", unf_stmt.type)
+            print("Statement:", unf_stmt.text)
+            print("Formalization: UNFORMALIZABLE")
+            print("\n-----------------------------------\n")
 
 
 def _str_units_to_float(str_units: str) -> float:
