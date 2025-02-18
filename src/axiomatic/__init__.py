@@ -11,6 +11,8 @@ from .types import (
     CreateApiKeyrequest,
     CreateUserRequest,
     CreateUserResponse,
+    EquationExtraction,
+    EquationExtractionResponse,
     ExecuteCodeResponse,
     ExtractConstantsResponse,
     ExtractTextResponse,
@@ -71,7 +73,19 @@ from .types import (
     Z3Expression,
 )
 from .errors import UnprocessableEntityError
-from . import code_execution, document, experimental, formalization, fso, generic, lean, pic, requirements, tools
+from . import (
+    code_execution,
+    document,
+    equation_processing,
+    experimental,
+    formalization,
+    fso,
+    generic,
+    lean,
+    pic,
+    requirements,
+    tools,
+)
 from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
 from .version import __version__
@@ -90,6 +104,8 @@ __all__ = [
     "CreateApiKeyrequest",
     "CreateUserRequest",
     "CreateUserResponse",
+    "EquationExtraction",
+    "EquationExtractionResponse",
     "ExecuteCodeResponse",
     "ExtractConstantsResponse",
     "ExtractTextResponse",
@@ -152,6 +168,7 @@ __all__ = [
     "__version__",
     "code_execution",
     "document",
+    "equation_processing",
     "experimental",
     "formalization",
     "fso",

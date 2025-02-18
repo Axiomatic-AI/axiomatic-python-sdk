@@ -13,6 +13,7 @@ from .formalization.client import FormalizationClient
 from .generic.client import GenericClient
 from .document.client import DocumentClient
 from .tools.client import ToolsClient
+from .equation_processing.client import EquationProcessingClient
 from .code_execution.client import CodeExecutionClient
 from .fso.client import FsoClient
 from .pic.client import PicClient
@@ -27,6 +28,7 @@ from .formalization.client import AsyncFormalizationClient
 from .generic.client import AsyncGenericClient
 from .document.client import AsyncDocumentClient
 from .tools.client import AsyncToolsClient
+from .equation_processing.client import AsyncEquationProcessingClient
 from .code_execution.client import AsyncCodeExecutionClient
 from .fso.client import AsyncFsoClient
 from .pic.client import AsyncPicClient
@@ -101,6 +103,7 @@ class BaseClient:
         self.generic = GenericClient(client_wrapper=self._client_wrapper)
         self.document = DocumentClient(client_wrapper=self._client_wrapper)
         self.tools = ToolsClient(client_wrapper=self._client_wrapper)
+        self.equation_processing = EquationProcessingClient(client_wrapper=self._client_wrapper)
         self.code_execution = CodeExecutionClient(client_wrapper=self._client_wrapper)
         self.fso = FsoClient(client_wrapper=self._client_wrapper)
         self.pic = PicClient(client_wrapper=self._client_wrapper)
@@ -259,6 +262,7 @@ class AsyncBaseClient:
         self.generic = AsyncGenericClient(client_wrapper=self._client_wrapper)
         self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)
         self.tools = AsyncToolsClient(client_wrapper=self._client_wrapper)
+        self.equation_processing = AsyncEquationProcessingClient(client_wrapper=self._client_wrapper)
         self.code_execution = AsyncCodeExecutionClient(client_wrapper=self._client_wrapper)
         self.fso = AsyncFsoClient(client_wrapper=self._client_wrapper)
         self.pic = AsyncPicClient(client_wrapper=self._client_wrapper)

@@ -10,6 +10,8 @@ from .create_api_key_response import CreateApiKeyResponse
 from .create_api_keyrequest import CreateApiKeyrequest
 from .create_user_request import CreateUserRequest
 from .create_user_response import CreateUserResponse
+from .equation_extraction import EquationExtraction
+from .equation_extraction_response import EquationExtractionResponse
 from .execute_code_response import ExecuteCodeResponse
 from .extract_constants_response import ExtractConstantsResponse
 from .extract_text_response import ExtractTextResponse
@@ -80,6 +82,8 @@ __all__ = [
     "CreateApiKeyrequest",
     "CreateUserRequest",
     "CreateUserResponse",
+    "EquationExtraction",
+    "EquationExtractionResponse",
     "ExecuteCodeResponse",
     "ExtractConstantsResponse",
     "ExtractTextResponse",
