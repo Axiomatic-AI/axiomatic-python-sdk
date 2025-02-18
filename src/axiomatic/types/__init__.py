@@ -24,6 +24,8 @@ from .formalize_response import FormalizeResponse
 from .generate_code_response import GenerateCodeResponse
 from .generate_component_code_response import GenerateComponentCodeResponse
 from .generate_lens_code_response import GenerateLensCodeResponse
+from .get_optimizable_parameters_body import GetOptimizableParametersBody
+from .get_optimizable_parameters_response import GetOptimizableParametersResponse
 from .get_spectrum_response import GetSpectrumResponse
 from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
 from .http_validation_error import HttpValidationError
@@ -96,6 +98,8 @@ __all__ = [
     "GenerateCodeResponse",
     "GenerateComponentCodeResponse",
     "GenerateLensCodeResponse",
+    "GetOptimizableParametersBody",
+    "GetOptimizableParametersResponse",
     "GetSpectrumResponse",
     "GetSpectrumResponseSpectrumItem",
     "HttpValidationError",

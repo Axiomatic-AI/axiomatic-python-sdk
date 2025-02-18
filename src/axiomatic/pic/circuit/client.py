@@ -24,6 +24,7 @@ from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from ...types.optimize_placement_body_response import OptimizePlacementBodyResponse
 from .types.settings import Settings
 from ...types.get_spectrum_response import GetSpectrumResponse
+from ...types.get_optimizable_parameters_response import GetOptimizableParametersResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -470,13 +471,7 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import (
-            Axiomatic,
-            Computation,
-            Netlist,
-            Parameter,
-            StatementDictionary,
-        )
+        from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -490,11 +485,7 @@ class CircuitClient:
                     arguments={"key": 1.1},
                 )
             },
-            parameters=[
-                Parameter(
-                    path="path",
-                )
-            ],
+            parameters=[{"path": "path"}],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -510,9 +501,7 @@ class CircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
                 ),
-                "parameters": convert_and_respect_annotation_metadata(
-                    object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
-                ),
+                "parameters": parameters,
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
@@ -758,6 +747,60 @@ class CircuitClient:
                     GetSpectrumResponse,
                     parse_obj_as(
                         type_=GetSpectrumResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get_optimizable_parameters(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetOptimizableParametersResponse:
+        """
+        Gets the optimizable parameters of a circuit.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetOptimizableParametersResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.get_optimizable_parameters()
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/optimizable-parameters/get",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    GetOptimizableParametersResponse,
+                    parse_obj_as(
+                        type_=GetOptimizableParametersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1259,13 +1302,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import (
-            AsyncAxiomatic,
-            Computation,
-            Netlist,
-            Parameter,
-            StatementDictionary,
-        )
+        from axiomatic import AsyncAxiomatic, Computation, Netlist, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -1282,11 +1319,7 @@ class AsyncCircuitClient:
                         arguments={"key": 1.1},
                     )
                 },
-                parameters=[
-                    Parameter(
-                        path="path",
-                    )
-                ],
+                parameters=[{"path": "path"}],
             )
 
 
@@ -1305,9 +1338,7 @@ class AsyncCircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
                 ),
-                "parameters": convert_and_respect_annotation_metadata(
-                    object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
-                ),
+                "parameters": parameters,
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
@@ -1577,6 +1608,68 @@ class AsyncCircuitClient:
                     GetSpectrumResponse,
                     parse_obj_as(
                         type_=GetSpectrumResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_optimizable_parameters(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetOptimizableParametersResponse:
+        """
+        Gets the optimizable parameters of a circuit.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetOptimizableParametersResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.get_optimizable_parameters()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/optimizable-parameters/get",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    GetOptimizableParametersResponse,
+                    parse_obj_as(
+                        type_=GetOptimizableParametersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
