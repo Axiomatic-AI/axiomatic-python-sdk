@@ -471,7 +471,13 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
+        from axiomatic import (
+            Axiomatic,
+            Computation,
+            Netlist,
+            Parameter,
+            StatementDictionary,
+        )
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -485,7 +491,11 @@ class CircuitClient:
                     arguments={"key": 1.1},
                 )
             },
-            parameters=[{"path": "path"}],
+            parameters=[
+                Parameter(
+                    path="path",
+                )
+            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -501,7 +511,9 @@ class CircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
                 ),
-                "parameters": parameters,
+                "parameters": convert_and_respect_annotation_metadata(
+                    object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
@@ -766,13 +778,15 @@ class CircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_optimizable_parameters(
-        self, *, request_options: typing.Optional[RequestOptions] = None
+        self, *, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
     ) -> GetOptimizableParametersResponse:
         """
         Gets the optimizable parameters of a circuit.
 
         Parameters
         ----------
+        netlist : Netlist
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -783,17 +797,28 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic
+        from axiomatic import Axiomatic, Netlist
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.pic.circuit.get_optimizable_parameters()
+        client.pic.circuit.get_optimizable_parameters(
+            netlist=Netlist(),
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
             "pic/circuit/optimizable-parameters/get",
-            method="GET",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -1302,7 +1327,13 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, Computation, Netlist, StatementDictionary
+        from axiomatic import (
+            AsyncAxiomatic,
+            Computation,
+            Netlist,
+            Parameter,
+            StatementDictionary,
+        )
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -1319,7 +1350,11 @@ class AsyncCircuitClient:
                         arguments={"key": 1.1},
                     )
                 },
-                parameters=[{"path": "path"}],
+                parameters=[
+                    Parameter(
+                        path="path",
+                    )
+                ],
             )
 
 
@@ -1338,7 +1373,9 @@ class AsyncCircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
                 ),
-                "parameters": parameters,
+                "parameters": convert_and_respect_annotation_metadata(
+                    object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
@@ -1627,13 +1664,15 @@ class AsyncCircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_optimizable_parameters(
-        self, *, request_options: typing.Optional[RequestOptions] = None
+        self, *, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
     ) -> GetOptimizableParametersResponse:
         """
         Gets the optimizable parameters of a circuit.
 
         Parameters
         ----------
+        netlist : Netlist
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1646,7 +1685,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic
+        from axiomatic import AsyncAxiomatic, Netlist
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -1654,15 +1693,26 @@ class AsyncCircuitClient:
 
 
         async def main() -> None:
-            await client.pic.circuit.get_optimizable_parameters()
+            await client.pic.circuit.get_optimizable_parameters(
+                netlist=Netlist(),
+            )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
             "pic/circuit/optimizable-parameters/get",
-            method="GET",
+            method="POST",
+            json={
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:

@@ -24,7 +24,6 @@ from .formalize_response import FormalizeResponse
 from .generate_code_response import GenerateCodeResponse
 from .generate_component_code_response import GenerateComponentCodeResponse
 from .generate_lens_code_response import GenerateLensCodeResponse
-from .get_optimizable_parameters_body import GetOptimizableParametersBody
 from .get_optimizable_parameters_response import GetOptimizableParametersResponse
 from .get_spectrum_response import GetSpectrumResponse
 from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
@@ -38,6 +37,8 @@ from .optimize_netlist_response import OptimizeNetlistResponse
 from .optimize_placement_body_response import OptimizePlacementBodyResponse
 from .parameter import Parameter
 from .parameter_constraint import ParameterConstraint
+from .parameter_output_lower_bound import ParameterOutputLowerBound
+from .parameter_output_upper_bound import ParameterOutputUpperBound
 from .parse_response import ParseResponse
 from .pdk_type import PdkType
 from .pic_instance import PicInstance
@@ -98,7 +99,6 @@ __all__ = [
     "GenerateCodeResponse",
     "GenerateComponentCodeResponse",
     "GenerateLensCodeResponse",
-    "GetOptimizableParametersBody",
     "GetOptimizableParametersResponse",
     "GetSpectrumResponse",
     "GetSpectrumResponseSpectrumItem",
@@ -112,6 +112,8 @@ __all__ = [
     "OptimizePlacementBodyResponse",
     "Parameter",
     "ParameterConstraint",
+    "ParameterOutputLowerBound",
+    "ParameterOutputUpperBound",
     "ParseResponse",
     "PdkType",
     "PicInstance",

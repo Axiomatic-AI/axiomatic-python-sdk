@@ -2115,7 +2115,13 @@ Optimize a PIC circuit with given cost and constraints
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
+from axiomatic import (
+    Axiomatic,
+    Computation,
+    Netlist,
+    Parameter,
+    StatementDictionary,
+)
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
@@ -2129,7 +2135,11 @@ client.pic.circuit.optimize(
             arguments={"key": 1.1},
         )
     },
-    parameters=[{"path": "path"}],
+    parameters=[
+        Parameter(
+            path="path",
+        )
+    ],
 )
 
 ```
@@ -2452,7 +2462,7 @@ client.pic.circuit.get_sax_spectrum(
 </dl>
 </details>
 
-<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">get_optimizable_parameters</a>()</code></summary>
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">get_optimizable_parameters</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -2479,12 +2489,14 @@ Gets the optimizable parameters of a circuit.
 <dd>
 
 ```python
-from axiomatic import Axiomatic
+from axiomatic import Axiomatic, Netlist
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.pic.circuit.get_optimizable_parameters()
+client.pic.circuit.get_optimizable_parameters(
+    netlist=Netlist(),
+)
 
 ```
 </dd>
@@ -2496,6 +2508,14 @@ client.pic.circuit.get_optimizable_parameters()
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
+    
+</dd>
+</dl>
 
 <dl>
 <dd>

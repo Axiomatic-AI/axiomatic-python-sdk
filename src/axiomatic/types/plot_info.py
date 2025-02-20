@@ -16,13 +16,15 @@ class PlotInfo(UniversalBaseModel):
     x_axis_max: typing.Optional[float] = None
     x_axis_tick: typing.Optional[float] = None
     x_axis_unit: typing.Optional[str] = None
+    x_scale: typing.Optional[str] = None
     y_axis_name: typing.Optional[str] = None
     y_axis_min: typing.Optional[float] = None
     y_axis_max: typing.Optional[float] = None
     y_axis_tick: typing.Optional[float] = None
     y_axis_unit: typing.Optional[str] = None
+    y_scale: typing.Optional[str] = None
     num_of_lines: typing.Optional[int] = None
-    exists_black_line: typing.Optional[bool] = None
+    black_gray_line: typing.Optional[bool] = None
     grid_lines: typing.Optional[bool] = None
 
     if IS_PYDANTIC_V2:
