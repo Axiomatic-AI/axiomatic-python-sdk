@@ -75,7 +75,7 @@ class CircuitClient:
             mapping={
                 "key": Computation(
                     name="name",
-                    arguments={"key": 1.1},
+                    arguments={"key": True},
                 )
             },
         )
@@ -488,7 +488,7 @@ class CircuitClient:
             mapping={
                 "key": Computation(
                     name="name",
-                    arguments={"key": 1.1},
+                    arguments={"key": True},
                 )
             },
             parameters=[
@@ -894,7 +894,7 @@ class AsyncCircuitClient:
                 mapping={
                     "key": Computation(
                         name="name",
-                        arguments={"key": 1.1},
+                        arguments={"key": True},
                     )
                 },
             )
@@ -1347,7 +1347,7 @@ class AsyncCircuitClient:
                 mapping={
                     "key": Computation(
                         name="name",
-                        arguments={"key": 1.1},
+                        arguments={"key": True},
                     )
                 },
                 parameters=[

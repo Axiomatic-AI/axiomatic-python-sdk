@@ -14,13 +14,13 @@ class PlotInfo(UniversalBaseModel):
     x_axis_name: typing.Optional[str] = None
     x_axis_min: typing.Optional[float] = None
     x_axis_max: typing.Optional[float] = None
-    x_axis_tick: typing.Optional[float] = None
+    x_axis_tick_values: typing.Optional[typing.List[float]] = None
     x_axis_unit: typing.Optional[str] = None
     x_scale: typing.Optional[str] = None
     y_axis_name: typing.Optional[str] = None
     y_axis_min: typing.Optional[float] = None
     y_axis_max: typing.Optional[float] = None
-    y_axis_tick: typing.Optional[float] = None
+    y_axis_tick_values: typing.Optional[typing.List[float]] = None
     y_axis_unit: typing.Optional[str] = None
     y_scale: typing.Optional[str] = None
     num_of_lines: typing.Optional[int] = None

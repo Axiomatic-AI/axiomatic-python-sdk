@@ -2,4 +2,4 @@
 
 import typing
 
-ComputationArgumentsValue = typing.Union[float, int, str, bool, typing.List[typing.Optional[typing.Any]]]
+ComputationArgumentsValue = typing.Union[bool, int, float, str, typing.List[typing.Optional[typing.Any]]]

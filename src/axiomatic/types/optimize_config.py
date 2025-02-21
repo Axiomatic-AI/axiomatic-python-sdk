@@ -17,6 +17,7 @@ class OptimizeConfig(UniversalBaseModel):
     adam: typing.Optional[bool] = None
     momentum: typing.Optional[float] = None
     jit_compile: typing.Optional[bool] = None
+    ignore_unsatisfiable: typing.Optional[bool] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

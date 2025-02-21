@@ -1680,7 +1680,7 @@ client.pic.circuit.validate(
     mapping={
         "key": Computation(
             name="name",
-            arguments={"key": 1.1},
+            arguments={"key": True},
         )
     },
 )
@@ -2132,7 +2132,7 @@ client.pic.circuit.optimize(
     mapping={
         "key": Computation(
             name="name",
-            arguments={"key": 1.1},
+            arguments={"key": True},
         )
     },
     parameters=[

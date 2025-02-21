@@ -16,6 +16,8 @@ class AxesInfo(UniversalBaseModel):
     y_axis_len: typing.Optional[float] = None
     x_contour: typing.Optional[typing.List[typing.List[float]]] = None
     y_contour: typing.Optional[typing.List[typing.List[float]]] = None
+    x_ticks: typing.Optional[typing.List[typing.List[typing.List[int]]]] = None
+    y_ticks: typing.Optional[typing.List[typing.List[typing.List[int]]]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
