@@ -9,7 +9,6 @@ from . import ParseResponse
 
 
 class Axiomatic(BaseClient):
-
     def __init__(self, *args, **kwargs):
         if "timeout" not in kwargs:
             kwargs["timeout"] = 1200
@@ -20,7 +19,6 @@ class Axiomatic(BaseClient):
 
 
 class DocumentHelper:
-
     _ax_client: Axiomatic
 
     def __init__(self, ax_client: Axiomatic):
@@ -28,6 +26,9 @@ class DocumentHelper:
 
     def pdf_from_url(self, url: str) -> ParseResponse:
         """Download a PDF document from a URL and parse it into a Markdown response."""
+        if "arxiv" in url and "abs" in url:
+            url = url.replace("abs", "pdf")
+            print("The URL is an arXiv abstract page. Replacing 'abs' with 'pdf' to download the PDF.")
         file = requests.get(url)
         response = self._ax_client.document.parse(file=file.content)
         return response
@@ -112,7 +113,7 @@ class ToolsHelper:
             output = self._ax_client.tools.schedule(
                 tool_name=tool_name,
                 code=code_string,
-                )
+            )
             if output.is_success is True:
                 job_id = str(output.job_id)
                 result = self._ax_client.tools.status(job_id=job_id)
