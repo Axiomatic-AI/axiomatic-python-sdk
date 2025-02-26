@@ -2,13 +2,14 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .statement_type import StatementType
 import pydantic
 from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class UnformalizableStatement(UniversalBaseModel):
-    type: typing.Optional[typing.Literal["UNFORMALIZABLE_STATEMENT"]] = None
+    type: typing.Optional[StatementType] = None
     text: str = pydantic.Field()
     """
     The natural language content of the statement.

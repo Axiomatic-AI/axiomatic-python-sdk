@@ -13,7 +13,10 @@ from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from ...types.pdk_type import PdkType
 from ...types.formalize_circuit_response import FormalizeCircuitResponse
+from .types.statement import Statement
+from ...types.informalize_statement_response import InformalizeStatementResponse
 from ...types.find_mapping_response import FindMappingResponse
 from ...types.generate_code_response import GenerateCodeResponse
 from ...types.refine_code_response import RefineCodeResponse
@@ -125,7 +128,11 @@ class CircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def formalize(
-        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        query: str,
+        pdk: typing.Optional[PdkType] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormalizeCircuitResponse:
         """
         Formalize a query about a circuit into a dictionary of constraints
@@ -133,6 +140,8 @@ class CircuitClient:
         Parameters
         ----------
         query : str
+
+        pdk : typing.Optional[PdkType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -158,6 +167,7 @@ class CircuitClient:
             method="POST",
             json={
                 "query": query,
+                "pdk": pdk,
             },
             headers={
                 "content-type": "application/json",
@@ -171,6 +181,75 @@ class CircuitClient:
                     FormalizeCircuitResponse,
                     parse_obj_as(
                         type_=FormalizeCircuitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def informalize(
+        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
+    ) -> InformalizeStatementResponse:
+        """
+        Informalize a formal statement about a circuit into a natural language text.
+
+        Parameters
+        ----------
+        statement : Statement
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        InformalizeStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, ParameterConstraint
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.informalize(
+            statement=ParameterConstraint(
+                text="text",
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/informalize",
+            method="POST",
+            json={
+                "statement": convert_and_respect_annotation_metadata(
+                    object_=statement, annotation=Statement, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    InformalizeStatementResponse,
+                    parse_obj_as(
+                        type_=InformalizeStatementResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -947,7 +1026,11 @@ class AsyncCircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def formalize(
-        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        query: str,
+        pdk: typing.Optional[PdkType] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormalizeCircuitResponse:
         """
         Formalize a query about a circuit into a dictionary of constraints
@@ -955,6 +1038,8 @@ class AsyncCircuitClient:
         Parameters
         ----------
         query : str
+
+        pdk : typing.Optional[PdkType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -988,6 +1073,7 @@ class AsyncCircuitClient:
             method="POST",
             json={
                 "query": query,
+                "pdk": pdk,
             },
             headers={
                 "content-type": "application/json",
@@ -1001,6 +1087,83 @@ class AsyncCircuitClient:
                     FormalizeCircuitResponse,
                     parse_obj_as(
                         type_=FormalizeCircuitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def informalize(
+        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
+    ) -> InformalizeStatementResponse:
+        """
+        Informalize a formal statement about a circuit into a natural language text.
+
+        Parameters
+        ----------
+        statement : Statement
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        InformalizeStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic, ParameterConstraint
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.informalize(
+                statement=ParameterConstraint(
+                    text="text",
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/informalize",
+            method="POST",
+            json={
+                "statement": convert_and_respect_annotation_metadata(
+                    object_=statement, annotation=Statement, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    InformalizeStatementResponse,
+                    parse_obj_as(
+                        type_=InformalizeStatementResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

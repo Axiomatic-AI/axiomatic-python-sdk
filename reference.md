@@ -1039,7 +1039,147 @@ client.tools.list()
 </dl>
 </details>
 
+## EquationValidation
+<details><summary><code>client.equation_validation.<a href="src/axiomatic/equation_validation/client.py">validate_equations</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Validates a set of variables against stored equations to check for inconsistencies.
+Returns validation results for each relevant equation.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, VariableRequirement
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.equation_validation.validate_equations(
+    request=[
+        VariableRequirement(
+            symbol="symbol",
+            name="name",
+            value=1.1,
+            units="units",
+            tolerance=1.1,
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `typing.Sequence[VariableRequirement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## EquationProcessing
+<details><summary><code>client.equation_processing.<a href="src/axiomatic/equation_processing/client.py">get_all_variables</a>()</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get all avail. vars to allow user choose requirements
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.equation_processing.get_all_variables()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.equation_processing.<a href="src/axiomatic/equation_processing/client.py">extract_from_document</a>(...)</code></summary>
 <dl>
 <dd>
@@ -1786,6 +1926,86 @@ client.pic.circuit.formalize(
 <dd>
 
 **query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**pdk:** `typing.Optional[PdkType]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">informalize</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Informalize a formal statement about a circuit into a natural language text.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, ParameterConstraint
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.informalize(
+    statement=ParameterConstraint(
+        text="text",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**statement:** `Statement` 
     
 </dd>
 </dl>

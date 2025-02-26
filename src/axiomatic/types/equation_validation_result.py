@@ -2,18 +2,12 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .dict_item import DictItem
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class EquationExtraction(UniversalBaseModel):
-    id: str
-    name: str
-    description: str
-    original_format: str
-    latex_symbols: typing.List[DictItem]
-    narrative_assumptions: typing.List[str]
+class EquationValidationResult(UniversalBaseModel):
+    validations: typing.Dict[str, typing.Optional[typing.Any]]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

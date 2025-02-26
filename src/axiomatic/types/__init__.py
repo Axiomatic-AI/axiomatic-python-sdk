@@ -10,8 +10,10 @@ from .create_api_key_response import CreateApiKeyResponse
 from .create_api_keyrequest import CreateApiKeyrequest
 from .create_user_request import CreateUserRequest
 from .create_user_response import CreateUserResponse
+from .dict_item import DictItem
 from .equation_extraction import EquationExtraction
 from .equation_extraction_response import EquationExtractionResponse
+from .equation_validation_result import EquationValidationResult
 from .execute_code_response import ExecuteCodeResponse
 from .extract_constants_response import ExtractConstantsResponse
 from .extract_text_response import ExtractTextResponse
@@ -28,6 +30,7 @@ from .get_optimizable_parameters_response import GetOptimizableParametersRespons
 from .get_spectrum_response import GetSpectrumResponse
 from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
 from .http_validation_error import HttpValidationError
+from .informalize_statement_response import InformalizeStatementResponse
 from .interactive_response import InteractiveResponse
 from .net import Net
 from .netlist import Netlist
@@ -55,6 +58,7 @@ from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
 from .spectrum import Spectrum
 from .statement_dictionary import StatementDictionary
+from .statement_type import StatementType
 from .statement_validation import StatementValidation
 from .statement_validation_dictionary import StatementValidationDictionary
 from .status_response import StatusResponse
@@ -70,6 +74,7 @@ from .validate_netlist_response import ValidateNetlistResponse
 from .validate_response import ValidateResponse
 from .validation_error import ValidationError
 from .validation_error_loc_item import ValidationErrorLocItem
+from .variable_requirement import VariableRequirement
 from .verify_circuit_code_response import VerifyCircuitCodeResponse
 from .verify_response import VerifyResponse
 from .z_3_expression import Z3Expression
@@ -85,8 +90,10 @@ __all__ = [
     "CreateApiKeyrequest",
     "CreateUserRequest",
     "CreateUserResponse",
+    "DictItem",
     "EquationExtraction",
     "EquationExtractionResponse",
+    "EquationValidationResult",
     "ExecuteCodeResponse",
     "ExtractConstantsResponse",
     "ExtractTextResponse",
@@ -103,6 +110,7 @@ __all__ = [
     "GetSpectrumResponse",
     "GetSpectrumResponseSpectrumItem",
     "HttpValidationError",
+    "InformalizeStatementResponse",
     "InteractiveResponse",
     "Net",
     "Netlist",
@@ -130,6 +138,7 @@ __all__ = [
     "SolutionResponseSolutionValue",
     "Spectrum",
     "StatementDictionary",
+    "StatementType",
     "StatementValidation",
     "StatementValidationDictionary",
     "StatusResponse",
@@ -145,6 +154,7 @@ __all__ = [
     "ValidateResponse",
     "ValidationError",
     "ValidationErrorLocItem",
+    "VariableRequirement",
     "VerifyCircuitCodeResponse",
     "VerifyResponse",
     "Z3Expression",
