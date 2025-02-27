@@ -2,17 +2,18 @@
 
 import typing
 from ...core.client_wrapper import SyncClientWrapper
-from ...types.netlist import Netlist
-from ...types.statement_dictionary import StatementDictionary
-from ...types.computation import Computation
 from ...core.request_options import RequestOptions
-from ...types.validate_netlist_response import ValidateNetlistResponse
-from ...core.serialization import convert_and_respect_annotation_metadata
+from ...types.parse_statement_response import ParseStatementResponse
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from ...types.netlist import Netlist
+from ...types.statement_dictionary import StatementDictionary
+from ...types.computation import Computation
+from ...types.validate_netlist_response import ValidateNetlistResponse
+from ...core.serialization import convert_and_respect_annotation_metadata
 from ...types.pdk_type import PdkType
 from ...types.formalize_circuit_response import FormalizeCircuitResponse
 from .types.statement import Statement
@@ -37,6 +38,78 @@ OMIT = typing.cast(typing.Any, ...)
 class CircuitClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    def parse(
+        self,
+        *,
+        text: str,
+        informalize: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ParseStatementResponse:
+        """
+        Parse a piece of text into a valid formal statement, if possible.
+
+        Parameters
+        ----------
+        text : str
+
+        informalize : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ParseStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.parse(
+            text="text",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/parse",
+            method="POST",
+            json={
+                "text": text,
+                "informalize": informalize,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ParseStatementResponse,
+                    parse_obj_as(
+                        type_=ParseStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def validate(
         self,
@@ -927,6 +1000,86 @@ class CircuitClient:
 class AsyncCircuitClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    async def parse(
+        self,
+        *,
+        text: str,
+        informalize: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ParseStatementResponse:
+        """
+        Parse a piece of text into a valid formal statement, if possible.
+
+        Parameters
+        ----------
+        text : str
+
+        informalize : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ParseStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.parse(
+                text="text",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/parse",
+            method="POST",
+            json={
+                "text": text,
+                "informalize": informalize,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ParseStatementResponse,
+                    parse_obj_as(
+                        type_=ParseStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def validate(
         self,

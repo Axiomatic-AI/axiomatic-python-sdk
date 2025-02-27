@@ -2,12 +2,14 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .statement import Statement
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class PicWarnings(UniversalBaseModel):
-    message: typing.Optional[str] = None
+class ParseStatementResponse(UniversalBaseModel):
+    statement: typing.Optional[Statement] = None
+    errors: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

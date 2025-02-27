@@ -7,7 +7,7 @@ from .pic_instance import PicInstance
 from .net import Net
 from .placement import Placement
 from .bundle import Bundle
-from .pic_warnings import PicWarnings
+from .pic_warning import PicWarning
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -24,7 +24,7 @@ class Netlist(UniversalBaseModel):
     ports: typing.Optional[typing.Dict[str, str]] = None
     placements: typing.Optional[typing.Dict[str, Placement]] = None
     routes: typing.Optional[typing.Dict[str, Bundle]] = None
-    warnings: typing.Optional[PicWarnings] = None
+    warnings: typing.Optional[typing.List[PicWarning]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
