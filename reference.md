@@ -1887,7 +1887,7 @@ Validates a set of statements against a netlist.
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
+from axiomatic import Axiomatic, Netlist, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
@@ -1895,12 +1895,6 @@ client = Axiomatic(
 client.pic.circuit.validate(
     netlist=Netlist(),
     statements=StatementDictionary(),
-    mapping={
-        "key": Computation(
-            name="name",
-            arguments={"key": True},
-        )
-    },
 )
 
 ```
@@ -1933,7 +1927,7 @@ client.pic.circuit.validate(
 <dl>
 <dd>
 
-**mapping:** `typing.Dict[str, Computation]` 
+**mapping:** `typing.Optional[typing.Dict[str, typing.Optional[Computation]]]` 
     
 </dd>
 </dl>
@@ -2413,13 +2407,7 @@ Optimize a PIC circuit with given cost and constraints
 <dd>
 
 ```python
-from axiomatic import (
-    Axiomatic,
-    Computation,
-    Netlist,
-    Parameter,
-    StatementDictionary,
-)
+from axiomatic import Axiomatic, Netlist, Parameter, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
@@ -2427,12 +2415,6 @@ client = Axiomatic(
 client.pic.circuit.optimize(
     netlist=Netlist(),
     statements=StatementDictionary(),
-    mapping={
-        "key": Computation(
-            name="name",
-            arguments={"key": True},
-        )
-    },
     parameters=[
         Parameter(
             path="path",
@@ -2470,7 +2452,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**mapping:** `typing.Dict[str, Computation]` 
+**parameters:** `typing.Sequence[Parameter]` 
     
 </dd>
 </dl>
@@ -2478,7 +2460,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**parameters:** `typing.Sequence[Parameter]` 
+**mapping:** `typing.Optional[typing.Dict[str, typing.Optional[Computation]]]` 
     
 </dd>
 </dl>

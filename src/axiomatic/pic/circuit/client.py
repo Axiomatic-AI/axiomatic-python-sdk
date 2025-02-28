@@ -116,7 +116,7 @@ class CircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -128,7 +128,7 @@ class CircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -140,7 +140,7 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
+        from axiomatic import Axiomatic, Netlist, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -148,12 +148,6 @@ class CircuitClient:
         client.pic.circuit.validate(
             netlist=Netlist(),
             statements=StatementDictionary(),
-            mapping={
-                "key": Computation(
-                    name="name",
-                    arguments={"key": True},
-                )
-            },
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -167,7 +161,7 @@ class CircuitClient:
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
             },
             headers={
@@ -593,8 +587,8 @@ class CircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
@@ -607,9 +601,9 @@ class CircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
-
         parameters : typing.Sequence[Parameter]
+
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         config : typing.Optional[OptimizeConfig]
 
@@ -623,13 +617,7 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import (
-            Axiomatic,
-            Computation,
-            Netlist,
-            Parameter,
-            StatementDictionary,
-        )
+        from axiomatic import Axiomatic, Netlist, Parameter, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -637,12 +625,6 @@ class CircuitClient:
         client.pic.circuit.optimize(
             netlist=Netlist(),
             statements=StatementDictionary(),
-            mapping={
-                "key": Computation(
-                    name="name",
-                    arguments={"key": True},
-                )
-            },
             parameters=[
                 Parameter(
                     path="path",
@@ -660,11 +642,11 @@ class CircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
-                "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
-                ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
@@ -1086,7 +1068,7 @@ class AsyncCircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -1098,7 +1080,7 @@ class AsyncCircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1112,7 +1094,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, Computation, Netlist, StatementDictionary
+        from axiomatic import AsyncAxiomatic, Netlist, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -1123,12 +1105,6 @@ class AsyncCircuitClient:
             await client.pic.circuit.validate(
                 netlist=Netlist(),
                 statements=StatementDictionary(),
-                mapping={
-                    "key": Computation(
-                        name="name",
-                        arguments={"key": True},
-                    )
-                },
             )
 
 
@@ -1145,7 +1121,7 @@ class AsyncCircuitClient:
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
             },
             headers={
@@ -1611,8 +1587,8 @@ class AsyncCircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
@@ -1625,9 +1601,9 @@ class AsyncCircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
-
         parameters : typing.Sequence[Parameter]
+
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         config : typing.Optional[OptimizeConfig]
 
@@ -1643,13 +1619,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import (
-            AsyncAxiomatic,
-            Computation,
-            Netlist,
-            Parameter,
-            StatementDictionary,
-        )
+        from axiomatic import AsyncAxiomatic, Netlist, Parameter, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -1660,12 +1630,6 @@ class AsyncCircuitClient:
             await client.pic.circuit.optimize(
                 netlist=Netlist(),
                 statements=StatementDictionary(),
-                mapping={
-                    "key": Computation(
-                        name="name",
-                        arguments={"key": True},
-                    )
-                },
                 parameters=[
                     Parameter(
                         path="path",
@@ -1686,11 +1650,11 @@ class AsyncCircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
-                "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
-                ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"

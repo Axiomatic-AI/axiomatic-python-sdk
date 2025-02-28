@@ -8,7 +8,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 class StatementValidation(UniversalBaseModel):
     """
-    The status of a statement.
+    The validation status of a statement.
     """
 
     satisfiable: typing.Optional[bool] = pydantic.Field(default=None)

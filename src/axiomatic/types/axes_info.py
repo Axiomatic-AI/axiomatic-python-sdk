@@ -2,6 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .contour_cv_2 import ContourCv2
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -16,8 +17,12 @@ class AxesInfo(UniversalBaseModel):
     y_axis_len: typing.Optional[float] = None
     x_contour: typing.Optional[typing.List[typing.List[float]]] = None
     y_contour: typing.Optional[typing.List[typing.List[float]]] = None
-    x_ticks: typing.Optional[typing.List[typing.List[typing.List[int]]]] = None
-    y_ticks: typing.Optional[typing.List[typing.List[typing.List[int]]]] = None
+    x_tick_marks: typing.Optional[typing.List[ContourCv2]] = None
+    y_tick_marks: typing.Optional[typing.List[ContourCv2]] = None
+    x_tick_vals: typing.Optional[typing.List[typing.List[typing.Optional[typing.Any]]]] = None
+    y_tick_vals: typing.Optional[typing.List[typing.List[typing.Optional[typing.Any]]]] = None
+    x_tick_mapping: typing.Optional[typing.Dict[str, typing.Optional[ContourCv2]]] = None
+    y_tick_mapping: typing.Optional[typing.Dict[str, typing.Optional[ContourCv2]]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -5,6 +5,7 @@ from .bundle import Bundle
 from .bundle_settings_value import BundleSettingsValue
 from .computation import Computation
 from .computation_arguments_value import ComputationArgumentsValue
+from .contour_cv_2 import ContourCv2
 from .cost_function import CostFunction
 from .create_api_key_response import CreateApiKeyResponse
 from .create_api_keyrequest import CreateApiKeyrequest
@@ -87,6 +88,7 @@ __all__ = [
     "BundleSettingsValue",
     "Computation",
     "ComputationArgumentsValue",
+    "ContourCv2",
     "CostFunction",
     "CreateApiKeyResponse",
     "CreateApiKeyrequest",
