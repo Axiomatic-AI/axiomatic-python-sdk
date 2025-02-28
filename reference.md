@@ -2476,6 +2476,14 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
+**use_ideal_component_models:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2730,6 +2738,14 @@ client.pic.circuit.get_sax_spectrum(
 <dl>
 <dd>
 
+**use_ideal_component_models:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2793,6 +2809,14 @@ client.pic.circuit.get_optimizable_parameters(
 <dd>
 
 **netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**get_key_parameters:** `typing.Optional[bool]` 
     
 </dd>
 </dl>

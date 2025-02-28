@@ -590,6 +590,7 @@ class CircuitClient:
         parameters: typing.Sequence[Parameter],
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -606,6 +607,8 @@ class CircuitClient:
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         config : typing.Optional[OptimizeConfig]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -651,6 +654,7 @@ class CircuitClient:
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -827,6 +831,7 @@ class CircuitClient:
         port_out: str,
         settings: Settings,
         wls: typing.Sequence[float],
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -843,6 +848,8 @@ class CircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -880,6 +887,7 @@ class CircuitClient:
                     object_=settings, annotation=Settings, direction="write"
                 ),
                 "wls": wls,
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -912,7 +920,11 @@ class CircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_optimizable_parameters(
-        self, *, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        netlist: Netlist,
+        get_key_parameters: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GetOptimizableParametersResponse:
         """
         Gets the optimizable parameters of a circuit.
@@ -920,6 +932,8 @@ class CircuitClient:
         Parameters
         ----------
         netlist : Netlist
+
+        get_key_parameters : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -947,6 +961,7 @@ class CircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "get_key_parameters": get_key_parameters,
             },
             headers={
                 "content-type": "application/json",
@@ -1590,6 +1605,7 @@ class AsyncCircuitClient:
         parameters: typing.Sequence[Parameter],
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -1606,6 +1622,8 @@ class AsyncCircuitClient:
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         config : typing.Optional[OptimizeConfig]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1659,6 +1677,7 @@ class AsyncCircuitClient:
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -1851,6 +1870,7 @@ class AsyncCircuitClient:
         port_out: str,
         settings: Settings,
         wls: typing.Sequence[float],
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -1867,6 +1887,8 @@ class AsyncCircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1912,6 +1934,7 @@ class AsyncCircuitClient:
                     object_=settings, annotation=Settings, direction="write"
                 ),
                 "wls": wls,
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -1944,7 +1967,11 @@ class AsyncCircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_optimizable_parameters(
-        self, *, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        netlist: Netlist,
+        get_key_parameters: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GetOptimizableParametersResponse:
         """
         Gets the optimizable parameters of a circuit.
@@ -1952,6 +1979,8 @@ class AsyncCircuitClient:
         Parameters
         ----------
         netlist : Netlist
+
+        get_key_parameters : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1987,6 +2016,7 @@ class AsyncCircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "get_key_parameters": get_key_parameters,
             },
             headers={
                 "content-type": "application/json",
