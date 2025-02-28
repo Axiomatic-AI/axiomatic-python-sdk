@@ -1,11 +1,14 @@
 import re
-import numpy as np  # type: ignore
+from functools import reduce
+from operator import getitem
+from typing import Dict, List, Optional, Set, Tuple
+
 import iklayout  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
-import plotly.graph_objects as go   # type: ignore
-from typing import List, Optional, Tuple, Dict, Set
+import numpy as np  # type: ignore
+import plotly.graph_objects as go  # type: ignore
 
-from . import Parameter, StatementDictionary, StatementValidationDictionary, StatementValidation, Computation
+from . import Computation, Parameter, StatementDictionary, StatementValidation, StatementValidationDictionary
 
 
 def plot_circuit(component):
@@ -56,9 +59,7 @@ def plot_constraints(
         labels: List of labels for each constraint value.
     """
 
-    constraints_labels = constraints_labels or [
-        f"Constraint {i}" for i in range(len(constraints[0]))
-    ]
+    constraints_labels = constraints_labels or [f"Constraint {i}" for i in range(len(constraints[0]))]
     iterations = iterations or list(range(len(constraints[0])))
 
     plt.clf()
@@ -92,13 +93,9 @@ def plot_single_spectrum(
     plt.ylabel("Losses")
     plt.plot(wavelengths, spectrum)
     for x_val in vlines:
-        plt.axvline(
-            x=x_val, color="red", linestyle="--", label=f"Wavelength (x={x_val})"
-        )  # Add vertical line
+        plt.axvline(x=x_val, color="red", linestyle="--", label=f"Wavelength (x={x_val})")  # Add vertical line
     for y_val in hlines:
-        plt.axhline(
-            y=y_val, color="red", linestyle="--", label=f"Transmission (y={y_val})"
-        )  # Add vertical line
+        plt.axhline(y=y_val, color="red", linestyle="--", label=f"Transmission (y={y_val})")  # Add vertical line
     return plt.gcf()
 
 
@@ -109,7 +106,7 @@ def plot_interactive_spectra(
     vlines: Optional[List[float]] = None,
     hlines: Optional[List[float]] = None,
 ):
-    """"
+    """ "
     Creates an interactive plot of spectra with a slider to select different indices.
     Parameters:
     -----------
@@ -131,7 +128,7 @@ def plot_interactive_spectra(
         vlines = []
     if hlines is None:
         hlines = []
-    
+
     # Adjust y-axis range
     all_vals = [val for spec in spectra for iteration in spec for val in iteration]
     y_min = min(all_vals)
@@ -143,21 +140,14 @@ def plot_interactive_spectra(
     # Create hlines and vlines
     shapes = []
     for xv in vlines:
-        shapes.append(dict(
-            type="line",
-            xref="x", x0=xv, x1=xv,
-            yref="paper", y0=0, y1=1,
-            line=dict(color="red", dash="dash")
-        ))
+        shapes.append(
+            dict(type="line", xref="x", x0=xv, x1=xv, yref="paper", y0=0, y1=1, line=dict(color="red", dash="dash"))
+        )
     for yh in hlines:
-        shapes.append(dict(
-            type="line",
-            xref="paper", x0=0, x1=1,
-            yref="y", y0=yh, y1=yh,
-            line=dict(color="red", dash="dash")
-        ))
+        shapes.append(
+            dict(type="line", xref="paper", x0=0, x1=1, yref="y", y0=yh, y1=yh, line=dict(color="red", dash="dash"))
+        )
 
-    
     # Create frames for each index
     slider_index = list(range(len(spectra[0])))
     fig = go.Figure()
@@ -165,27 +155,13 @@ def plot_interactive_spectra(
     # Build initial figure for immediate display
     init_idx = slider_index[0]
     for i, spec in enumerate(spectra):
-        fig.add_trace(
-            go.Scatter(
-                x=wavelengths,
-                y=spec[init_idx],
-                mode="lines",
-                name=spectrum_labels[i]
-            )
-        )
+        fig.add_trace(go.Scatter(x=wavelengths, y=spec[init_idx], mode="lines", name=spectrum_labels[i]))
     # Build frames for animation
     frames = []
     for idx in slider_index:
         frame_data = []
         for i, spec in enumerate(spectra):
-            frame_data.append(
-                go.Scatter(
-                    x=wavelengths,
-                    y=spec[idx],
-                    mode="lines",
-                    name=spectrum_labels[i]
-                )
-            )
+            frame_data.append(go.Scatter(x=wavelengths, y=spec[idx], mode="lines", name=spectrum_labels[i]))
         frames.append(
             go.Frame(
                 data=frame_data,
@@ -195,30 +171,22 @@ def plot_interactive_spectra(
 
     fig.frames = frames
 
-    
     #  Create transition steps
     steps = []
     for idx in slider_index:
-        steps.append(dict(
-            method="animate",
-            args=[
-                [str(idx)],
-                {
-                    "mode": "immediate",
-                    "frame": {"duration": 0, "redraw": True},
-                    "transition": {"duration": 0}
-                }
-            ],
-            label=str(idx),
-        ))
+        steps.append(
+            dict(
+                method="animate",
+                args=[
+                    [str(idx)],
+                    {"mode": "immediate", "frame": {"duration": 0, "redraw": True}, "transition": {"duration": 0}},
+                ],
+                label=str(idx),
+            )
+        )
 
     # Create the slider
-    sliders = [dict(
-        active=0,
-        currentvalue={"prefix": "Index: "},
-        pad={"t": 50},
-        steps=steps
-    )]
+    sliders = [dict(active=0, currentvalue={"prefix": "Index: "}, pad={"t": 50}, steps=steps)]
 
     # Create the layout
     fig.update_layout(
@@ -253,25 +221,28 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
         plt.xlabel("Iterations")
         plt.ylabel(param.path)
         split_param = param.path.split(",")
-        plt.plot(
-            [
-                parameter_history[i][split_param[0]][split_param[1]]
-                for i in range(len(parameter_history))
-            ]
-        )
+        plt.plot([reduce(getitem, split_param, parameter_history[i]) for i in range(len(parameter_history))])
         plt.show()
 
 
-def print_statements(statements: StatementDictionary, validation: Optional[StatementValidationDictionary] = None, only_formalized: bool = False):
+def print_statements(
+    statements: StatementDictionary,
+    validation: Optional[StatementValidationDictionary] = None,
+    only_formalized: bool = False,
+):
     """
     Print a list of statements in nice readable format.
     """
 
     validation = StatementValidationDictionary(
-        cost_functions=(validation.cost_functions if validation is not None else None) or [StatementValidation()]*len(statements.cost_functions or []),
-        parameter_constraints=(validation.parameter_constraints if validation is not None else None) or [StatementValidation()]*len(statements.parameter_constraints or []),
-        structure_constraints=(validation.structure_constraints if validation is not None else None) or [StatementValidation()]*len(statements.structure_constraints or []),
-        unformalizable_statements=(validation.unformalizable_statements if validation is not None else None) or [StatementValidation()]*len(statements.unformalizable_statements or [])
+        cost_functions=(validation.cost_functions if validation is not None else None)
+        or [StatementValidation()] * len(statements.cost_functions or []),
+        parameter_constraints=(validation.parameter_constraints if validation is not None else None)
+        or [StatementValidation()] * len(statements.parameter_constraints or []),
+        structure_constraints=(validation.structure_constraints if validation is not None else None)
+        or [StatementValidation()] * len(statements.structure_constraints or []),
+        unformalizable_statements=(validation.unformalizable_statements if validation is not None else None)
+        or [StatementValidation()] * len(statements.unformalizable_statements or []),
     )
 
     if len(validation.cost_functions or []) != len(statements.cost_functions or []):
@@ -299,8 +270,7 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
                     if computation is not None:
                         args_str = ", ".join(
                             [
-                                f"{argname}="
-                                + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
+                                f"{argname}=" + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
                                 for argname, argvalue in computation.arguments.items()
                             ]
                         )
@@ -326,8 +296,7 @@ def print_statements(statements: StatementDictionary, validation: Optional[State
                     if computation is not None:
                         args_str = ", ".join(
                             [
-                                f"{argname}="
-                                + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
+                                f"{argname}=" + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
                                 for argname, argvalue in computation.arguments.items()
                             ]
                         )
@@ -382,9 +351,7 @@ def _str_units_to_float(str_units: str) -> float:
     return float(numeric_value * unit_conversions[unit])
 
 
-def get_wavelengths_to_plot(
-    statements: StatementDictionary, num_samples: int = 100
-) -> Tuple[List[float], List[float]]:
+def get_wavelengths_to_plot(statements: StatementDictionary, num_samples: int = 100) -> Tuple[List[float], List[float]]:
     """
     Get the wavelengths to plot based on the statements.
 
@@ -401,10 +368,16 @@ def get_wavelengths_to_plot(
                 continue
             if "wavelengths" in comp.arguments:
                 vlines = vlines | {
-                    _str_units_to_float(wl) for wl in (comp.arguments["wavelengths"] if isinstance(comp.arguments["wavelengths"], list) else []) if isinstance(wl, str)
+                    _str_units_to_float(wl)
+                    for wl in (comp.arguments["wavelengths"] if isinstance(comp.arguments["wavelengths"], list) else [])
+                    if isinstance(wl, str)
                 }
             if "wavelength_range" in comp.arguments:
-                if isinstance(comp.arguments["wavelength_range"], list) and len(comp.arguments["wavelength_range"]) == 2 and all(isinstance(wl, str) for wl in comp.arguments["wavelength_range"]):
+                if (
+                    isinstance(comp.arguments["wavelength_range"], list)
+                    and len(comp.arguments["wavelength_range"]) == 2
+                    and all(isinstance(wl, str) for wl in comp.arguments["wavelength_range"])
+                ):
                     min_wl = min(min_wl, _str_units_to_float(comp.arguments["wavelength_range"][0]))
                     max_wl = max(max_wl, _str_units_to_float(comp.arguments["wavelength_range"][1]))
         return min_wl, max_wl, vlines
