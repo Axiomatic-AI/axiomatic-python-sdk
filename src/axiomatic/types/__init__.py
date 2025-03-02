@@ -32,7 +32,6 @@ from .get_spectrum_response import GetSpectrumResponse
 from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
 from .http_validation_error import HttpValidationError
 from .informalize_statement_response import InformalizeStatementResponse
-from .interactive_response import InteractiveResponse
 from .net import Net
 from .netlist import Netlist
 from .optimization_history import OptimizationHistory
@@ -115,7 +114,6 @@ __all__ = [
     "GetSpectrumResponseSpectrumItem",
     "HttpValidationError",
     "InformalizeStatementResponse",
-    "InteractiveResponse",
     "Net",
     "Netlist",
     "OptimizationHistory",

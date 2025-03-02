@@ -10,6 +10,8 @@ class RefineCodeResponse(UniversalBaseModel):
     raw_content: str
     code: str
     outcome_success: bool
+    orientation_success: bool
+    placement_success: bool
     routing_success: bool
     feedback_text: typing.Optional[str] = None
     thought_text: typing.Optional[str] = None

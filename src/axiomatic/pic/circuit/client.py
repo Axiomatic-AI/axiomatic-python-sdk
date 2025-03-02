@@ -9,23 +9,23 @@ from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from .types.statement import Statement
+from ...types.informalize_statement_response import InformalizeStatementResponse
+from ...core.serialization import convert_and_respect_annotation_metadata
 from ...types.netlist import Netlist
 from ...types.statement_dictionary import StatementDictionary
 from ...types.computation import Computation
 from ...types.validate_netlist_response import ValidateNetlistResponse
-from ...core.serialization import convert_and_respect_annotation_metadata
 from ...types.pdk_type import PdkType
 from ...types.formalize_circuit_response import FormalizeCircuitResponse
-from .types.statement import Statement
-from ...types.informalize_statement_response import InformalizeStatementResponse
 from ...types.find_mapping_response import FindMappingResponse
 from ...types.generate_code_response import GenerateCodeResponse
 from ...types.refine_code_response import RefineCodeResponse
 from ...types.parameter import Parameter
 from ...types.optimize_config import OptimizeConfig
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
-from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from ...types.optimize_placement_body_response import OptimizePlacementBodyResponse
+from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from .types.settings import Settings
 from ...types.get_spectrum_response import GetSpectrumResponse
 from ...types.get_optimizable_parameters_response import GetOptimizableParametersResponse
@@ -93,6 +93,75 @@ class CircuitClient:
                     ParseStatementResponse,
                     parse_obj_as(
                         type_=ParseStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def informalize(
+        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
+    ) -> InformalizeStatementResponse:
+        """
+        Informalize a formal statement about a circuit into a natural language text.
+
+        Parameters
+        ----------
+        statement : Statement
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        InformalizeStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, ParameterConstraint
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.informalize(
+            statement=ParameterConstraint(
+                text="text",
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/informalize",
+            method="POST",
+            json={
+                "statement": convert_and_respect_annotation_metadata(
+                    object_=statement, annotation=Statement, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    InformalizeStatementResponse,
+                    parse_obj_as(
+                        type_=InformalizeStatementResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -266,75 +335,6 @@ class CircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def informalize(
-        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
-    ) -> InformalizeStatementResponse:
-        """
-        Informalize a formal statement about a circuit into a natural language text.
-
-        Parameters
-        ----------
-        statement : Statement
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        InformalizeStatementResponse
-            Successful Response
-
-        Examples
-        --------
-        from axiomatic import Axiomatic, ParameterConstraint
-
-        client = Axiomatic(
-            api_key="YOUR_API_KEY",
-        )
-        client.pic.circuit.informalize(
-            statement=ParameterConstraint(
-                text="text",
-            ),
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "pic/circuit/statement/informalize",
-            method="POST",
-            json={
-                "statement": convert_and_respect_annotation_metadata(
-                    object_=statement, annotation=Statement, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    InformalizeStatementResponse,
-                    parse_obj_as(
-                        type_=InformalizeStatementResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     def mapping(
         self,
         *,
@@ -423,8 +423,10 @@ class CircuitClient:
         *,
         query: str,
         max_iterations: typing.Optional[int] = OMIT,
-        apply_routing: typing.Optional[bool] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
         apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
+        apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -436,9 +438,13 @@ class CircuitClient:
 
         max_iterations : typing.Optional[int]
 
-        apply_routing : typing.Optional[bool]
+        llm_model : typing.Optional[str]
 
         apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
+
+        apply_routing : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -465,8 +471,10 @@ class CircuitClient:
             json={
                 "query": query,
                 "max_iterations": max_iterations,
-                "apply_routing": apply_routing,
+                "llm_model": llm_model,
                 "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
+                "apply_routing": apply_routing,
             },
             headers={
                 "content-type": "application/json",
@@ -502,9 +510,12 @@ class CircuitClient:
         self,
         *,
         query: str,
+        max_iterations: typing.Optional[int] = OMIT,
         feedback: typing.Optional[str] = OMIT,
         code: typing.Optional[str] = OMIT,
-        max_iterations: typing.Optional[int] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
+        apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RefineCodeResponse:
@@ -515,11 +526,17 @@ class CircuitClient:
         ----------
         query : str
 
+        max_iterations : typing.Optional[int]
+
         feedback : typing.Optional[str]
 
         code : typing.Optional[str]
 
-        max_iterations : typing.Optional[int]
+        llm_model : typing.Optional[str]
+
+        apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
 
@@ -547,9 +564,12 @@ class CircuitClient:
             method="POST",
             json={
                 "query": query,
+                "max_iterations": max_iterations,
                 "feedback": feedback,
                 "code": code,
-                "max_iterations": max_iterations,
+                "llm_model": llm_model,
+                "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
             },
             headers={
@@ -686,71 +706,6 @@ class CircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def verify(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> VerifyCircuitCodeResponse:
-        """
-        Verifies that the code for a circuit
-
-        Parameters
-        ----------
-        code : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        VerifyCircuitCodeResponse
-            Successful Response
-
-        Examples
-        --------
-        from axiomatic import Axiomatic
-
-        client = Axiomatic(
-            api_key="YOUR_API_KEY",
-        )
-        client.pic.circuit.verify(
-            code="code",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "pic/circuit/verifycode",
-            method="POST",
-            json={
-                "code": code,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    VerifyCircuitCodeResponse,
-                    parse_obj_as(
-                        type_=VerifyCircuitCodeResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     def placementoptimize(
         self,
         *,
@@ -805,6 +760,71 @@ class CircuitClient:
                     OptimizePlacementBodyResponse,
                     parse_obj_as(
                         type_=OptimizePlacementBodyResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def verify(
+        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> VerifyCircuitCodeResponse:
+        """
+        Verifies that the code for a circuit
+
+        Parameters
+        ----------
+        code : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        VerifyCircuitCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.verify(
+            code="code",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/verifycode",
+            method="POST",
+            json={
+                "code": code,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    VerifyCircuitCodeResponse,
+                    parse_obj_as(
+                        type_=VerifyCircuitCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1078,6 +1098,83 @@ class AsyncCircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    async def informalize(
+        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
+    ) -> InformalizeStatementResponse:
+        """
+        Informalize a formal statement about a circuit into a natural language text.
+
+        Parameters
+        ----------
+        statement : Statement
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        InformalizeStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic, ParameterConstraint
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.informalize(
+                statement=ParameterConstraint(
+                    text="text",
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/informalize",
+            method="POST",
+            json={
+                "statement": convert_and_respect_annotation_metadata(
+                    object_=statement, annotation=Statement, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    InformalizeStatementResponse,
+                    parse_obj_as(
+                        type_=InformalizeStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     async def validate(
         self,
         *,
@@ -1249,83 +1346,6 @@ class AsyncCircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def informalize(
-        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
-    ) -> InformalizeStatementResponse:
-        """
-        Informalize a formal statement about a circuit into a natural language text.
-
-        Parameters
-        ----------
-        statement : Statement
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        InformalizeStatementResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from axiomatic import AsyncAxiomatic, ParameterConstraint
-
-        client = AsyncAxiomatic(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.pic.circuit.informalize(
-                statement=ParameterConstraint(
-                    text="text",
-                ),
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "pic/circuit/statement/informalize",
-            method="POST",
-            json={
-                "statement": convert_and_respect_annotation_metadata(
-                    object_=statement, annotation=Statement, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    InformalizeStatementResponse,
-                    parse_obj_as(
-                        type_=InformalizeStatementResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     async def mapping(
         self,
         *,
@@ -1422,8 +1442,10 @@ class AsyncCircuitClient:
         *,
         query: str,
         max_iterations: typing.Optional[int] = OMIT,
-        apply_routing: typing.Optional[bool] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
         apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
+        apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -1435,9 +1457,13 @@ class AsyncCircuitClient:
 
         max_iterations : typing.Optional[int]
 
-        apply_routing : typing.Optional[bool]
+        llm_model : typing.Optional[str]
 
         apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
+
+        apply_routing : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1472,8 +1498,10 @@ class AsyncCircuitClient:
             json={
                 "query": query,
                 "max_iterations": max_iterations,
-                "apply_routing": apply_routing,
+                "llm_model": llm_model,
                 "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
+                "apply_routing": apply_routing,
             },
             headers={
                 "content-type": "application/json",
@@ -1509,9 +1537,12 @@ class AsyncCircuitClient:
         self,
         *,
         query: str,
+        max_iterations: typing.Optional[int] = OMIT,
         feedback: typing.Optional[str] = OMIT,
         code: typing.Optional[str] = OMIT,
-        max_iterations: typing.Optional[int] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
+        apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RefineCodeResponse:
@@ -1522,11 +1553,17 @@ class AsyncCircuitClient:
         ----------
         query : str
 
+        max_iterations : typing.Optional[int]
+
         feedback : typing.Optional[str]
 
         code : typing.Optional[str]
 
-        max_iterations : typing.Optional[int]
+        llm_model : typing.Optional[str]
+
+        apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
 
@@ -1562,9 +1599,12 @@ class AsyncCircuitClient:
             method="POST",
             json={
                 "query": query,
+                "max_iterations": max_iterations,
                 "feedback": feedback,
                 "code": code,
-                "max_iterations": max_iterations,
+                "llm_model": llm_model,
+                "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
             },
             headers={
@@ -1709,79 +1749,6 @@ class AsyncCircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def verify(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> VerifyCircuitCodeResponse:
-        """
-        Verifies that the code for a circuit
-
-        Parameters
-        ----------
-        code : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        VerifyCircuitCodeResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from axiomatic import AsyncAxiomatic
-
-        client = AsyncAxiomatic(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.pic.circuit.verify(
-                code="code",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "pic/circuit/verifycode",
-            method="POST",
-            json={
-                "code": code,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    VerifyCircuitCodeResponse,
-                    parse_obj_as(
-                        type_=VerifyCircuitCodeResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     async def placementoptimize(
         self,
         *,
@@ -1844,6 +1811,79 @@ class AsyncCircuitClient:
                     OptimizePlacementBodyResponse,
                     parse_obj_as(
                         type_=OptimizePlacementBodyResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def verify(
+        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> VerifyCircuitCodeResponse:
+        """
+        Verifies that the code for a circuit
+
+        Parameters
+        ----------
+        code : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        VerifyCircuitCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.verify(
+                code="code",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/verifycode",
+            method="POST",
+            json={
+                "code": code,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    VerifyCircuitCodeResponse,
+                    parse_obj_as(
+                        type_=VerifyCircuitCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
