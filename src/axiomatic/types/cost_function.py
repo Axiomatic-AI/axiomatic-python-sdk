@@ -2,6 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .statement_type import StatementType
 import pydantic
 from .z_3_expression import Z3Expression
 from .statement_validation import StatementValidation
@@ -9,7 +10,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class CostFunction(UniversalBaseModel):
-    type: typing.Optional[typing.Literal["COST_FUNCTION"]] = None
+    type: typing.Optional[StatementType] = None
     text: str = pydantic.Field()
     """
     The natural language content of the statement.

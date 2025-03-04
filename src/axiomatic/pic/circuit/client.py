@@ -2,17 +2,21 @@
 
 import typing
 from ...core.client_wrapper import SyncClientWrapper
-from ...types.netlist import Netlist
-from ...types.statement_dictionary import StatementDictionary
-from ...types.computation import Computation
 from ...core.request_options import RequestOptions
-from ...types.validate_netlist_response import ValidateNetlistResponse
-from ...core.serialization import convert_and_respect_annotation_metadata
+from ...types.parse_statement_response import ParseStatementResponse
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from .types.statement import Statement
+from ...types.informalize_statement_response import InformalizeStatementResponse
+from ...core.serialization import convert_and_respect_annotation_metadata
+from ...types.netlist import Netlist
+from ...types.statement_dictionary import StatementDictionary
+from ...types.computation import Computation
+from ...types.validate_netlist_response import ValidateNetlistResponse
+from ...types.pdk_type import PdkType
 from ...types.formalize_circuit_response import FormalizeCircuitResponse
 from ...types.find_mapping_response import FindMappingResponse
 from ...types.generate_code_response import GenerateCodeResponse
@@ -20,8 +24,8 @@ from ...types.refine_code_response import RefineCodeResponse
 from ...types.parameter import Parameter
 from ...types.optimize_config import OptimizeConfig
 from ...types.optimize_netlist_response import OptimizeNetlistResponse
-from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from ...types.optimize_placement_body_response import OptimizePlacementBodyResponse
+from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from .types.settings import Settings
 from ...types.get_spectrum_response import GetSpectrumResponse
 from ...types.get_optimizable_parameters_response import GetOptimizableParametersResponse
@@ -35,12 +39,153 @@ class CircuitClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
+    def parse(
+        self,
+        *,
+        text: str,
+        informalize: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ParseStatementResponse:
+        """
+        Parse a piece of text into a valid formal statement, if possible.
+
+        Parameters
+        ----------
+        text : str
+
+        informalize : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ParseStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.parse(
+            text="text",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/parse",
+            method="POST",
+            json={
+                "text": text,
+                "informalize": informalize,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ParseStatementResponse,
+                    parse_obj_as(
+                        type_=ParseStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def informalize(
+        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
+    ) -> InformalizeStatementResponse:
+        """
+        Informalize a formal statement about a circuit into a natural language text.
+
+        Parameters
+        ----------
+        statement : Statement
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        InformalizeStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, ParameterConstraint
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.informalize(
+            statement=ParameterConstraint(
+                text="text",
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/informalize",
+            method="POST",
+            json={
+                "statement": convert_and_respect_annotation_metadata(
+                    object_=statement, annotation=Statement, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    InformalizeStatementResponse,
+                    parse_obj_as(
+                        type_=InformalizeStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     def validate(
         self,
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -52,7 +197,7 @@ class CircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -64,7 +209,7 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
+        from axiomatic import Axiomatic, Netlist, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -72,12 +217,6 @@ class CircuitClient:
         client.pic.circuit.validate(
             netlist=Netlist(),
             statements=StatementDictionary(),
-            mapping={
-                "key": Computation(
-                    name="name",
-                    arguments={"key": True},
-                )
-            },
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -91,7 +230,7 @@ class CircuitClient:
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
             },
             headers={
@@ -125,7 +264,11 @@ class CircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def formalize(
-        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        query: str,
+        pdk: typing.Optional[PdkType] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormalizeCircuitResponse:
         """
         Formalize a query about a circuit into a dictionary of constraints
@@ -133,6 +276,8 @@ class CircuitClient:
         Parameters
         ----------
         query : str
+
+        pdk : typing.Optional[PdkType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -158,6 +303,7 @@ class CircuitClient:
             method="POST",
             json={
                 "query": query,
+                "pdk": pdk,
             },
             headers={
                 "content-type": "application/json",
@@ -277,8 +423,10 @@ class CircuitClient:
         *,
         query: str,
         max_iterations: typing.Optional[int] = OMIT,
-        apply_routing: typing.Optional[bool] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
         apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
+        apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -290,9 +438,13 @@ class CircuitClient:
 
         max_iterations : typing.Optional[int]
 
-        apply_routing : typing.Optional[bool]
+        llm_model : typing.Optional[str]
 
         apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
+
+        apply_routing : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -319,8 +471,10 @@ class CircuitClient:
             json={
                 "query": query,
                 "max_iterations": max_iterations,
-                "apply_routing": apply_routing,
+                "llm_model": llm_model,
                 "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
+                "apply_routing": apply_routing,
             },
             headers={
                 "content-type": "application/json",
@@ -356,9 +510,12 @@ class CircuitClient:
         self,
         *,
         query: str,
+        max_iterations: typing.Optional[int] = OMIT,
         feedback: typing.Optional[str] = OMIT,
         code: typing.Optional[str] = OMIT,
-        max_iterations: typing.Optional[int] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
+        apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RefineCodeResponse:
@@ -369,11 +526,17 @@ class CircuitClient:
         ----------
         query : str
 
+        max_iterations : typing.Optional[int]
+
         feedback : typing.Optional[str]
 
         code : typing.Optional[str]
 
-        max_iterations : typing.Optional[int]
+        llm_model : typing.Optional[str]
+
+        apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
 
@@ -401,9 +564,12 @@ class CircuitClient:
             method="POST",
             json={
                 "query": query,
+                "max_iterations": max_iterations,
                 "feedback": feedback,
                 "code": code,
-                "max_iterations": max_iterations,
+                "llm_model": llm_model,
+                "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
             },
             headers={
@@ -441,9 +607,10 @@ class CircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -455,11 +622,13 @@ class CircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
-
         parameters : typing.Sequence[Parameter]
 
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
+
         config : typing.Optional[OptimizeConfig]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -471,13 +640,7 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import (
-            Axiomatic,
-            Computation,
-            Netlist,
-            Parameter,
-            StatementDictionary,
-        )
+        from axiomatic import Axiomatic, Netlist, Parameter, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -485,12 +648,6 @@ class CircuitClient:
         client.pic.circuit.optimize(
             netlist=Netlist(),
             statements=StatementDictionary(),
-            mapping={
-                "key": Computation(
-                    name="name",
-                    arguments={"key": True},
-                )
-            },
             parameters=[
                 Parameter(
                     path="path",
@@ -508,15 +665,16 @@ class CircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
-                "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
-                ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -530,71 +688,6 @@ class CircuitClient:
                     OptimizeNetlistResponse,
                     parse_obj_as(
                         type_=OptimizeNetlistResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def verify(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> VerifyCircuitCodeResponse:
-        """
-        Verifies that the code for a circuit
-
-        Parameters
-        ----------
-        code : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        VerifyCircuitCodeResponse
-            Successful Response
-
-        Examples
-        --------
-        from axiomatic import Axiomatic
-
-        client = Axiomatic(
-            api_key="YOUR_API_KEY",
-        )
-        client.pic.circuit.verify(
-            code="code",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "pic/circuit/verifycode",
-            method="POST",
-            json={
-                "code": code,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    VerifyCircuitCodeResponse,
-                    parse_obj_as(
-                        type_=VerifyCircuitCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -685,6 +778,71 @@ class CircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    def verify(
+        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> VerifyCircuitCodeResponse:
+        """
+        Verifies that the code for a circuit
+
+        Parameters
+        ----------
+        code : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        VerifyCircuitCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.verify(
+            code="code",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/verifycode",
+            method="POST",
+            json={
+                "code": code,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    VerifyCircuitCodeResponse,
+                    parse_obj_as(
+                        type_=VerifyCircuitCodeResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     def get_sax_spectrum(
         self,
         *,
@@ -693,6 +851,7 @@ class CircuitClient:
         port_out: str,
         settings: Settings,
         wls: typing.Sequence[float],
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -709,6 +868,8 @@ class CircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -746,6 +907,7 @@ class CircuitClient:
                     object_=settings, annotation=Settings, direction="write"
                 ),
                 "wls": wls,
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -778,7 +940,11 @@ class CircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_optimizable_parameters(
-        self, *, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        netlist: Netlist,
+        get_key_parameters: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GetOptimizableParametersResponse:
         """
         Gets the optimizable parameters of a circuit.
@@ -786,6 +952,8 @@ class CircuitClient:
         Parameters
         ----------
         netlist : Netlist
+
+        get_key_parameters : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -813,6 +981,7 @@ class CircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "get_key_parameters": get_key_parameters,
             },
             headers={
                 "content-type": "application/json",
@@ -849,12 +1018,169 @@ class AsyncCircuitClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
+    async def parse(
+        self,
+        *,
+        text: str,
+        informalize: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ParseStatementResponse:
+        """
+        Parse a piece of text into a valid formal statement, if possible.
+
+        Parameters
+        ----------
+        text : str
+
+        informalize : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ParseStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.parse(
+                text="text",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/parse",
+            method="POST",
+            json={
+                "text": text,
+                "informalize": informalize,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ParseStatementResponse,
+                    parse_obj_as(
+                        type_=ParseStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def informalize(
+        self, *, statement: Statement, request_options: typing.Optional[RequestOptions] = None
+    ) -> InformalizeStatementResponse:
+        """
+        Informalize a formal statement about a circuit into a natural language text.
+
+        Parameters
+        ----------
+        statement : Statement
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        InformalizeStatementResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic, ParameterConstraint
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.informalize(
+                statement=ParameterConstraint(
+                    text="text",
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/statement/informalize",
+            method="POST",
+            json={
+                "statement": convert_and_respect_annotation_metadata(
+                    object_=statement, annotation=Statement, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    InformalizeStatementResponse,
+                    parse_obj_as(
+                        type_=InformalizeStatementResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     async def validate(
         self,
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -866,7 +1192,7 @@ class AsyncCircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -880,7 +1206,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, Computation, Netlist, StatementDictionary
+        from axiomatic import AsyncAxiomatic, Netlist, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -891,12 +1217,6 @@ class AsyncCircuitClient:
             await client.pic.circuit.validate(
                 netlist=Netlist(),
                 statements=StatementDictionary(),
-                mapping={
-                    "key": Computation(
-                        name="name",
-                        arguments={"key": True},
-                    )
-                },
             )
 
 
@@ -913,7 +1233,7 @@ class AsyncCircuitClient:
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
                 "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
             },
             headers={
@@ -947,7 +1267,11 @@ class AsyncCircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def formalize(
-        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        query: str,
+        pdk: typing.Optional[PdkType] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormalizeCircuitResponse:
         """
         Formalize a query about a circuit into a dictionary of constraints
@@ -955,6 +1279,8 @@ class AsyncCircuitClient:
         Parameters
         ----------
         query : str
+
+        pdk : typing.Optional[PdkType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -988,6 +1314,7 @@ class AsyncCircuitClient:
             method="POST",
             json={
                 "query": query,
+                "pdk": pdk,
             },
             headers={
                 "content-type": "application/json",
@@ -1115,8 +1442,10 @@ class AsyncCircuitClient:
         *,
         query: str,
         max_iterations: typing.Optional[int] = OMIT,
-        apply_routing: typing.Optional[bool] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
         apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
+        apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -1128,9 +1457,13 @@ class AsyncCircuitClient:
 
         max_iterations : typing.Optional[int]
 
-        apply_routing : typing.Optional[bool]
+        llm_model : typing.Optional[str]
 
         apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
+
+        apply_routing : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1165,8 +1498,10 @@ class AsyncCircuitClient:
             json={
                 "query": query,
                 "max_iterations": max_iterations,
-                "apply_routing": apply_routing,
+                "llm_model": llm_model,
                 "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
+                "apply_routing": apply_routing,
             },
             headers={
                 "content-type": "application/json",
@@ -1202,9 +1537,12 @@ class AsyncCircuitClient:
         self,
         *,
         query: str,
+        max_iterations: typing.Optional[int] = OMIT,
         feedback: typing.Optional[str] = OMIT,
         code: typing.Optional[str] = OMIT,
-        max_iterations: typing.Optional[int] = OMIT,
+        llm_model: typing.Optional[str] = OMIT,
+        apply_orientation: typing.Optional[bool] = OMIT,
+        apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RefineCodeResponse:
@@ -1215,11 +1553,17 @@ class AsyncCircuitClient:
         ----------
         query : str
 
+        max_iterations : typing.Optional[int]
+
         feedback : typing.Optional[str]
 
         code : typing.Optional[str]
 
-        max_iterations : typing.Optional[int]
+        llm_model : typing.Optional[str]
+
+        apply_orientation : typing.Optional[bool]
+
+        apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
 
@@ -1255,9 +1599,12 @@ class AsyncCircuitClient:
             method="POST",
             json={
                 "query": query,
+                "max_iterations": max_iterations,
                 "feedback": feedback,
                 "code": code,
-                "max_iterations": max_iterations,
+                "llm_model": llm_model,
+                "apply_orientation": apply_orientation,
+                "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
             },
             headers={
@@ -1295,9 +1642,10 @@ class AsyncCircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        mapping: typing.Dict[str, Computation],
         parameters: typing.Sequence[Parameter],
+        mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -1309,11 +1657,13 @@ class AsyncCircuitClient:
 
         statements : StatementDictionary
 
-        mapping : typing.Dict[str, Computation]
-
         parameters : typing.Sequence[Parameter]
 
+        mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
+
         config : typing.Optional[OptimizeConfig]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1327,13 +1677,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import (
-            AsyncAxiomatic,
-            Computation,
-            Netlist,
-            Parameter,
-            StatementDictionary,
-        )
+        from axiomatic import AsyncAxiomatic, Netlist, Parameter, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -1344,12 +1688,6 @@ class AsyncCircuitClient:
             await client.pic.circuit.optimize(
                 netlist=Netlist(),
                 statements=StatementDictionary(),
-                mapping={
-                    "key": Computation(
-                        name="name",
-                        arguments={"key": True},
-                    )
-                },
                 parameters=[
                     Parameter(
                         path="path",
@@ -1370,15 +1708,16 @@ class AsyncCircuitClient:
                 "statements": convert_and_respect_annotation_metadata(
                     object_=statements, annotation=StatementDictionary, direction="write"
                 ),
-                "mapping": convert_and_respect_annotation_metadata(
-                    object_=mapping, annotation=typing.Dict[str, Computation], direction="write"
-                ),
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[Parameter], direction="write"
+                ),
+                "mapping": convert_and_respect_annotation_metadata(
+                    object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -1392,79 +1731,6 @@ class AsyncCircuitClient:
                     OptimizeNetlistResponse,
                     parse_obj_as(
                         type_=OptimizeNetlistResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def verify(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> VerifyCircuitCodeResponse:
-        """
-        Verifies that the code for a circuit
-
-        Parameters
-        ----------
-        code : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        VerifyCircuitCodeResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from axiomatic import AsyncAxiomatic
-
-        client = AsyncAxiomatic(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.pic.circuit.verify(
-                code="code",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "pic/circuit/verifycode",
-            method="POST",
-            json={
-                "code": code,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    VerifyCircuitCodeResponse,
-                    parse_obj_as(
-                        type_=VerifyCircuitCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1563,6 +1829,79 @@ class AsyncCircuitClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    async def verify(
+        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> VerifyCircuitCodeResponse:
+        """
+        Verifies that the code for a circuit
+
+        Parameters
+        ----------
+        code : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        VerifyCircuitCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.verify(
+                code="code",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/verifycode",
+            method="POST",
+            json={
+                "code": code,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    VerifyCircuitCodeResponse,
+                    parse_obj_as(
+                        type_=VerifyCircuitCodeResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     async def get_sax_spectrum(
         self,
         *,
@@ -1571,6 +1910,7 @@ class AsyncCircuitClient:
         port_out: str,
         settings: Settings,
         wls: typing.Sequence[float],
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -1587,6 +1927,8 @@ class AsyncCircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1632,6 +1974,7 @@ class AsyncCircuitClient:
                     object_=settings, annotation=Settings, direction="write"
                 ),
                 "wls": wls,
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -1664,7 +2007,11 @@ class AsyncCircuitClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_optimizable_parameters(
-        self, *, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        netlist: Netlist,
+        get_key_parameters: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GetOptimizableParametersResponse:
         """
         Gets the optimizable parameters of a circuit.
@@ -1672,6 +2019,8 @@ class AsyncCircuitClient:
         Parameters
         ----------
         netlist : Netlist
+
+        get_key_parameters : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1707,6 +2056,7 @@ class AsyncCircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "get_key_parameters": get_key_parameters,
             },
             headers={
                 "content-type": "application/json",

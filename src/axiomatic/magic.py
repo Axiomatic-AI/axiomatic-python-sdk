@@ -108,6 +108,10 @@ class AXMagic:
         """
         if not tool.strip():
             print("Please provider a tool name when calling this magic like:  %%tool_schedule [optional_tool_name]")
+            tools = self.client.tools.list()
+            print("Available tools are:")
+            for tool in tools.tools_list:
+                print(f"- {tool}")
         else:
             tool_name = tool.strip()
             code_string = cell

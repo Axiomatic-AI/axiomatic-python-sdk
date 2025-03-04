@@ -2,24 +2,16 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .statement_type import StatementType
-import pydantic
-from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import pydantic
 
 
-class UnformalizableStatement(UniversalBaseModel):
-    type: typing.Optional[StatementType] = None
-    text: str = pydantic.Field()
+class PicWarning(UniversalBaseModel):
     """
-    The natural language content of the statement.
+    Class to represent a PIC warning
     """
 
-    formalization: typing.Optional[str] = None
-    validation: typing.Optional[StatementValidation] = pydantic.Field(default=None)
-    """
-    The validation result of the statement.
-    """
+    message: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

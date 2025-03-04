@@ -2,14 +2,14 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
-from .. import core
 from ..core.request_options import RequestOptions
-from ..types.equation_extraction_response import EquationExtractionResponse
 from ..core.pydantic_utilities import parse_obj_as
-from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
+from .. import core
+from ..types.equation_extraction_response import EquationExtractionResponse
+from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.http_validation_error import HttpValidationError
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -19,6 +19,48 @@ OMIT = typing.cast(typing.Any, ...)
 class EquationProcessingClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    def get_all_variables(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Dict[str, str]:
+        """
+        Get all avail. vars to allow user choose requirements
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Dict[str, str]
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.equation_processing.get_all_variables()
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "equations/",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    typing.Dict[str, str],
+                    parse_obj_as(
+                        type_=typing.Dict[str, str],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def extract_from_document(
         self, *, document: core.File, request_options: typing.Optional[RequestOptions] = None
@@ -86,6 +128,58 @@ class EquationProcessingClient:
 class AsyncEquationProcessingClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    async def get_all_variables(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Dict[str, str]:
+        """
+        Get all avail. vars to allow user choose requirements
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Dict[str, str]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.equation_processing.get_all_variables()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "equations/",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    typing.Dict[str, str],
+                    parse_obj_as(
+                        type_=typing.Dict[str, str],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def extract_from_document(
         self, *, document: core.File, request_options: typing.Optional[RequestOptions] = None

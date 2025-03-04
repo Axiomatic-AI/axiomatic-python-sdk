@@ -2,6 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .statement_type import StatementType
 import pydantic
 from .structure_function_call import StructureFunctionCall
 from .statement_validation import StatementValidation
@@ -9,7 +10,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class StructureConstraint(UniversalBaseModel):
-    type: typing.Optional[typing.Literal["STRUCTURE_CONSTRAINT"]] = None
+    type: typing.Optional[StatementType] = None
     text: str = pydantic.Field()
     """
     The natural language content of the statement.

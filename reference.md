@@ -278,86 +278,6 @@ client.lean.suggest(
 </dl>
 </details>
 
-## experimental
-<details><summary><code>client.experimental.<a href="src/axiomatic/experimental/client.py">assistant</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Interactive assistant for IDE extension
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.experimental.assistant(
-    query="query",
-    context="context",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**query:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**context:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 ## formalization
 <details><summary><code>client.formalization.<a href="src/axiomatic/formalization/client.py">formalize</a>(...)</code></summary>
 <dl>
@@ -500,63 +420,6 @@ client.formalization.validate(
 <dd>
 
 **values:** `typing.Dict[str, str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## generic
-<details><summary><code>client.generic.<a href="src/axiomatic/generic/client.py">statement</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.generic.statement(
-    query="query",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**query:** `str` 
     
 </dd>
 </dl>
@@ -1039,7 +902,147 @@ client.tools.list()
 </dl>
 </details>
 
+## EquationValidation
+<details><summary><code>client.equation_validation.<a href="src/axiomatic/equation_validation/client.py">validate_equations</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Validates a set of variables against stored equations to check for inconsistencies.
+Returns validation results for each relevant equation.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, VariableRequirement
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.equation_validation.validate_equations(
+    request=[
+        VariableRequirement(
+            symbol="symbol",
+            name="name",
+            value=1.1,
+            units="units",
+            tolerance=1.1,
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `typing.Sequence[VariableRequirement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## EquationProcessing
+<details><summary><code>client.equation_processing.<a href="src/axiomatic/equation_processing/client.py">get_all_variables</a>()</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get all avail. vars to allow user choose requirements
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.equation_processing.get_all_variables()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.equation_processing.<a href="src/axiomatic/equation_processing/client.py">extract_from_document</a>(...)</code></summary>
 <dl>
 <dd>
@@ -1642,6 +1645,156 @@ client.pic.document.summarize(
 </details>
 
 ## Pic Circuit
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">parse</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Parse a piece of text into a valid formal statement, if possible.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.parse(
+    text="text",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**text:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**informalize:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">informalize</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Informalize a formal statement about a circuit into a natural language text.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, ParameterConstraint
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.informalize(
+    statement=ParameterConstraint(
+        text="text",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**statement:** `Statement` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">validate</a>(...)</code></summary>
 <dl>
 <dd>
@@ -1669,7 +1822,7 @@ Validates a set of statements against a netlist.
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Computation, Netlist, StatementDictionary
+from axiomatic import Axiomatic, Netlist, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
@@ -1677,12 +1830,6 @@ client = Axiomatic(
 client.pic.circuit.validate(
     netlist=Netlist(),
     statements=StatementDictionary(),
-    mapping={
-        "key": Computation(
-            name="name",
-            arguments={"key": True},
-        )
-    },
 )
 
 ```
@@ -1715,7 +1862,7 @@ client.pic.circuit.validate(
 <dl>
 <dd>
 
-**mapping:** `typing.Dict[str, Computation]` 
+**mapping:** `typing.Optional[typing.Dict[str, typing.Optional[Computation]]]` 
     
 </dd>
 </dl>
@@ -1786,6 +1933,14 @@ client.pic.circuit.formalize(
 <dd>
 
 **query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**pdk:** `typing.Optional[PdkType]` 
     
 </dd>
 </dl>
@@ -1958,7 +2113,7 @@ client.pic.circuit.generate(
 <dl>
 <dd>
 
-**apply_routing:** `typing.Optional[bool]` 
+**llm_model:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -1967,6 +2122,22 @@ client.pic.circuit.generate(
 <dd>
 
 **apply_orientation:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**apply_placement:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**apply_routing:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -2044,6 +2215,14 @@ client.pic.circuit.refine(
 <dl>
 <dd>
 
+**max_iterations:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **feedback:** `typing.Optional[str]` 
     
 </dd>
@@ -2060,7 +2239,23 @@ client.pic.circuit.refine(
 <dl>
 <dd>
 
-**max_iterations:** `typing.Optional[int]` 
+**llm_model:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**apply_orientation:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**apply_placement:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -2115,13 +2310,7 @@ Optimize a PIC circuit with given cost and constraints
 <dd>
 
 ```python
-from axiomatic import (
-    Axiomatic,
-    Computation,
-    Netlist,
-    Parameter,
-    StatementDictionary,
-)
+from axiomatic import Axiomatic, Netlist, Parameter, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
@@ -2129,12 +2318,6 @@ client = Axiomatic(
 client.pic.circuit.optimize(
     netlist=Netlist(),
     statements=StatementDictionary(),
-    mapping={
-        "key": Computation(
-            name="name",
-            arguments={"key": True},
-        )
-    },
     parameters=[
         Parameter(
             path="path",
@@ -2172,7 +2355,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**mapping:** `typing.Dict[str, Computation]` 
+**parameters:** `typing.Sequence[Parameter]` 
     
 </dd>
 </dl>
@@ -2180,7 +2363,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**parameters:** `typing.Sequence[Parameter]` 
+**mapping:** `typing.Optional[typing.Dict[str, typing.Optional[Computation]]]` 
     
 </dd>
 </dl>
@@ -2196,69 +2379,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">verify</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Verifies that the code for a circuit
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.pic.circuit.verify(
-    code="code",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**code:** `str` 
+**use_ideal_component_models:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -2337,6 +2458,76 @@ client.pic.circuit.placementoptimize(
 <dd>
 
 **method:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">verify</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Verifies that the code for a circuit
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.verify(
+    code="code",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**code:** `str` 
     
 </dd>
 </dl>
@@ -2450,6 +2641,14 @@ client.pic.circuit.get_sax_spectrum(
 <dl>
 <dd>
 
+**use_ideal_component_models:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2513,6 +2712,14 @@ client.pic.circuit.get_optimizable_parameters(
 <dd>
 
 **netlist:** `Netlist` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**get_key_parameters:** `typing.Optional[bool]` 
     
 </dd>
 </dl>

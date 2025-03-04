@@ -2,7 +2,10 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from ..types.variable_requirement import VariableRequirement
 from ..core.request_options import RequestOptions
+from ..types.equation_validation_result import EquationValidationResult
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
@@ -14,55 +17,63 @@ from ..core.client_wrapper import AsyncClientWrapper
 OMIT = typing.cast(typing.Any, ...)
 
 
-class GenericClient:
+class EquationValidationClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def statement(
-        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    def validate_equations(
+        self, *, request: typing.Sequence[VariableRequirement], request_options: typing.Optional[RequestOptions] = None
+    ) -> EquationValidationResult:
         """
+        Validates a set of variables against stored equations to check for inconsistencies.
+        Returns validation results for each relevant equation.
+
         Parameters
         ----------
-        query : str
+        request : typing.Sequence[VariableRequirement]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        EquationValidationResult
             Successful Response
 
         Examples
         --------
-        from axiomatic import Axiomatic
+        from axiomatic import Axiomatic, VariableRequirement
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.generic.statement(
-            query="query",
+        client.equation_validation.validate_equations(
+            request=[
+                VariableRequirement(
+                    symbol="symbol",
+                    name="name",
+                    value=1.1,
+                    units="units",
+                    tolerance=1.1,
+                )
+            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "generic/statement",
+            "equations/validation",
             method="POST",
-            json={
-                "query": query,
-            },
-            headers={
-                "content-type": "application/json",
-            },
+            json=convert_and_respect_annotation_metadata(
+                object_=request, annotation=typing.Sequence[VariableRequirement], direction="write"
+            ),
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    EquationValidationResult,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=EquationValidationResult,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -82,31 +93,34 @@ class GenericClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
 
-class AsyncGenericClient:
+class AsyncEquationValidationClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def statement(
-        self, *, query: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    async def validate_equations(
+        self, *, request: typing.Sequence[VariableRequirement], request_options: typing.Optional[RequestOptions] = None
+    ) -> EquationValidationResult:
         """
+        Validates a set of variables against stored equations to check for inconsistencies.
+        Returns validation results for each relevant equation.
+
         Parameters
         ----------
-        query : str
+        request : typing.Sequence[VariableRequirement]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        EquationValidationResult
             Successful Response
 
         Examples
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic
+        from axiomatic import AsyncAxiomatic, VariableRequirement
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -114,31 +128,36 @@ class AsyncGenericClient:
 
 
         async def main() -> None:
-            await client.generic.statement(
-                query="query",
+            await client.equation_validation.validate_equations(
+                request=[
+                    VariableRequirement(
+                        symbol="symbol",
+                        name="name",
+                        value=1.1,
+                        units="units",
+                        tolerance=1.1,
+                    )
+                ],
             )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "generic/statement",
+            "equations/validation",
             method="POST",
-            json={
-                "query": query,
-            },
-            headers={
-                "content-type": "application/json",
-            },
+            json=convert_and_respect_annotation_metadata(
+                object_=request, annotation=typing.Sequence[VariableRequirement], direction="write"
+            ),
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    EquationValidationResult,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=EquationValidationResult,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

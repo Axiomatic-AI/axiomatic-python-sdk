@@ -2,6 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .dict_item import DictItem
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -11,7 +12,7 @@ class EquationExtraction(UniversalBaseModel):
     name: str
     description: str
     original_format: str
-    latex_symbols: typing.List[str]
+    latex_symbols: typing.List[DictItem]
     narrative_assumptions: typing.List[str]
 
     if IS_PYDANTIC_V2:

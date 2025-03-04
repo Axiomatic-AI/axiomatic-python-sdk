@@ -8,11 +8,10 @@ from .core.api_error import ApiError
 from .core.client_wrapper import SyncClientWrapper
 from .requirements.client import RequirementsClient
 from .lean.client import LeanClient
-from .experimental.client import ExperimentalClient
 from .formalization.client import FormalizationClient
-from .generic.client import GenericClient
 from .document.client import DocumentClient
 from .tools.client import ToolsClient
+from .equation_validation.client import EquationValidationClient
 from .equation_processing.client import EquationProcessingClient
 from .code_execution.client import CodeExecutionClient
 from .fso.client import FsoClient
@@ -23,11 +22,10 @@ from json.decoder import JSONDecodeError
 from .core.client_wrapper import AsyncClientWrapper
 from .requirements.client import AsyncRequirementsClient
 from .lean.client import AsyncLeanClient
-from .experimental.client import AsyncExperimentalClient
 from .formalization.client import AsyncFormalizationClient
-from .generic.client import AsyncGenericClient
 from .document.client import AsyncDocumentClient
 from .tools.client import AsyncToolsClient
+from .equation_validation.client import AsyncEquationValidationClient
 from .equation_processing.client import AsyncEquationProcessingClient
 from .code_execution.client import AsyncCodeExecutionClient
 from .fso.client import AsyncFsoClient
@@ -98,11 +96,10 @@ class BaseClient:
         )
         self.requirements = RequirementsClient(client_wrapper=self._client_wrapper)
         self.lean = LeanClient(client_wrapper=self._client_wrapper)
-        self.experimental = ExperimentalClient(client_wrapper=self._client_wrapper)
         self.formalization = FormalizationClient(client_wrapper=self._client_wrapper)
-        self.generic = GenericClient(client_wrapper=self._client_wrapper)
         self.document = DocumentClient(client_wrapper=self._client_wrapper)
         self.tools = ToolsClient(client_wrapper=self._client_wrapper)
+        self.equation_validation = EquationValidationClient(client_wrapper=self._client_wrapper)
         self.equation_processing = EquationProcessingClient(client_wrapper=self._client_wrapper)
         self.code_execution = CodeExecutionClient(client_wrapper=self._client_wrapper)
         self.fso = FsoClient(client_wrapper=self._client_wrapper)
@@ -257,11 +254,10 @@ class AsyncBaseClient:
         )
         self.requirements = AsyncRequirementsClient(client_wrapper=self._client_wrapper)
         self.lean = AsyncLeanClient(client_wrapper=self._client_wrapper)
-        self.experimental = AsyncExperimentalClient(client_wrapper=self._client_wrapper)
         self.formalization = AsyncFormalizationClient(client_wrapper=self._client_wrapper)
-        self.generic = AsyncGenericClient(client_wrapper=self._client_wrapper)
         self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)
         self.tools = AsyncToolsClient(client_wrapper=self._client_wrapper)
+        self.equation_validation = AsyncEquationValidationClient(client_wrapper=self._client_wrapper)
         self.equation_processing = AsyncEquationProcessingClient(client_wrapper=self._client_wrapper)
         self.code_execution = AsyncCodeExecutionClient(client_wrapper=self._client_wrapper)
         self.fso = AsyncFsoClient(client_wrapper=self._client_wrapper)

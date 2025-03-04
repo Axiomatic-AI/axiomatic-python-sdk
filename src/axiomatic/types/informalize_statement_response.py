@@ -6,9 +6,8 @@ import typing
 import pydantic
 
 
-class InteractiveResponse(UniversalBaseModel):
-    response: str
-    feedback: str
+class InformalizeStatementResponse(UniversalBaseModel):
+    text: str
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
