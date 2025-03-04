@@ -1,0 +1,1668 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Equation Extraction Report</title>
+        <meta charset="UTF-8">
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <style>
+            :root {
+                --system1-bg: #fff;
+                --system1-text: #000;
+                --system1-border: #000;
+                --system1-highlight: #000;
+            }
+            
+            body { 
+                font-family: 'Chicago', 'Helvetica', sans-serif;
+                margin: 8px; 
+                padding: 0;
+                background-color: var(--system1-bg);
+                color: var(--system1-text);
+                font-size: 12px;
+            }
+            
+            /* Menu Bar Styles */
+            .menu-bar {
+                background: var(--system1-bg);
+                border-bottom: 1px solid var(--system1-border);
+                padding: 2px;
+                display: flex;
+                gap: 16px;
+                margin-bottom: 8px;
+            }
+            
+            .menu-button {
+                background: var(--system1-bg);
+                border: 1.5px solid var(--system1-border);
+                border-radius: 8px;
+                padding: 2px 8px;
+                font-family: 'Chicago', 'Helvetica', sans-serif;
+                font-size: 12px;
+                cursor: pointer;
+                position: relative;
+                white-space: nowrap;
+            }
+            
+            .menu-button:active {
+                background: var(--system1-text);
+                color: var(--system1-bg);
+            }
+            
+            h1 { 
+                margin: 0 0 16px 0;
+                padding: 4px;
+                font-size: 14px;
+                font-weight: bold;
+                text-align: center;
+                border-bottom: 1.5px solid var(--system1-border);
+            }
+            
+            .container {
+                display: flex;
+                gap: 16px;
+                height: calc(100vh - 100px);
+            }
+            
+            .equation-list {
+                width: 300px;
+                border: 1.5px solid var(--system1-border);
+                border-radius: 8px;
+                padding: 8px;
+                overflow-y: auto;
+            }
+            
+            .equation-item { 
+                border: 1.5px solid transparent;
+                margin-bottom: 12px;
+                padding: 8px;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+            
+            .equation-item:hover { 
+                background: var(--system1-text);
+                color: var(--system1-bg);
+            }
+            
+            .equation-item.active {
+                background: var(--system1-text);
+                color: var(--system1-bg);
+            }
+            
+            .details-panel {
+                flex: 1;
+                border: 1.5px solid var(--system1-border);
+                border-radius: 8px;
+                padding: 16px;
+                overflow-y: auto;
+            }
+            
+            .details-panel.empty {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-style: italic;
+            }
+            
+            .equation-details h2 {
+                margin: 0 0 16px 0;
+                font-size: 14px;
+                text-align: center;
+            }
+            
+            .equation-details p {
+                margin: 16px 0 8px 0;
+            }
+            
+            .symbol-table { 
+                width: 100%; 
+                border-collapse: collapse;
+                margin-top: 8px;
+                border: 1.5px solid var(--system1-border);
+            }
+            
+            .symbol-table td, .symbol-table th { 
+                border: 1px solid var(--system1-border);
+                padding: 6px 8px;
+                text-align: left;
+            }
+            
+            .symbol-table th {
+                background: var(--system1-text);
+                color: var(--system1-bg);
+                font-weight: bold;
+            }
+            
+            .equation-title {
+                margin: 0 0 8px 0;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            /* MathJax container spacing */
+            .mjx-chtml {
+                margin: 8px 0 !important;
+            }
+
+            /* Classic System 1 scrollbar */
+            ::-webkit-scrollbar {
+                width: 16px;
+                height: 16px;
+            }
+            
+            ::-webkit-scrollbar-track {
+                background: var(--system1-bg);
+                border: 1.5px solid var(--system1-border);
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                background: var(--system1-text);
+                border: 1.5px solid var(--system1-border);
+            }
+            
+            ::-webkit-scrollbar-button {
+                display: none;
+            }
+        </style>
+        <script>
+            function showDetails(eqId) {
+                document.querySelectorAll('.equation-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                document.getElementById('eq-item-' + eqId).classList.add('active');
+                
+                document.querySelectorAll('.equation-details').forEach(detail => {
+                    detail.style.display = 'none';
+                });
+                document.getElementById('empty-message').style.display = 'none';
+                document.getElementById('details-' + eqId).style.display = 'block';
+            }
+        </script>
+    </head>
+
+    <body>
+        <div class="menu-bar">
+            <button class="menu-button" onclick="alert('Validating equations...')">Validate Equations</button>
+            <button class="menu-button" onclick="alert('Running numerical optimization...')">Numerical Optimization</button>
+            <button class="menu-button" onclick="alert('Deriving relations...')">Derive Relations</button>
+            <button class="menu-button" onclick="showHypergraph()">Relation Graph</button>
+        </div>
+        
+        <h1>Equation Extraction Report</h1>
+        <div class="container">
+            <div class="equation-list">
+    
+                <div class="equation-item" id="eq-item-0" onclick="showDetails(0)">
+                    <div class="equation-title">Velocity Equation</div>
+                    \[{\vec{v}}(t)={\frac{d{\vec{r}}(t)}{d t}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-1" onclick="showDetails(1)">
+                    <div class="equation-title">Speed from Velocity Magnitude</div>
+                    \[v=|\vec{v}(t)|\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-2" onclick="showDetails(2)">
+                    <div class="equation-title">Acceleration Equation</div>
+                    \[\vec{a}(t)=\frac{d\vec{v}(t)}{d t}=\frac{d^{2}\vec{r}(t)}{d t^{2}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-3" onclick="showDetails(3)">
+                    <div class="equation-title">Newton's Second Law</div>
+                    \[{\vec{F}}=m{\vec{a}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-4" onclick="showDetails(4)">
+                    <div class="equation-title">Newton's Second Law (Momentum Form)</div>
+                    \[{\vec{F}}={\frac{d{\vec{p}}}{d t}},\quad{\mathrm{where~}}{\vec{p}}=m{\vec{v}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-5" onclick="showDetails(5)">
+                    <div class="equation-title">Infinitesimal Work Equation</div>
+                    \[d W={\vec{F}}\cdot{\vec{d r}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-6" onclick="showDetails(6)">
+                    <div class="equation-title">Work Equation</div>
+                    \[W=\int{\vec{F}}\cdot d{\vec{r}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-7" onclick="showDetails(7)">
+                    <div class="equation-title">Work-Energy Theorem</div>
+                    \[W=\Delta K\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-8" onclick="showDetails(8)">
+                    <div class="equation-title">Conservation of Energy Equation</div>
+                    \[E=K+U\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-9" onclick="showDetails(9)">
+                    <div class="equation-title">Total Momentum of a System of Particles</div>
+                    \[\vec{P}=\sum_{i}\vec{p_{i}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-10" onclick="showDetails(10)">
+                    <div class="equation-title">Torque Equation</div>
+                    \[{\vec{\tau}}={\vec{r}}\times{\vec{F}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-11" onclick="showDetails(11)">
+                    <div class="equation-title">Angular Momentum Equation</div>
+                    \[\vec{L}=\vec{r}\times\vec{p!}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-12" onclick="showDetails(12)">
+                    <div class="equation-title">Torque and Angular Momentum Relation</div>
+                    \[{\vec{\tau}}={\frac{d{\vec{L}}}{d t}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-13" onclick="showDetails(13)">
+                    <div class="equation-title">Hooke's Law for Springs</div>
+                    \[F_{s}=-k x\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-14" onclick="showDetails(14)">
+                    <div class="equation-title">Moment of Inertia Equation</div>
+                    \[I=\sum_{i}m_{i}r_{i}^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-15" onclick="showDetails(15)">
+                    <div class="equation-title">Rotational Kinetic Energy</div>
+                    \[K_{\mathrm{rot}}={\frac{1}{2}}I\omega^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-16" onclick="showDetails(16)">
+                    <div class="equation-title">Simple Harmonic Motion Equation</div>
+                    \[\frac{d^{2}x}{d t^{2}}+\frac{k}{m}x=0.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-17" onclick="showDetails(17)">
+                    <div class="equation-title">Simple Harmonic Motion Equation</div>
+                    \[x(t)=A\cos(\omega t+\phi)\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-18" onclick="showDetails(18)">
+                    <div class="equation-title">Newton's Law of Universal Gravitation</div>
+                    \[F_{g}=G{\frac{m_{1}m_{2}}{r^{2}}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-19" onclick="showDetails(19)">
+                    <div class="equation-title">Gravitational Potential Energy</div>
+                    \[U_{g}=-G{\frac{m_{1}m_{2}}{r}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-20" onclick="showDetails(20)">
+                    <div class="equation-title">Inclined Plane Acceleration Equation</div>
+                    \[m a = m g \sin \theta\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-21" onclick="showDetails(21)">
+                    <div class="equation-title">Conservation of Energy Equation</div>
+                    \[E_{i}=E_{f}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-22" onclick="showDetails(22)">
+                    <div class="equation-title">Inclined Plane Acceleration</div>
+                    \[a=g\sin\theta=(9.81)\sin30^{\circ}=4.905~\mathrm{m/s}^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-23" onclick="showDetails(23)">
+                    <div class="equation-title">Gravitational Potential Energy Equation</div>
+                    \[E_{i}=m g h\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-24" onclick="showDetails(24)">
+                    <div class="equation-title">Kinematic Equation for Constant Acceleration</div>
+                    \[v^{2}=v_{0}^{2}+2a s\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-25" onclick="showDetails(25)">
+                    <div class="equation-title">Final Kinetic Energy Equation</div>
+                    \[E_{f}=\frac{1}{2}m v^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-26" onclick="showDetails(26)">
+                    <div class="equation-title">Conservation of Mechanical Energy</div>
+                    \[m g h=\frac{1}{2}m v^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-27" onclick="showDetails(27)">
+                    <div class="equation-title">Velocity from Energy Conservation</div>
+                    \[v={\sqrt{2g h}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-28" onclick="showDetails(28)">
+                    <div class="equation-title">Velocity of a Block on an Incline</div>
+                    \[v={\sqrt{2(9.81)(10)}}=14{\mathrm{~m/s}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-29" onclick="showDetails(29)">
+                    <div class="equation-title">Velocity from Kinematic Equation</div>
+                    \[v={\sqrt{2a s}}={\sqrt{2(4.905)(20)}}=14{\mathrm{~m/s}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-30" onclick="showDetails(30)">
+                    <div class="equation-title">Force on an Inclined Plane</div>
+                    \[F=m g\sin\theta\]
+                </div>
+        
+            </div>
+            <div class="details-panel">
+                <div id="empty-message" style="text-align: center; color: #666;">
+                    Select an equation to view details
+                </div>
+    
+                <div class="equation-details" id="details-0" style="display: none;">
+                    <h2>Velocity Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines the velocity \( \vec{v}(t) \) as the time derivative of the position vector \( \vec{r}(t) \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{v}}(t)={\frac{d{\vec{r}}(t)}{d t}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{v}(t)\)</td>
+                            <td>Velocity vector at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{r}(t)\)</td>
+                            <td>Position vector at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-1" style="display: none;">
+                    <h2>Speed from Velocity Magnitude</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines speed as the magnitude of the velocity vector.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v=|\vec{v}(t)|\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{v}(t)\)</td>
+                            <td>Velocity vector at time t</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-2" style="display: none;">
+                    <h2>Acceleration Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes acceleration as the time derivative of velocity and the second time derivative of position.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\vec{a}(t)=\frac{d\vec{v}(t)}{d t}=\frac{d^{2}\vec{r}(t)}{d t^{2}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{a}(t)\)</td>
+                            <td>Acceleration vector as a function of time</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{v}(t)\)</td>
+                            <td>Velocity vector at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{r}(t)\)</td>
+                            <td>Position vector at time t</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-3" style="display: none;">
+                    <h2>Newton's Second Law</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>Newton’s Second Law states that the net force \( \vec{F} \) acting on a particle of mass \( m \) produces an acceleration \( \vec{a} \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{F}}=m{\vec{a}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{F}\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{a}\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-4" style="display: none;">
+                    <h2>Newton's Second Law (Momentum Form)</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents Newton's Second Law in terms of momentum, stating that the force acting on a particle is equal to the time rate of change of its momentum.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{F}}={\frac{d{\vec{p}}}{d t}},\quad{\mathrm{where~}}{\vec{p}}=m{\vec{v}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\({\vec{F}}\)</td>
+                            <td>Force vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\({\vec{p}}\)</td>
+                            <td>Momentum vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\({\vec{v}}\)</td>
+                            <td>Velocity vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-5" style="display: none;">
+                    <h2>Infinitesimal Work Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the infinitesimal work done by a force acting on a particle along a displacement.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[d W={\vec{F}}\cdot{\vec{d r}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(d W\)</td>
+                            <td>Infinitesimal work done</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{F}\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{d r}\)</td>
+                            <td>Infinitesimal displacement vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-6" style="display: none;">
+                    <h2>Work Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the total work done by a force \( \vec{F} \) along a path defined by the displacement vector \( d\vec{r} \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[W=\int{\vec{F}}\cdot d{\vec{r}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(W\)</td>
+                            <td>Work done</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{F}\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(d\vec{r}\)</td>
+                            <td>Infinitesimal displacement vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-7" style="display: none;">
+                    <h2>Work-Energy Theorem</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation relates the work done (W) on a system to the change in kinetic energy (ΔK) of the system.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[W=\Delta K\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(W\)</td>
+                            <td>Work done</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\Delta K\)</td>
+                            <td>Change in kinetic energy</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-8" style="display: none;">
+                    <h2>Conservation of Energy Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the conservation of mechanical energy in an isolated system, where the total energy E is the sum of kinetic energy K and potential energy U.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[E=K+U\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(E\)</td>
+                            <td>Total mechanical energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(K\)</td>
+                            <td>Kinetic energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(U\)</td>
+                            <td>Potential energy</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-9" style="display: none;">
+                    <h2>Total Momentum of a System of Particles</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the total momentum \( \vec{P} \) of a system as the vector sum of the individual momenta \( \vec{p_i} \) of all particles in the system.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\vec{P}=\sum_{i}\vec{p_{i}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{P}\)</td>
+                            <td>Total momentum of the system</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{p_{i}}\)</td>
+                            <td>Momentum of the i-th particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-10" style="display: none;">
+                    <h2>Torque Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines torque as the cross product of the position vector and the force vector.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{\tau}}={\vec{r}}\times{\vec{F}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\({\vec{\tau}}\)</td>
+                            <td>Torque vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\({\vec{r}}\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\({\vec{F}}\)</td>
+                            <td>Force vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-11" style="display: none;">
+                    <h2>Angular Momentum Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines the angular momentum \( \vec{L} \) of a particle as the cross product of its position vector \( \vec{r} \) and its linear momentum \( \vec{p} \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\vec{L}=\vec{r}\times\vec{p!}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{L}\)</td>
+                            <td>Angular momentum</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{r}\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{p}\)</td>
+                            <td>Linear momentum of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-12" style="display: none;">
+                    <h2>Torque and Angular Momentum Relation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation relates torque (\vec{\tau}) to the time rate of change of angular momentum (\vec{L}).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{\tau}}={\frac{d{\vec{L}}}{d t}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{\tau}\)</td>
+                            <td>Torque</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{L}\)</td>
+                            <td>Angular momentum</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-13" style="display: none;">
+                    <h2>Hooke's Law for Springs</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the force exerted by a spring when it is displaced from its equilibrium position.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[F_{s}=-k x\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(F_{s}\)</td>
+                            <td>Force exerted by the spring</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(k\)</td>
+                            <td>Spring constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(x\)</td>
+                            <td>Displacement from equilibrium</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-14" style="display: none;">
+                    <h2>Moment of Inertia Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines the moment of inertia (I) as the sum of the products of the mass of each particle (m_i) and the square of its distance (r_i) from the axis of rotation.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[I=\sum_{i}m_{i}r_{i}^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(I\)</td>
+                            <td>Moment of inertia</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{i}\)</td>
+                            <td>Mass of the i-th particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(r_{i}\)</td>
+                            <td>Distance of the i-th particle from the axis of rotation</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-15" style="display: none;">
+                    <h2>Rotational Kinetic Energy</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the rotational kinetic energy of a rotating object, where I is the moment of inertia and \omega is the angular velocity.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[K_{\mathrm{rot}}={\frac{1}{2}}I\omega^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(K_{\mathrm{rot}}\)</td>
+                            <td>Rotational kinetic energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(I\)</td>
+                            <td>Moment of inertia</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\omega\)</td>
+                            <td>Angular velocity</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-16" style="display: none;">
+                    <h2>Simple Harmonic Motion Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the motion of a simple harmonic oscillator, such as a mass on a spring, where the acceleration is proportional to the displacement and opposite in direction.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\frac{d^{2}x}{d t^{2}}+\frac{k}{m}x=0.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\frac{d^{2}x}{d t^{2}}\)</td>
+                            <td>Second derivative of displacement with respect to time (acceleration)</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(x\)</td>
+                            <td>Displacement from equilibrium</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(k\)</td>
+                            <td>Spring constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-17" style="display: none;">
+                    <h2>Simple Harmonic Motion Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the position of a particle undergoing simple harmonic motion as a function of time.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[x(t)=A\cos(\omega t+\phi)\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(x(t)\)</td>
+                            <td>Position of the oscillator at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(A\)</td>
+                            <td>Amplitude of the oscillation</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\omega\)</td>
+                            <td>Angular velocity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\phi\)</td>
+                            <td>Phase constant</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-18" style="display: none;">
+                    <h2>Newton's Law of Universal Gravitation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the gravitational force between two masses m_1 and m_2 separated by a distance r.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[F_{g}=G{\frac{m_{1}m_{2}}{r^{2}}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(F_{g}\)</td>
+                            <td>Gravitational force between two masses</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(G\)</td>
+                            <td>Gravitational constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{1}\)</td>
+                            <td>Mass of the first object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{2}\)</td>
+                            <td>Mass of the second object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(r\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-19" style="display: none;">
+                    <h2>Gravitational Potential Energy</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the gravitational potential energy (U_g) between two masses (m_1 and m_2) separated by a distance (r).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[U_{g}=-G{\frac{m_{1}m_{2}}{r}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(U_{g}\)</td>
+                            <td>Gravitational potential energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(G\)</td>
+                            <td>Gravitational constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{1}\)</td>
+                            <td>Mass of the first object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{2}\)</td>
+                            <td>Mass of the second object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(r\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-20" style="display: none;">
+                    <h2>Inclined Plane Acceleration Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the acceleration of a block on a frictionless inclined plane under the influence of gravity.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[m a = m g \sin \theta\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\theta\)</td>
+                            <td>Angle of the incline with the horizontal</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-21" style="display: none;">
+                    <h2>Conservation of Energy Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the conservation of energy principle, stating that the initial total energy (E_i) of a system is equal to the final total energy (E_f) in the absence of non-conservative forces.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[E_{i}=E_{f}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(E_{i}\)</td>
+                            <td>Initial total energy of the system</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(E_{f}\)</td>
+                            <td>Final total energy of the system</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-22" style="display: none;">
+                    <h2>Inclined Plane Acceleration</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the acceleration of a block sliding down a frictionless inclined plane using the component of gravitational force along the incline.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[a=g\sin\theta=(9.81)\sin30^{\circ}=4.905~\mathrm{m/s}^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\theta\)</td>
+                            <td>Angle of the incline with the horizontal</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-23" style="display: none;">
+                    <h2>Gravitational Potential Energy Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the initial gravitational potential energy (E_i) of an object with mass m at a height h in a gravitational field with acceleration due to gravity g.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[E_{i}=m g h\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(E_{i}\)</td>
+                            <td>Initial total energy of the system</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(h\)</td>
+                            <td>Height of the block above the base</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-24" style="display: none;">
+                    <h2>Kinematic Equation for Constant Acceleration</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation relates the final velocity (v) of an object to its initial velocity (v_0), acceleration (a), and displacement (s) under constant acceleration.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v^{2}=v_{0}^{2}+2a s\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(v_{0}\)</td>
+                            <td>Initial velocity of the object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(s\)</td>
+                            <td>Displacement of the object</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-25" style="display: none;">
+                    <h2>Final Kinetic Energy Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the final kinetic energy (E_f) of an object in terms of its mass (m) and velocity (v).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[E_{f}=\frac{1}{2}m v^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(E_{f}\)</td>
+                            <td>Final total energy of the system</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-26" style="display: none;">
+                    <h2>Conservation of Mechanical Energy</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the conservation of mechanical energy, where the initial potential energy is converted into kinetic energy as an object moves under the influence of gravity.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[m g h=\frac{1}{2}m v^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(h\)</td>
+                            <td>Height of the block above the base</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-27" style="display: none;">
+                    <h2>Velocity from Energy Conservation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the velocity of an object using energy conservation principles, specifically for an object falling from a height h under gravity.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v={\sqrt{2g h}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(h\)</td>
+                            <td>Height of the block above the base</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-28" style="display: none;">
+                    <h2>Velocity of a Block on an Incline</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the velocity of a block sliding down a frictionless inclined plane using energy conservation principles.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v={\sqrt{2(9.81)(10)}}=14{\mathrm{~m/s}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(9.81\)</td>
+                            <td>Acceleration due to gravity in m/s^2</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(10\)</td>
+                            <td>Height of the incline in meters</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-29" style="display: none;">
+                    <h2>Velocity from Kinematic Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the final velocity of an object using the kinematic equation, given the acceleration and displacement.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v={\sqrt{2a s}}={\sqrt{2(4.905)(20)}}=14{\mathrm{~m/s}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(s\)</td>
+                            <td>Displacement of the object</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-30" style="display: none;">
+                    <h2>Force on an Inclined Plane</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the force acting on a block of mass m placed on a frictionless inclined plane at an angle θ with the horizontal.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[F=m g\sin\theta\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(F\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\theta\)</td>
+                            <td>Angle of the incline with the horizontal</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+            </div>
+        </div>
+        
+        <!-- Graph Modal -->
+        <div id="hypergraph-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+             background: rgba(0,0,0,0.8); z-index: 1000;">
+            <div style="position: relative; width: 90%; height: 90%; margin: 2% auto; background: var(--system1-bg); 
+                 padding: 20px; border-radius: 8px; overflow: hidden;">
+                <button onclick="hideHypergraph()" style="position: absolute; right: 10px; top: 10px; z-index: 1001;" 
+                        class="menu-button">Close</button>
+                <div id="graph-container" style="width: 100%; height: 100%;">
+    
+    <div class="graph-container" style="height: 100%; width: 100%;">
+        <style>
+            .graph-container {
+                border: 1.5px solid var(--system1-border);
+                border-radius: 8px;
+                overflow: hidden;
+                background: var(--system1-bg);
+            }
+            .vis-network {
+                outline: none !important;
+            }
+            .vis-tooltip {
+                font-family: 'Chicago', 'Helvetica', sans-serif;
+                font-size: 12px;
+                background-color: var(--system1-bg) !important;
+                border: 1.5px solid var(--system1-border) !important;
+                border-radius: 8px;
+                padding: 8px;
+                color: var(--system1-text) !important;
+            }
+        </style>
+        <script type="text/javascript">
+            function initGraph() {
+                const container = document.getElementById('graph-container');
+                const network = new vis.Network(container, data, options);
+                
+                network.on("afterDrawing", function() {
+                    if (typeof MathJax !== 'undefined') {
+                        MathJax.typesetPromise();
+                    }
+                });
+                
+                network.on("stabilizationIterationsDone", function() {
+                    network.setOptions({ physics: false });
+                });
+            }
+        </script>
+        <html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100%;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Velocity Equation", "label": "Velocity Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eVelocity Equation\u003c/b\u003e\u003cbr/\u003eThis equation defines the velocity \\( \\vec{v}(t) \\) as the time derivative of the position vector \\( \\vec{r}(t) \\).\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{v}(t)", "label": "\\(\\vec{v}(t)\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{v}(t)\u003c/b\u003e\u003cbr/\u003eVelocity vector at time t\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{r}(t)", "label": "\\(\\vec{r}(t)\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{r}(t)\u003c/b\u003e\u003cbr/\u003ePosition vector at time t\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "t", "label": "\\(t\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003et\u003c/b\u003e\u003cbr/\u003eTime variable\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Speed from Velocity Magnitude", "label": "Speed from Velocity Magnitude", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eSpeed from Velocity Magnitude\u003c/b\u003e\u003cbr/\u003eThis equation defines speed as the magnitude of the velocity vector.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "v", "label": "\\(v\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ev\u003c/b\u003e\u003cbr/\u003eSpeed\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Acceleration Equation", "label": "Acceleration Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eAcceleration Equation\u003c/b\u003e\u003cbr/\u003eThis equation describes acceleration as the time derivative of velocity and the second time derivative of position.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{a}(t)", "label": "\\(\\vec{a}(t)\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{a}(t)\u003c/b\u003e\u003cbr/\u003eAcceleration vector as a function of time\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Newton\u0027s Second Law", "label": "Newton\u0027s Second Law", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eNewton\u0027s Second Law\u003c/b\u003e\u003cbr/\u003eNewton\u2019s Second Law states that the net force \\( \\vec{F} \\) acting on a particle of mass \\( m \\) produces an acceleration \\( \\vec{a} \\).\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{F}", "label": "\\(\\vec{F}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{F}\u003c/b\u003e\u003cbr/\u003eNet force acting on a particle\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "m", "label": "\\(m\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003em\u003c/b\u003e\u003cbr/\u003eMass of the particle\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{a}", "label": "\\(\\vec{a}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{a}\u003c/b\u003e\u003cbr/\u003eAcceleration of the particle\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Newton\u0027s Second Law (Momentum Form)", "label": "Newton\u0027s Second Law (Momentum Form)", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eNewton\u0027s Second Law (Momentum Form)\u003c/b\u003e\u003cbr/\u003eThis equation represents Newton\u0027s Second Law in terms of momentum, stating that the force acting on a particle is equal to the time rate of change of its momentum.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "{\\vec{F}}", "label": "\\({\\vec{F}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e{\\vec{F}}\u003c/b\u003e\u003cbr/\u003eForce vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "{\\vec{p}}", "label": "\\({\\vec{p}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e{\\vec{p}}\u003c/b\u003e\u003cbr/\u003eMomentum vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "{\\vec{v}}", "label": "\\({\\vec{v}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e{\\vec{v}}\u003c/b\u003e\u003cbr/\u003eVelocity vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Infinitesimal Work Equation", "label": "Infinitesimal Work Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eInfinitesimal Work Equation\u003c/b\u003e\u003cbr/\u003eThis equation represents the infinitesimal work done by a force acting on a particle along a displacement.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "d W", "label": "\\(d W\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ed W\u003c/b\u003e\u003cbr/\u003eInfinitesimal work done\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{d r}", "label": "\\(\\vec{d r}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{d r}\u003c/b\u003e\u003cbr/\u003eInfinitesimal displacement vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Work Equation", "label": "Work Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eWork Equation\u003c/b\u003e\u003cbr/\u003eThis equation calculates the total work done by a force \\( \\vec{F} \\) along a path defined by the displacement vector \\( d\\vec{r} \\).\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "W", "label": "\\(W\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eW\u003c/b\u003e\u003cbr/\u003eWork done\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "d\\vec{r}", "label": "\\(d\\vec{r}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ed\\vec{r}\u003c/b\u003e\u003cbr/\u003eInfinitesimal displacement vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Work-Energy Theorem", "label": "Work-Energy Theorem", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eWork-Energy Theorem\u003c/b\u003e\u003cbr/\u003eThis equation relates the work done (W) on a system to the change in kinetic energy (\u0394K) of the system.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\Delta K", "label": "\\(\\Delta K\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\Delta K\u003c/b\u003e\u003cbr/\u003eChange in kinetic energy\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Conservation of Energy Equation", "label": "Conservation of Energy Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eConservation of Energy Equation\u003c/b\u003e\u003cbr/\u003eThis equation represents the conservation of mechanical energy in an isolated system, where the total energy E is the sum of kinetic energy K and potential energy U.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "E", "label": "\\(E\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eE\u003c/b\u003e\u003cbr/\u003eTotal mechanical energy\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "K", "label": "\\(K\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eK\u003c/b\u003e\u003cbr/\u003eKinetic energy\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "U", "label": "\\(U\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eU\u003c/b\u003e\u003cbr/\u003ePotential energy\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Total Momentum of a System of Particles", "label": "Total Momentum of a System of Particles", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eTotal Momentum of a System of Particles\u003c/b\u003e\u003cbr/\u003eThis equation represents the total momentum \\( \\vec{P} \\) of a system as the vector sum of the individual momenta \\( \\vec{p_i} \\) of all particles in the system.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{P}", "label": "\\(\\vec{P}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{P}\u003c/b\u003e\u003cbr/\u003eTotal momentum of the system\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{p_{i}}", "label": "\\(\\vec{p_{i}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{p_{i}}\u003c/b\u003e\u003cbr/\u003eMomentum of the i-th particle\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Torque Equation", "label": "Torque Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eTorque Equation\u003c/b\u003e\u003cbr/\u003eThis equation defines torque as the cross product of the position vector and the force vector.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "{\\vec{\\tau}}", "label": "\\({\\vec{\\tau}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e{\\vec{\\tau}}\u003c/b\u003e\u003cbr/\u003eTorque vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "{\\vec{r}}", "label": "\\({\\vec{r}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e{\\vec{r}}\u003c/b\u003e\u003cbr/\u003ePosition vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Angular Momentum Equation", "label": "Angular Momentum Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eAngular Momentum Equation\u003c/b\u003e\u003cbr/\u003eThis equation defines the angular momentum \\( \\vec{L} \\) of a particle as the cross product of its position vector \\( \\vec{r} \\) and its linear momentum \\( \\vec{p} \\).\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{L}", "label": "\\(\\vec{L}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{L}\u003c/b\u003e\u003cbr/\u003eAngular momentum\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{r}", "label": "\\(\\vec{r}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{r}\u003c/b\u003e\u003cbr/\u003ePosition vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{p}", "label": "\\(\\vec{p}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{p}\u003c/b\u003e\u003cbr/\u003eLinear momentum of the particle\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Torque and Angular Momentum Relation", "label": "Torque and Angular Momentum Relation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eTorque and Angular Momentum Relation\u003c/b\u003e\u003cbr/\u003eThis equation relates torque (\\vec{\\tau}) to the time rate of change of angular momentum (\\vec{L}).\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{\\tau}", "label": "\\(\\vec{\\tau}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\vec{\\tau}\u003c/b\u003e\u003cbr/\u003eTorque\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Hooke\u0027s Law for Springs", "label": "Hooke\u0027s Law for Springs", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eHooke\u0027s Law for Springs\u003c/b\u003e\u003cbr/\u003eThis equation describes the force exerted by a spring when it is displaced from its equilibrium position.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "F_{s}", "label": "\\(F_{s}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eF_{s}\u003c/b\u003e\u003cbr/\u003eForce exerted by the spring\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "k", "label": "\\(k\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ek\u003c/b\u003e\u003cbr/\u003eSpring constant\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "x", "label": "\\(x\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ex\u003c/b\u003e\u003cbr/\u003eDisplacement from equilibrium\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Moment of Inertia Equation", "label": "Moment of Inertia Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eMoment of Inertia Equation\u003c/b\u003e\u003cbr/\u003eThis equation defines the moment of inertia (I) as the sum of the products of the mass of each particle (m_i) and the square of its distance (r_i) from the axis of rotation.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "I", "label": "\\(I\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eI\u003c/b\u003e\u003cbr/\u003eMoment of inertia\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "m_{i}", "label": "\\(m_{i}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003em_{i}\u003c/b\u003e\u003cbr/\u003eMass of the i-th particle\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "r_{i}", "label": "\\(r_{i}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003er_{i}\u003c/b\u003e\u003cbr/\u003eDistance of the i-th particle from the axis of rotation\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Rotational Kinetic Energy", "label": "Rotational Kinetic Energy", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eRotational Kinetic Energy\u003c/b\u003e\u003cbr/\u003eThis equation represents the rotational kinetic energy of a rotating object, where I is the moment of inertia and \\omega is the angular velocity.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "K_{\\mathrm{rot}}", "label": "\\(K_{\\mathrm{rot}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eK_{\\mathrm{rot}}\u003c/b\u003e\u003cbr/\u003eRotational kinetic energy\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\omega", "label": "\\(\\omega\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\omega\u003c/b\u003e\u003cbr/\u003eAngular velocity\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Simple Harmonic Motion Equation", "label": "Simple Harmonic Motion Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eSimple Harmonic Motion Equation\u003c/b\u003e\u003cbr/\u003eThis equation describes the motion of a simple harmonic oscillator, such as a mass on a spring, where the acceleration is proportional to the displacement and opposite in direction.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\frac{d^{2}x}{d t^{2}}", "label": "\\(\\frac{d^{2}x}{d t^{2}}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\frac{d^{2}x}{d t^{2}}\u003c/b\u003e\u003cbr/\u003eSecond derivative of displacement with respect to time (acceleration)\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "x(t)", "label": "\\(x(t)\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ex(t)\u003c/b\u003e\u003cbr/\u003ePosition of the oscillator at time t\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "A", "label": "\\(A\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eA\u003c/b\u003e\u003cbr/\u003eAmplitude of the oscillation\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\phi", "label": "\\(\\phi\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\phi\u003c/b\u003e\u003cbr/\u003ePhase constant\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Newton\u0027s Law of Universal Gravitation", "label": "Newton\u0027s Law of Universal Gravitation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eNewton\u0027s Law of Universal Gravitation\u003c/b\u003e\u003cbr/\u003eThis equation describes the gravitational force between two masses m_1 and m_2 separated by a distance r.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "F_{g}", "label": "\\(F_{g}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eF_{g}\u003c/b\u003e\u003cbr/\u003eGravitational force between two masses\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "G", "label": "\\(G\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eG\u003c/b\u003e\u003cbr/\u003eGravitational constant\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "m_{1}", "label": "\\(m_{1}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003em_{1}\u003c/b\u003e\u003cbr/\u003eMass of the first object\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "m_{2}", "label": "\\(m_{2}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003em_{2}\u003c/b\u003e\u003cbr/\u003eMass of the second object\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "r", "label": "\\(r\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003er\u003c/b\u003e\u003cbr/\u003ePosition vector\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Gravitational Potential Energy", "label": "Gravitational Potential Energy", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eGravitational Potential Energy\u003c/b\u003e\u003cbr/\u003eThis equation represents the gravitational potential energy (U_g) between two masses (m_1 and m_2) separated by a distance (r).\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "U_{g}", "label": "\\(U_{g}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eU_{g}\u003c/b\u003e\u003cbr/\u003eGravitational potential energy\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Inclined Plane Acceleration Equation", "label": "Inclined Plane Acceleration Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eInclined Plane Acceleration Equation\u003c/b\u003e\u003cbr/\u003eThis equation describes the acceleration of a block on a frictionless inclined plane under the influence of gravity.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "a", "label": "\\(a\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ea\u003c/b\u003e\u003cbr/\u003eAcceleration of the particle\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "g", "label": "\\(g\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eg\u003c/b\u003e\u003cbr/\u003eAcceleration due to gravity\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\theta", "label": "\\(\\theta\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e\\theta\u003c/b\u003e\u003cbr/\u003eAngle of the incline with the horizontal\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "E_{i}", "label": "\\(E_{i}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eE_{i}\u003c/b\u003e\u003cbr/\u003eInitial total energy of the system\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "E_{f}", "label": "\\(E_{f}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eE_{f}\u003c/b\u003e\u003cbr/\u003eFinal total energy of the system\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Inclined Plane Acceleration", "label": "Inclined Plane Acceleration", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eInclined Plane Acceleration\u003c/b\u003e\u003cbr/\u003eThis equation calculates the acceleration of a block sliding down a frictionless inclined plane using the component of gravitational force along the incline.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Gravitational Potential Energy Equation", "label": "Gravitational Potential Energy Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eGravitational Potential Energy Equation\u003c/b\u003e\u003cbr/\u003eThis equation represents the initial gravitational potential energy (E_i) of an object with mass m at a height h in a gravitational field with acceleration due to gravity g.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "h", "label": "\\(h\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eh\u003c/b\u003e\u003cbr/\u003eHeight of the block above the base\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Kinematic Equation for Constant Acceleration", "label": "Kinematic Equation for Constant Acceleration", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eKinematic Equation for Constant Acceleration\u003c/b\u003e\u003cbr/\u003eThis equation relates the final velocity (v) of an object to its initial velocity (v_0), acceleration (a), and displacement (s) under constant acceleration.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "v_{0}", "label": "\\(v_{0}\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003ev_{0}\u003c/b\u003e\u003cbr/\u003eInitial velocity of the object\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "s", "label": "\\(s\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003es\u003c/b\u003e\u003cbr/\u003eDisplacement of the object\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Final Kinetic Energy Equation", "label": "Final Kinetic Energy Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eFinal Kinetic Energy Equation\u003c/b\u003e\u003cbr/\u003eThis equation represents the final kinetic energy (E_f) of an object in terms of its mass (m) and velocity (v).\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Conservation of Mechanical Energy", "label": "Conservation of Mechanical Energy", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eConservation of Mechanical Energy\u003c/b\u003e\u003cbr/\u003eThis equation represents the conservation of mechanical energy, where the initial potential energy is converted into kinetic energy as an object moves under the influence of gravity.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Velocity from Energy Conservation", "label": "Velocity from Energy Conservation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eVelocity from Energy Conservation\u003c/b\u003e\u003cbr/\u003eThis equation calculates the velocity of an object using energy conservation principles, specifically for an object falling from a height h under gravity.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Velocity of a Block on an Incline", "label": "Velocity of a Block on an Incline", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eVelocity of a Block on an Incline\u003c/b\u003e\u003cbr/\u003eThis equation calculates the velocity of a block sliding down a frictionless inclined plane using energy conservation principles.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "9.81", "label": "\\(9.81\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e9.81\u003c/b\u003e\u003cbr/\u003eAcceleration due to gravity in m/s^2\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "10", "label": "\\(10\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003e10\u003c/b\u003e\u003cbr/\u003eHeight of the incline in meters\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Velocity from Kinematic Equation", "label": "Velocity from Kinematic Equation", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eVelocity from Kinematic Equation\u003c/b\u003e\u003cbr/\u003eThis equation calculates the final velocity of an object using the kinematic equation, given the acceleration and displacement.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#2C3E50", "font": {"color": "#000000"}, "id": "Eq: Force on an Inclined Plane", "label": "Force on an Inclined Plane", "shape": "box", "size": 30, "title": "\u003cdiv style=\u0027max-width:300px;\u0027\u003e\u003cb\u003eForce on an Inclined Plane\u003c/b\u003e\u003cbr/\u003eThis equation represents the force acting on a block of mass m placed on a frictionless inclined plane at an angle \u03b8 with the horizontal.\u003c/div\u003e"}, {"borderWidth": 1.5, "color": "#E74C3C", "font": {"color": "#000000"}, "id": "F", "label": "\\(F\\)", "shape": "dot", "size": 20, "title": "\u003cdiv style=\u0027max-width:200px;\u0027\u003e\u003cb\u003eF\u003c/b\u003e\u003cbr/\u003eNet force acting on a particle\u003c/div\u003e"}]);
+                  edges = new vis.DataSet([{"color": "#7F8C8D", "from": "Eq: Velocity Equation", "to": "\\vec{v}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity Equation", "to": "\\vec{r}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity Equation", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Speed from Velocity Magnitude", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Speed from Velocity Magnitude", "to": "\\vec{v}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration Equation", "to": "\\vec{a}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration Equation", "to": "\\vec{v}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration Equation", "to": "\\vec{r}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law", "to": "\\vec{a}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (Momentum Form)", "to": "{\\vec{F}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (Momentum Form)", "to": "{\\vec{p}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (Momentum Form)", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (Momentum Form)", "to": "{\\vec{v}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (Momentum Form)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Infinitesimal Work Equation", "to": "d W", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Infinitesimal Work Equation", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Infinitesimal Work Equation", "to": "\\vec{d r}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work Equation", "to": "W", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work Equation", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work Equation", "to": "d\\vec{r}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work-Energy Theorem", "to": "W", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work-Energy Theorem", "to": "\\Delta K", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation", "to": "E", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation", "to": "K", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation", "to": "U", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Total Momentum of a System of Particles", "to": "\\vec{P}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Total Momentum of a System of Particles", "to": "\\vec{p_{i}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque Equation", "to": "{\\vec{\\tau}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque Equation", "to": "{\\vec{r}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque Equation", "to": "{\\vec{F}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Angular Momentum Equation", "to": "\\vec{L}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Angular Momentum Equation", "to": "\\vec{r}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Angular Momentum Equation", "to": "\\vec{p}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque and Angular Momentum Relation", "to": "\\vec{\\tau}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque and Angular Momentum Relation", "to": "\\vec{L}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque and Angular Momentum Relation", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Hooke\u0027s Law for Springs", "to": "F_{s}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Hooke\u0027s Law for Springs", "to": "k", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Hooke\u0027s Law for Springs", "to": "x", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Moment of Inertia Equation", "to": "I", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Moment of Inertia Equation", "to": "m_{i}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Moment of Inertia Equation", "to": "r_{i}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Rotational Kinetic Energy", "to": "K_{\\mathrm{rot}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Rotational Kinetic Energy", "to": "I", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Rotational Kinetic Energy", "to": "\\omega", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "\\frac{d^{2}x}{d t^{2}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "x", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "k", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "x(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "A", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "\\omega", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation", "to": "\\phi", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation", "to": "F_{g}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation", "to": "G", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation", "to": "m_{1}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation", "to": "m_{2}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation", "to": "r", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy", "to": "U_{g}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy", "to": "G", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy", "to": "m_{1}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy", "to": "m_{2}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy", "to": "r", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Inclined Plane Acceleration Equation", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Inclined Plane Acceleration Equation", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Inclined Plane Acceleration Equation", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Inclined Plane Acceleration Equation", "to": "\\theta", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation", "to": "E_{i}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation", "to": "E_{f}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Inclined Plane Acceleration", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Inclined Plane Acceleration", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Inclined Plane Acceleration", "to": "\\theta", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy Equation", "to": "E_{i}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy Equation", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy Equation", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy Equation", "to": "h", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration", "to": "v_{0}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration", "to": "s", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Final Kinetic Energy Equation", "to": "E_{f}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Final Kinetic Energy Equation", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Final Kinetic Energy Equation", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Mechanical Energy", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Mechanical Energy", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Mechanical Energy", "to": "h", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Mechanical Energy", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity from Energy Conservation", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity from Energy Conservation", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity from Energy Conservation", "to": "h", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity of a Block on an Incline", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity of a Block on an Incline", "to": "9.81", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity of a Block on an Incline", "to": "10", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity from Kinematic Equation", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity from Kinematic Equation", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity from Kinematic Equation", "to": "s", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Force on an Inclined Plane", "to": "F", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Force on an Inclined Plane", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Force on an Inclined Plane", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Force on an Inclined Plane", "to": "\\theta", "width": 1.5}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
+    </div>
+    
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vis.js library for network visualization -->
+        <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+        
+        <script>
+            function showHypergraph() {
+                document.getElementById('hypergraph-modal').style.display = 'block';
+                if (typeof initGraph === 'function') {
+                    setTimeout(initGraph, 100);
+                }
+            }
+            
+            function hideHypergraph() {
+                document.getElementById('hypergraph-modal').style.display = 'none';
+            }
+        </script>
+    </body>
+    </html>
+    
