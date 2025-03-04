@@ -7,7 +7,6 @@ from typing import Dict
 from .base_client import BaseClient, AsyncBaseClient
 from . import ParseResponse
 
-
 class Axiomatic(BaseClient):
     def __init__(self, *args, **kwargs):
         if "timeout" not in kwargs:
@@ -91,7 +90,7 @@ class DocumentHelper:
                     images[img_name] = base64.b64encode(img_file.read()).decode("utf-8")
 
         return ParseResponse(markdown=markdown, images=images)
-
+        
 
 class ToolsHelper:
     _ax_client: Axiomatic
