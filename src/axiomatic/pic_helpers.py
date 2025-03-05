@@ -98,7 +98,7 @@ def plot_single_spectrum(
 
 
 def plot_interactive_spectra(
-    spectra: Union[List[List[List[float]]], Dict[str, List[List[float]]]],
+    spectra: Union[List[List[List[float]]], Dict[Tuple[str, str], List[List[float]]]],
     wavelengths: List[float],
     spectrum_labels: Optional[List[str]] = None,
     vlines: Optional[List[float]] = None,
