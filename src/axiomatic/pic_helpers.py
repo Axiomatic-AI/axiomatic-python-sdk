@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 import iklayout  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
@@ -98,7 +98,7 @@ def plot_single_spectrum(
 
 
 def plot_interactive_spectra(
-    spectra: List[List[List[float]]] | Dict[str, List[List[float]]],
+    spectra: Union[List[List[List[float]]], Dict[str, List[List[float]]]],
     wavelengths: List[float],
     spectrum_labels: Optional[List[str]] = None,
     vlines: Optional[List[float]] = None,
@@ -121,7 +121,7 @@ def plot_interactive_spectra(
 
     # Defaults
     if spectrum_labels is None and isinstance(spectra, dict):
-        spectrum_labels = [f"T {port_in[0]} -> {port_out[0]}" for port_in, port_out in spectra.keys()]
+        spectrum_labels = [f"T {port_in} -> {port_out}" for port_in, port_out in spectra.keys()]
     elif spectrum_labels is None:
         spectrum_labels = [f"Spectrum {i}" for i in range(len(spectra))]
     if vlines is None:
