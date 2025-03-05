@@ -1,11 +1,12 @@
 import re
-import numpy as np  # type: ignore
+from typing import Dict, List, Optional, Set, Tuple, Union
+
 import iklayout  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
+import numpy as np  # type: ignore
 import plotly.graph_objects as go  # type: ignore
-from typing import List, Optional, Tuple, Dict, Set
 
-from . import Parameter, StatementDictionary, StatementValidationDictionary, StatementValidation, Computation
+from . import Computation, Parameter, StatementDictionary, StatementValidation, StatementValidationDictionary
 
 
 def plot_circuit(component):
@@ -97,7 +98,7 @@ def plot_single_spectrum(
 
 
 def plot_interactive_spectra(
-    spectra: List[List[List[float]]],
+    spectra: Union[List[List[List[float]]], Dict[Tuple[str, str], List[List[float]]]],
     wavelengths: List[float],
     spectrum_labels: Optional[List[str]] = None,
     vlines: Optional[List[float]] = None,
@@ -119,12 +120,17 @@ def plot_interactive_spectra(
     """
 
     # Defaults
-    if spectrum_labels is None:
+    if spectrum_labels is None and isinstance(spectra, dict):
+        spectrum_labels = [f"T {port_in} -> {port_out}" for port_in, port_out in spectra.keys()]
+    elif spectrum_labels is None:
         spectrum_labels = [f"Spectrum {i}" for i in range(len(spectra))]
     if vlines is None:
         vlines = []
     if hlines is None:
         hlines = []
+
+    if isinstance(spectra, dict):
+        spectra = list(spectra.values())
 
     # Adjust y-axis range
     all_vals = [val for spec in spectra for iteration in spec for val in iteration]
