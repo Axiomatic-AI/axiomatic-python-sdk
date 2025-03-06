@@ -98,7 +98,7 @@ def plot_single_spectrum(
 
 
 def plot_interactive_spectra(
-    spectra: Union[List[List[List[float]]], Dict[Tuple[str, str], List[List[float]]]],
+    spectra: Union[List[List[List[float]]], Dict[Union[Tuple[str, str], str], List[List[float]]]],
     wavelengths: List[float],
     spectrum_labels: Optional[List[str]] = None,
     vlines: Optional[List[float]] = None,
@@ -118,15 +118,17 @@ def plot_interactive_spectra(
     hlines : list of float, optional
         A list of y-values where horizontal lines should be drawn. Defaults to an empty list.
     """
+    if isinstance(spectra, dict):
+        port_keys = []
+        for key in spectra:
+            if isinstance(key, str):
+                port_keys.append((key.split(",")[0], key.split(",")[1]))
+            elif isinstance(key, tuple):
+                port_keys.append(key)
 
     # Defaults
     if spectrum_labels is None and isinstance(spectra, dict):
-        if all(isinstance(key, str) and "," in key for key in spectra.keys()):
-            spectrum_labels = [f"T {ports.split(',')[0]} -> {ports.split(',')[1]}" for ports in spectra.keys()]
-        elif all(isinstance(key, tuple) and len(key) == 2 for key in spectra.keys()):
-            spectrum_labels = [f"T {port_in} -> {port_out}" for port_in, port_out in spectra.keys()]
-        else:
-            raise ValueError("Invalid keys for spectra dictionary.")
+        spectrum_labels = [f"T {port_in} -> {port_out}" for port_in, port_out in port_keys]
 
     elif spectrum_labels is None:
         spectrum_labels = [f"Spectrum {i}" for i in range(len(spectra))]
