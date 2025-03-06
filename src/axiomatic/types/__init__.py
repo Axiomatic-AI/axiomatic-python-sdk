@@ -29,7 +29,7 @@ from .generate_component_code_response import GenerateComponentCodeResponse
 from .generate_lens_code_response import GenerateLensCodeResponse
 from .get_optimizable_parameters_response import GetOptimizableParametersResponse
 from .get_spectrum_response import GetSpectrumResponse
-from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
+from .get_spectrum_response_spectrum_value_item import GetSpectrumResponseSpectrumValueItem
 from .http_validation_error import HttpValidationError
 from .informalize_statement_response import InformalizeStatementResponse
 from .net import Net
@@ -57,7 +57,6 @@ from .refine_component_code_response import RefineComponentCodeResponse
 from .schedule_job_response import ScheduleJobResponse
 from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
-from .spectrum import Spectrum
 from .statement import Statement
 from .statement_dictionary import StatementDictionary
 from .statement_type import StatementType
@@ -111,7 +110,7 @@ __all__ = [
     "GenerateLensCodeResponse",
     "GetOptimizableParametersResponse",
     "GetSpectrumResponse",
-    "GetSpectrumResponseSpectrumItem",
+    "GetSpectrumResponseSpectrumValueItem",
     "HttpValidationError",
     "InformalizeStatementResponse",
     "Net",
@@ -139,7 +138,6 @@ __all__ = [
     "ScheduleJobResponse",
     "SolutionResponse",
     "SolutionResponseSolutionValue",
-    "Spectrum",
     "Statement",
     "StatementDictionary",
     "StatementType",

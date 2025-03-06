@@ -1894,7 +1894,7 @@ client.pic.circuit.validate(
 <dl>
 <dd>
 
-Formalize a query about a circuit into a dictionary of constraints
+Formalize a query about a circuit into a dictionary of constraints. Extends previous statements if provided.
 </dd>
 </dl>
 </dd>
@@ -1941,6 +1941,14 @@ client.pic.circuit.formalize(
 <dd>
 
 **pdk:** `typing.Optional[PdkType]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**statements:** `typing.Optional[StatementDictionary]` 
     
 </dd>
 </dl>
@@ -2581,8 +2589,7 @@ client = Axiomatic(
 )
 client.pic.circuit.get_sax_spectrum(
     netlist=Netlist(),
-    port_in="port_in",
-    port_out="port_out",
+    port_pairs=[[]],
     settings={"key": "value"},
     wls=[1.1],
 )
@@ -2609,15 +2616,7 @@ client.pic.circuit.get_sax_spectrum(
 <dl>
 <dd>
 
-**port_in:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**port_out:** `str` 
+**port_pairs:** `typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]` 
     
 </dd>
 </dl>
@@ -2634,6 +2633,14 @@ client.pic.circuit.get_sax_spectrum(
 <dd>
 
 **wls:** `typing.Sequence[float]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**jit_compile:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
