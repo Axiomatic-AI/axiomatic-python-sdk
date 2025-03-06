@@ -856,7 +856,6 @@ class CircuitClient:
         port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
         settings: Settings,
         wls: typing.Sequence[float],
-        jit_compile: typing.Optional[bool] = OMIT,
         use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
@@ -872,8 +871,6 @@ class CircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
-
-        jit_compile : typing.Optional[bool]
 
         use_ideal_component_models : typing.Optional[bool]
 
@@ -907,7 +904,6 @@ class CircuitClient:
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
                 "port_pairs": port_pairs,
-                "jit_compile": jit_compile,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),
@@ -1920,7 +1916,6 @@ class AsyncCircuitClient:
         port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
         settings: Settings,
         wls: typing.Sequence[float],
-        jit_compile: typing.Optional[bool] = OMIT,
         use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
@@ -1936,8 +1931,6 @@ class AsyncCircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
-
-        jit_compile : typing.Optional[bool]
 
         use_ideal_component_models : typing.Optional[bool]
 
@@ -1979,7 +1972,6 @@ class AsyncCircuitClient:
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
                 "port_pairs": port_pairs,
-                "jit_compile": jit_compile,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),

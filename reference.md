@@ -2640,14 +2640,6 @@ client.pic.circuit.get_sax_spectrum(
 <dl>
 <dd>
 
-**jit_compile:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **use_ideal_component_models:** `typing.Optional[bool]` 
     
 </dd>
