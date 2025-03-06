@@ -108,7 +108,7 @@ def plot_interactive_spectra(
     Creates an interactive plot of spectra with a slider to select different indices.
     Parameters:
     -----------
-    spectra : list of list of float
+    spectra : list of list of float or a dictionary with tuple or string keys
         A list of spectra, where each spectrum is a list of lists of float values, each
         corresponding to the transmission of a single wavelength.
     wavelengths : list of float
@@ -128,6 +128,8 @@ def plot_interactive_spectra(
                 port_keys.append((key.split(",")[0], key.split(",")[1]))
             elif isinstance(key, tuple):
                 port_keys.append(key)
+            else:
+                raise ValueError("Port keys must be either a string or a tuple.")
 
     # Defaults
     if spectrum_labels is None and isinstance(spectra, dict):
