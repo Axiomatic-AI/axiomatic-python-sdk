@@ -122,6 +122,9 @@ def plot_interactive_spectra(
         port_keys = []
         for key in spectra:
             if isinstance(key, str):
+                ports = key.split(",")
+                if len(ports) != 2:
+                    raise ValueError("Port keys must be in the format 'port_in,port_out' with exactly one comma.")
                 port_keys.append((key.split(",")[0], key.split(",")[1]))
             elif isinstance(key, tuple):
                 port_keys.append(key)
