@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class DictItem(BaseModel):
@@ -11,12 +12,12 @@ class EquationExtraction(BaseModel):
     name: str
     description: str
     original_format: str
-    latex_symbols: list[DictItem]
-    narrative_assumptions: list[str]
+    latex_symbols: List[DictItem]
+    narrative_assumptions: List[str]
 
 
 class EquationExtractionResponse(BaseModel):
-    equations: list[EquationExtraction]
+    equations: List[EquationExtraction]
 
 
 class VariableRequirement(BaseModel):
