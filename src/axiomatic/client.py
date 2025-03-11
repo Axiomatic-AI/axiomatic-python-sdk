@@ -56,7 +56,7 @@ class AxtractHelper:
         show_hypergraph: bool = True,
     ):
         from .axtract.validation_results import display_full_results
-        from src.axiomatic.axtract.interactive_table import _create_variable_dict
+        from .axtract.interactive_table import _create_variable_dict
 
         variable_dict = _create_variable_dict(loaded_equations)
         api_response = self._ax_client.document.equation.validate(request=requirements[0])
