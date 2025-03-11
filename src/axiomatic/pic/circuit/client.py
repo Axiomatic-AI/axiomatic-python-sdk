@@ -268,16 +268,19 @@ class CircuitClient:
         *,
         query: str,
         pdk: typing.Optional[PdkType] = OMIT,
+        statements: typing.Optional[StatementDictionary] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> FormalizeCircuitResponse:
         """
-        Formalize a query about a circuit into a dictionary of constraints
+        Formalize a query about a circuit into a dictionary of constraints. Extends previous statements if provided.
 
         Parameters
         ----------
         query : str
 
         pdk : typing.Optional[PdkType]
+
+        statements : typing.Optional[StatementDictionary]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -304,6 +307,9 @@ class CircuitClient:
             json={
                 "query": query,
                 "pdk": pdk,
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=StatementDictionary, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -847,8 +853,7 @@ class CircuitClient:
         self,
         *,
         netlist: Netlist,
-        port_in: str,
-        port_out: str,
+        port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
         settings: Settings,
         wls: typing.Sequence[float],
         use_ideal_component_models: typing.Optional[bool] = OMIT,
@@ -861,9 +866,7 @@ class CircuitClient:
         ----------
         netlist : Netlist
 
-        port_in : str
-
-        port_out : str
+        port_pairs : typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]
 
         settings : Settings
 
@@ -888,8 +891,7 @@ class CircuitClient:
         )
         client.pic.circuit.get_sax_spectrum(
             netlist=Netlist(),
-            port_in="port_in",
-            port_out="port_out",
+            port_pairs=[[]],
             settings={"key": "value"},
             wls=[1.1],
         )
@@ -901,8 +903,7 @@ class CircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
-                "port_in": port_in,
-                "port_out": port_out,
+                "port_pairs": port_pairs,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),
@@ -1271,16 +1272,19 @@ class AsyncCircuitClient:
         *,
         query: str,
         pdk: typing.Optional[PdkType] = OMIT,
+        statements: typing.Optional[StatementDictionary] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> FormalizeCircuitResponse:
         """
-        Formalize a query about a circuit into a dictionary of constraints
+        Formalize a query about a circuit into a dictionary of constraints. Extends previous statements if provided.
 
         Parameters
         ----------
         query : str
 
         pdk : typing.Optional[PdkType]
+
+        statements : typing.Optional[StatementDictionary]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1315,6 +1319,9 @@ class AsyncCircuitClient:
             json={
                 "query": query,
                 "pdk": pdk,
+                "statements": convert_and_respect_annotation_metadata(
+                    object_=statements, annotation=StatementDictionary, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -1906,8 +1913,7 @@ class AsyncCircuitClient:
         self,
         *,
         netlist: Netlist,
-        port_in: str,
-        port_out: str,
+        port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
         settings: Settings,
         wls: typing.Sequence[float],
         use_ideal_component_models: typing.Optional[bool] = OMIT,
@@ -1920,9 +1926,7 @@ class AsyncCircuitClient:
         ----------
         netlist : Netlist
 
-        port_in : str
-
-        port_out : str
+        port_pairs : typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]
 
         settings : Settings
 
@@ -1952,8 +1956,7 @@ class AsyncCircuitClient:
         async def main() -> None:
             await client.pic.circuit.get_sax_spectrum(
                 netlist=Netlist(),
-                port_in="port_in",
-                port_out="port_out",
+                port_pairs=[[]],
                 settings={"key": "value"},
                 wls=[1.1],
             )
@@ -1968,8 +1971,7 @@ class AsyncCircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
-                "port_in": port_in,
-                "port_out": port_out,
+                "port_pairs": port_pairs,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),

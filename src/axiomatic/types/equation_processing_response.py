@@ -2,13 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .get_spectrum_response_spectrum_value_item import GetSpectrumResponseSpectrumValueItem
+from .response_equation import ResponseEquation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class GetSpectrumResponse(UniversalBaseModel):
-    spectrum: typing.Dict[str, typing.List[GetSpectrumResponseSpectrumValueItem]]
+class EquationProcessingResponse(UniversalBaseModel):
+    equations: typing.List[ResponseEquation]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

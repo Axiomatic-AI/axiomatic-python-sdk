@@ -14,6 +14,7 @@ from .create_user_response import CreateUserResponse
 from .dict_item import DictItem
 from .equation_extraction import EquationExtraction
 from .equation_extraction_response import EquationExtractionResponse
+from .equation_processing_response import EquationProcessingResponse
 from .equation_validation_result import EquationValidationResult
 from .execute_code_response import ExecuteCodeResponse
 from .extract_constants_response import ExtractConstantsResponse
@@ -29,7 +30,7 @@ from .generate_component_code_response import GenerateComponentCodeResponse
 from .generate_lens_code_response import GenerateLensCodeResponse
 from .get_optimizable_parameters_response import GetOptimizableParametersResponse
 from .get_spectrum_response import GetSpectrumResponse
-from .get_spectrum_response_spectrum_item import GetSpectrumResponseSpectrumItem
+from .get_spectrum_response_spectrum_value_item import GetSpectrumResponseSpectrumValueItem
 from .http_validation_error import HttpValidationError
 from .informalize_statement_response import InformalizeStatementResponse
 from .net import Net
@@ -54,10 +55,10 @@ from .plot_info import PlotInfo
 from .plot_parser_output import PlotParserOutput
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
+from .response_equation import ResponseEquation
 from .schedule_job_response import ScheduleJobResponse
 from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
-from .spectrum import Spectrum
 from .statement import Statement
 from .statement_dictionary import StatementDictionary
 from .statement_type import StatementType
@@ -96,6 +97,7 @@ __all__ = [
     "DictItem",
     "EquationExtraction",
     "EquationExtractionResponse",
+    "EquationProcessingResponse",
     "EquationValidationResult",
     "ExecuteCodeResponse",
     "ExtractConstantsResponse",
@@ -111,7 +113,7 @@ __all__ = [
     "GenerateLensCodeResponse",
     "GetOptimizableParametersResponse",
     "GetSpectrumResponse",
-    "GetSpectrumResponseSpectrumItem",
+    "GetSpectrumResponseSpectrumValueItem",
     "HttpValidationError",
     "InformalizeStatementResponse",
     "Net",
@@ -136,10 +138,10 @@ __all__ = [
     "PlotParserOutput",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
+    "ResponseEquation",
     "ScheduleJobResponse",
     "SolutionResponse",
     "SolutionResponseSolutionValue",
-    "Spectrum",
     "Statement",
     "StatementDictionary",
     "StatementType",
