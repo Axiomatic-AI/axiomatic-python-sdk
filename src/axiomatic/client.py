@@ -38,7 +38,6 @@ class AxtractHelper:
         url_path: Optional[str] = None,
         parsed_paper: Optional[ParseResponse] = None,
     ) -> Optional[EquationExtractionResponse]:
-        response : EquationExtractionResponse | EquationProcessingResponse
         if file_path:
             with open(file_path, "rb") as file:
                 response = self._ax_client.document.equation.from_pdf(document=file)
