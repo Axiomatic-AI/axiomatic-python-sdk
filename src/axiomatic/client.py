@@ -45,13 +45,13 @@ class AxtractHelper:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
             
-            response = self._ax_client.document.equation.from_pdf(document_url=url_path)
+            response = self._ax_client.document.equation.from_pdf(document=url_path)
 
         else:
             print("Please provide either a file path or a URL to analyze.")
             return None
 
-        return response
+        return EquationExtractionResponse(equations=response.equations)
 
     def validate_equations(
         self,
@@ -61,9 +61,20 @@ class AxtractHelper:
     ):
         from .axtract.validation_results import display_full_results
         from .axtract.interactive_table import _create_variable_dict
+        from axiomatic.types.variable_requirement import VariableRequirement as ApiVariableRequirement
+
+        api_requirements = [
+            ApiVariableRequirement(
+                symbol=req.symbol,
+                name=req.name,
+                value=req.value,
+                units=req.units,
+                tolerance=req.tolerance
+            ) for req in requirements
+        ]
 
         variable_dict = _create_variable_dict(loaded_equations)
-        api_response = self._ax_client.document.equation.validate(request=[requirements[0]])
+        api_response = self._ax_client.document.equation.validate(request=api_requirements)
         display_full_results(api_response.model_dump(), variable_dict, show_hypergraph=show_hypergraph)
 
     def set_numerical_requirements(self, extracted_equations):
