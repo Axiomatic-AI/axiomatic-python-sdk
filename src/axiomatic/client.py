@@ -2,7 +2,7 @@ import base64
 import requests
 import os
 import time
-from typing import Dict, List
+from typing import Dict, List, Union, Optional
 
 from .base_client import BaseClient, AsyncBaseClient
 from . import ParseResponse
@@ -34,9 +34,9 @@ class AxtractHelper:
 
     def analyze_equations(
         self,
-        file_path: str | None = None,
-        url_path: str | None = None
-    ) -> EquationExtractionResponse | None:
+        file_path: Optional[str] = None,
+        url_path: Optional[str] = None
+    ) -> Optional[EquationExtractionResponse]:
         if file_path:
             with open(file_path, "rb") as file:
                 response = self._ax_client.document.equation.from_pdf(document=file)
@@ -45,7 +45,7 @@ class AxtractHelper:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
             
-            response = self._ax_client.document.equation.from_pdf(url=url_path)
+            response = self._ax_client.document.equation.from_pdf(document_url=url_path)
 
         else:
             print("Please provide either a file path or a URL to analyze.")
