@@ -8,6 +8,7 @@ from .base_client import BaseClient, AsyncBaseClient
 from . import ParseResponse
 from .axtract.models import EquationExtractionResponse
 
+
 class Axiomatic(BaseClient):
     def __init__(self, *args, **kwargs):
         if "timeout" not in kwargs:
@@ -17,22 +18,21 @@ class Axiomatic(BaseClient):
         self.document_helper = DocumentHelper(self)
         self.tools_helper = ToolsHelper(self)
 
+
 class AxtractHelper:
-
     from .axtract.interactive_table import VariableRequirement
-    _ax_client: Axiomatic
 
+    _ax_client: Axiomatic
 
     def __init__(self, ax_client: Axiomatic):
         self._ax_client = ax_client
 
-    def create_report(self, response:EquationExtractionResponse, path:str):
-
+    def create_report(self, response: EquationExtractionResponse, path: str):
         from src.axiomatic.axtract.axtract_report import create_report
+
         create_report(response, path)
 
-    def analyze_equations(self, file_path:str=None, url_path:str=None):
-
+    def analyze_equations(self, file_path: str = None, url_path: str = None):
         if file_path:
             file = open(file_path, "rb")
             response = self._ax_client.document.equation.from_pdf(document=file)
@@ -46,11 +46,15 @@ class AxtractHelper:
         else:
             print("Please provide either a file path or a URL to analyze.")
             return None
-        
-        return response
-    
-    def validate_equations(self, requirements:list[VariableRequirement], loaded_equations:EquationExtractionResponse, show_hypergraph:bool=True):
 
+        return response
+
+    def validate_equations(
+        self,
+        requirements: list[VariableRequirement],
+        loaded_equations: EquationExtractionResponse,
+        show_hypergraph: bool = True,
+    ):
         from .axtract.validation_results import display_full_results
         from src.axiomatic.axtract.interactive_table import _create_variable_dict
 
@@ -58,15 +62,13 @@ class AxtractHelper:
         api_response = self._ax_client.document.equation.validate(request=requirements[0])
         display_full_results(api_response.model_dump(), variable_dict, show_hypergraph=show_hypergraph)
 
-    
     def set_numerical_requirements(self, extracted_equations):
-
         from .axtract.interactive_table import interactive_table
 
         result = interactive_table(extracted_equations)
         return result
 
-    
+
 class DocumentHelper:
     _ax_client: Axiomatic
 
@@ -140,7 +142,7 @@ class DocumentHelper:
                     images[img_name] = base64.b64encode(img_file.read()).decode("utf-8")
 
         return ParseResponse(markdown=markdown, images=images)
-        
+
 
 class ToolsHelper:
     _ax_client: Axiomatic

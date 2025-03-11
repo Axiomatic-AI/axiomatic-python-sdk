@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class DictItem(BaseModel):
     key: str
     value: str
