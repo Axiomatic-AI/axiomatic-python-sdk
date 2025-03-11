@@ -14,6 +14,7 @@ from .create_user_response import CreateUserResponse
 from .dict_item import DictItem
 from .equation_extraction import EquationExtraction
 from .equation_extraction_response import EquationExtractionResponse
+from .equation_processing_response import EquationProcessingResponse
 from .equation_validation_result import EquationValidationResult
 from .execute_code_response import ExecuteCodeResponse
 from .extract_constants_response import ExtractConstantsResponse
@@ -54,6 +55,7 @@ from .plot_info import PlotInfo
 from .plot_parser_output import PlotParserOutput
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
+from .response_equation import ResponseEquation
 from .schedule_job_response import ScheduleJobResponse
 from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
@@ -95,6 +97,7 @@ __all__ = [
     "DictItem",
     "EquationExtraction",
     "EquationExtractionResponse",
+    "EquationProcessingResponse",
     "EquationValidationResult",
     "ExecuteCodeResponse",
     "ExtractConstantsResponse",
@@ -135,6 +138,7 @@ __all__ = [
     "PlotParserOutput",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
+    "ResponseEquation",
     "ScheduleJobResponse",
     "SolutionResponse",
     "SolutionResponseSolutionValue",

@@ -15,6 +15,7 @@ from .types import (
     DictItem,
     EquationExtraction,
     EquationExtractionResponse,
+    EquationProcessingResponse,
     EquationValidationResult,
     ExecuteCodeResponse,
     ExtractConstantsResponse,
@@ -55,6 +56,7 @@ from .types import (
     PlotParserOutput,
     RefineCodeResponse,
     RefineComponentCodeResponse,
+    ResponseEquation,
     ScheduleJobResponse,
     SolutionResponse,
     SolutionResponseSolutionValue,
@@ -82,18 +84,7 @@ from .types import (
     Z3Expression,
 )
 from .errors import UnprocessableEntityError
-from . import (
-    code_execution,
-    document,
-    equation_processing,
-    equation_validation,
-    formalization,
-    fso,
-    lean,
-    pic,
-    requirements,
-    tools,
-)
+from . import code_execution, document, formalization, fso, lean, pic, requirements, tools
 from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
 from .version import __version__
@@ -116,6 +107,7 @@ __all__ = [
     "DictItem",
     "EquationExtraction",
     "EquationExtractionResponse",
+    "EquationProcessingResponse",
     "EquationValidationResult",
     "ExecuteCodeResponse",
     "ExtractConstantsResponse",
@@ -156,6 +148,7 @@ __all__ = [
     "PlotParserOutput",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
+    "ResponseEquation",
     "ScheduleJobResponse",
     "SolutionResponse",
     "SolutionResponseSolutionValue",
@@ -185,8 +178,6 @@ __all__ = [
     "__version__",
     "code_execution",
     "document",
-    "equation_processing",
-    "equation_validation",
     "formalization",
     "fso",
     "lean",
