@@ -84,8 +84,17 @@ from .types import (
     Z3Expression,
 )
 from .errors import UnprocessableEntityError
-from . import code_execution, document, formalization, fso, lean, pic, requirements, tools
-from .client import AsyncAxiomatic, Axiomatic
+from . import (
+    code_execution,
+    document,
+    formalization,
+    fso,
+    lean,
+    pic,
+    requirements,
+    tools,
+)
+from .client import AsyncAxiomatic, Axiomatic, AxtractHelper
 from .environment import AxiomaticEnvironment
 from .version import __version__
 
@@ -94,6 +103,7 @@ __all__ = [
     "AxesInfo",
     "Axiomatic",
     "AxiomaticEnvironment",
+    "AxtractHelper",
     "Bundle",
     "BundleSettingsValue",
     "Computation",

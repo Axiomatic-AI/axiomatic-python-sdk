@@ -4,3 +4,9 @@ src/axiomatic/client.py
 src/axiomatic/document_helpers.py
 src/axiomatic/magic.py
 src/axiomatic/pic_helpers.py
+src/axiomatic/axtract/axtract_report.py
+src/axiomatic/axtract/__init__.py
+src/axiomatic/axtract/interactive_table.py
+src/axiomatic/axtract/models.py
+src/axiomatic/axtract/relation_graph.py
+src/axiomatic/axtract/validation_result.py

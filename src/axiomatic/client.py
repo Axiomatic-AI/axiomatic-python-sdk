@@ -2,10 +2,11 @@ import base64
 import requests
 import os
 import time
-from typing import Dict
+from typing import Dict, List, Union, Optional
 
 from .base_client import BaseClient, AsyncBaseClient
 from . import ParseResponse
+from .axtract.models import EquationExtractionResponse
 
 
 class Axiomatic(BaseClient):
@@ -16,6 +17,71 @@ class Axiomatic(BaseClient):
 
         self.document_helper = DocumentHelper(self)
         self.tools_helper = ToolsHelper(self)
+
+
+class AxtractHelper:
+    from .axtract.interactive_table import VariableRequirement
+
+    _ax_client: Axiomatic
+
+    def __init__(self, ax_client: Axiomatic):
+        self._ax_client = ax_client
+
+    def create_report(self, response: EquationExtractionResponse, path: str):
+        from .axtract.axtract_report import create_report
+
+        create_report(response, path)
+
+    def analyze_equations(
+        self,
+        file_path: Optional[str] = None,
+        url_path: Optional[str] = None
+    ) -> Optional[EquationExtractionResponse]:
+        if file_path:
+            with open(file_path, "rb") as file:
+                response = self._ax_client.document.equation.from_pdf(document=file)
+
+        elif url_path:
+            if "arxiv" in url_path and "abs" in url_path:
+                url_path = url_path.replace("abs", "pdf")
+            
+            response = self._ax_client.document.equation.from_pdf(document=url_path)
+
+        else:
+            print("Please provide either a file path or a URL to analyze.")
+            return None
+
+        return EquationExtractionResponse(equations=response.equations)
+
+    def validate_equations(
+        self,
+        requirements: List[VariableRequirement],
+        loaded_equations: EquationExtractionResponse,
+        show_hypergraph: bool = True,
+    ):
+        from .axtract.validation_results import display_full_results
+        from .axtract.interactive_table import _create_variable_dict
+        from axiomatic.types.variable_requirement import VariableRequirement as ApiVariableRequirement
+
+        api_requirements = [
+            ApiVariableRequirement(
+                symbol=req.symbol,
+                name=req.name,
+                value=req.value,
+                units=req.units,
+                tolerance=req.tolerance
+            ) for req in requirements
+        ]
+
+        variable_dict = _create_variable_dict(loaded_equations)
+        api_response = self._ax_client.document.equation.validate(request=api_requirements)
+        display_full_results(api_response.model_dump(), variable_dict, show_hypergraph=show_hypergraph)
+
+    def set_numerical_requirements(self, extracted_equations):
+        from .axtract.interactive_table import interactive_table
+
+        result = interactive_table(extracted_equations)
+        return result
 
 
 class DocumentHelper:
