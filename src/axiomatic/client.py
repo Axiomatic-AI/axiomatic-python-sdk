@@ -28,7 +28,7 @@ class AxtractHelper:
         self._ax_client = ax_client
 
     def create_report(self, response: EquationExtractionResponse, path: str):
-        from src.axiomatic.axtract.axtract_report import create_report
+        from .axtract.axtract_report import create_report
 
         create_report(response, path)
 

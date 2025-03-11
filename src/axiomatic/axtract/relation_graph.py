@@ -1,5 +1,5 @@
 from .models import EquationExtraction
-from pyvis.network import Network
+from pyvis.network import Network  # type: ignore
 
 
 def normalize_latex_symbol(symbol: str) -> str:
