@@ -2,7 +2,7 @@ import base64
 import requests
 import os
 import time
-from typing import Dict
+from typing import Dict, List
 
 from .base_client import BaseClient, AsyncBaseClient
 from . import ParseResponse
@@ -32,16 +32,20 @@ class AxtractHelper:
 
         create_report(response, path)
 
-    def analyze_equations(self, file_path: str = None, url_path: str = None):
+    def analyze_equations(
+        self,
+        file_path: str | None = None,
+        url_path: str | None = None
+    ) -> EquationExtractionResponse | None:
         if file_path:
-            file = open(file_path, "rb")
-            response = self._ax_client.document.equation.from_pdf(document=file)
+            with open(file_path, "rb") as file:
+                response = self._ax_client.document.equation.from_pdf(document=file)
 
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
-
-            response = self._ax_client.document.equation.from_pdf(document=file)
+            
+            response = self._ax_client.document.equation.from_pdf(url=url_path)
 
         else:
             print("Please provide either a file path or a URL to analyze.")
@@ -51,7 +55,7 @@ class AxtractHelper:
 
     def validate_equations(
         self,
-        requirements: list[VariableRequirement],
+        requirements: List[VariableRequirement],
         loaded_equations: EquationExtractionResponse,
         show_hypergraph: bool = True,
     ):
@@ -59,7 +63,7 @@ class AxtractHelper:
         from .axtract.interactive_table import _create_variable_dict
 
         variable_dict = _create_variable_dict(loaded_equations)
-        api_response = self._ax_client.document.equation.validate(request=requirements[0])
+        api_response = self._ax_client.document.equation.validate(request=[requirements[0]])
         display_full_results(api_response.model_dump(), variable_dict, show_hypergraph=show_hypergraph)
 
     def set_numerical_requirements(self, extracted_equations):
