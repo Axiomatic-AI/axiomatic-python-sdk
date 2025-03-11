@@ -2,8 +2,7 @@ import ipywidgets as widgets  # type: ignore
 from IPython.display import display  # type: ignore
 import json  # type: ignore
 import os  # type: ignore
-from .axtract_report import EquationExtractionResponse
-from .models import VariableRequirement
+from .. import EquationExtractionResponse, VariableRequirement
 
 
 def _find_symbol(name, variable_dict):

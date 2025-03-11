@@ -1,5 +1,5 @@
 from .relation_graph import generate_relation_graph
-from .models import EquationExtractionResponse
+from .. import EquationExtractionResponse
 import os
 import re
 

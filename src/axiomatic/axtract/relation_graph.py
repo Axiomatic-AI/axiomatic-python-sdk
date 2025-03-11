@@ -1,5 +1,5 @@
 from typing import List
-from .models import EquationExtraction
+from .. import EquationExtraction
 from pyvis.network import Network  # type: ignore
 
 
