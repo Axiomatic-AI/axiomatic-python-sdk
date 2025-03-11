@@ -61,7 +61,7 @@ class AxtractHelper:
     ):
         from .axtract.validation_results import display_full_results
         from .axtract.interactive_table import _create_variable_dict
-        from axiomatic.types.variable_requirement import VariableRequirement as ApiVariableRequirement
+        from .types.variable_requirement import VariableRequirement as ApiVariableRequirement
 
         api_requirements = [
             ApiVariableRequirement(
