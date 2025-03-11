@@ -35,18 +35,19 @@ class AxtractHelper:
     def analyze_equations(
         self,
         file_path: Optional[str] = None,
-        url_path: Optional[str] = None
+        url_path: Optional[str] = None,
+        parsed_paper: Optional[ParseResponse] = None,
     ) -> Optional[EquationExtractionResponse]:
         if file_path:
             with open(file_path, "rb") as file:
                 response = self._ax_client.document.equation.from_pdf(document=file)
-
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
-            
-            response = self._ax_client.document.equation.from_pdf(document=url_path)
 
+            response = self._ax_client.document.equation.from_pdf(document=url_path)
+        elif parsed_paper:
+            response = self._ax_client.document.equation.process(**parsed_paper)
         else:
             print("Please provide either a file path or a URL to analyze.")
             return None
@@ -65,12 +66,9 @@ class AxtractHelper:
 
         api_requirements = [
             ApiVariableRequirement(
-                symbol=req.symbol,
-                name=req.name,
-                value=req.value,
-                units=req.units,
-                tolerance=req.tolerance
-            ) for req in requirements
+                symbol=req.symbol, name=req.name, value=req.value, units=req.units, tolerance=req.tolerance
+            )
+            for req in requirements
         ]
 
         variable_dict = _create_variable_dict(loaded_equations)
