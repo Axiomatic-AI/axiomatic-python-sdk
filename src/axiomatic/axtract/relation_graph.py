@@ -1,4 +1,4 @@
-from .axtract_report import EquationExtraction, EquationExtractionResponse
+from .models import EquationExtraction
 from pyvis.network import Network
 
 def normalize_latex_symbol(symbol: str) -> str:
@@ -17,14 +17,16 @@ def normalize_latex_symbol(symbol: str) -> str:
         symbol = symbol[1:-1].strip()
     return symbol
 
-def generate_graph(equations_response: EquationExtractionResponse, output_path: str):
+def generate_relation_graph(equations: list[EquationExtraction]) -> str:
     """
-    Generates a standalone HTML file with a bipartite graph visualization.
+    Generates HTML code for a bipartite graph visualization.
     Green nodes represent equations, red nodes represent variables.
     
     Args:
-        equations_response: EquationExtractionResponse object
-        output_path: Path where to save the HTML file
+        equations: List of EquationExtraction objects
+    
+    Returns:
+        HTML string containing the graph visualization code
     """
     
     # Create a new network
@@ -32,14 +34,12 @@ def generate_graph(equations_response: EquationExtractionResponse, output_path: 
         height="900px",
         width="100%",
         bgcolor="#ffffff",
-        font_color="#000000"
+        font_color="#000000",
+        notebook=False
     )
     
     # Track all variables to avoid duplicates
     all_variables = set()
-    
-    # Get the equations list from the response object
-    equations = equations_response.equations
     
     # Add equation nodes (green) and variable nodes (red)
     for eq in equations:
@@ -97,5 +97,32 @@ def generate_graph(equations_response: EquationExtractionResponse, output_path: 
     }
     """)
     
-    # Save the graph
-    net.save_graph(output_path)
+    # Generate a complete standalone HTML page
+    html = net.generate_html()
+    
+    # Add a title and back button to the HTML
+    html = html.replace('<head>', '''<head>
+    <title>Equation Relation Graph</title>
+    <style>
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>''')
+    
+    html = html.replace('<body>', '''<body>
+    <button class="back-button" onclick="window.close()">Close Graph</button>''')
+    
+    return html

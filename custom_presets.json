@@ -1,16 +1,16 @@
 {
   "custom_1": {
-    "Initial velocity of the object": {
+    "Kinetic energy": {
       "Value": 20.0,
-      "Units": "m/s"
+      "Units": ""
     },
-    "Displacement of the object": {
+    "Potential energy": {
       "Value": 10.0,
-      "Units": "m"
+      "Units": ""
     },
-    "Acceleration of the particle": {
-      "Value": 5.0,
-      "Units": "m/(s^2)"
+    "Total mechanical energy": {
+      "Value": 15.0,
+      "Units": ""
     }
   }
 }
