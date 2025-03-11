@@ -3,10 +3,15 @@ import requests
 import os
 import time
 import json
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional, Union
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import ParseResponse, EquationProcessingResponse, EquationExtractionResponse
+from . import ParseResponse, EquationExtractionResponse, EquationProcessingResponse
+from .axtract.axtract_report import create_report
+from .axtract.validation_results import display_full_results
+from .axtract.interactive_table import _create_variable_dict
+from .types.variable_requirement import VariableRequirement as ApiVariableRequirement
+
 
 class Axiomatic(BaseClient):
     def __init__(self, *args, **kwargs):
@@ -28,8 +33,6 @@ class AxtractHelper:
         self._ax_client = ax_client
 
     def create_report(self, response: EquationExtractionResponse, path: str):
-        from .axtract.axtract_report import create_report
-
         create_report(response, path)
 
     def analyze_equations(
@@ -38,6 +41,8 @@ class AxtractHelper:
         url_path: Optional[str] = None,
         parsed_paper: Optional[ParseResponse] = None,
     ) -> Optional[EquationExtractionResponse]:
+        response: Union[EquationExtractionResponse, EquationProcessingResponse]
+        
         if file_path:
             with open(file_path, "rb") as file:
                 response = self._ax_client.document.equation.from_pdf(document=file)
@@ -60,10 +65,6 @@ class AxtractHelper:
         loaded_equations: EquationExtractionResponse,
         show_hypergraph: bool = True,
     ):
-        from .axtract.validation_results import display_full_results
-        from .axtract.interactive_table import _create_variable_dict
-        from .types.variable_requirement import VariableRequirement as ApiVariableRequirement
-
         api_requirements = [
             ApiVariableRequirement(
                 symbol=req.symbol, name=req.name, value=req.value, units=req.units, tolerance=req.tolerance
