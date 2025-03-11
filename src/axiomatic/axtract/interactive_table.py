@@ -1,24 +1,21 @@
 import ipywidgets as widgets  # type: ignore
-from IPython.display import display # type: ignore
+from IPython.display import display  # type: ignore
 import json  # type: ignore
-import os # type: ignore
+import os  # type: ignore
 from .axtract_report import EquationExtractionResponse
 from .models import VariableRequirement
 
-def _find_symbol(name, variable_dict):
 
-    matching_keys = [
-        key for key, value in variable_dict.items() if name in value["name"]
-    ]
+def _find_symbol(name, variable_dict):
+    matching_keys = [key for key, value in variable_dict.items() if name in value["name"]]
 
     if not matching_keys:
         matching_keys.append("unknown")
 
     return matching_keys[0]
 
+
 def _requirements_from_table(results, variable_dict):
-
-
     requirements = []
 
     for key, value in results["values"].items():
@@ -35,6 +32,7 @@ def _requirements_from_table(results, variable_dict):
         )
 
     return requirements
+
 
 def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     """
@@ -60,7 +58,7 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     IMAGING_TELESCOPE_template = {
         "Resolution (panchromatic)": 0,
-        "Ground sampling distance (panchromatic)":0,
+        "Ground sampling distance (panchromatic)": 0,
         "Resolution (multispectral)": 0,
         "Ground sampling distance (multispectral)": 0,
         "Altitude": 0,
@@ -228,16 +226,8 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
                     default_value = PAYLOAD_1.get(row_name, 0.0)
                     default_unit = IMAGING_TELESCOPE_UNITS.get(row_name, "")
                 elif selected_option in custom_presets:
-                    default_value = (
-                        custom_presets[selected_option]
-                        .get(row_name, {})
-                        .get("Value", 0.0)
-                    )
-                    default_unit = (
-                        custom_presets[selected_option]
-                        .get(row_name, {})
-                        .get("Units", "")
-                    )
+                    default_value = custom_presets[selected_option].get(row_name, {}).get("Value", 0.0)
+                    default_unit = custom_presets[selected_option].get(row_name, {}).get("Units", "")
                 else:
                     default_value = 0.0
                     default_unit = ""
@@ -271,7 +261,7 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     # Store the requirements to return later
     requirements_result = [None]  # Using a list to store mutable reference
-    
+
     def submit_values(_):
         updated_values = {}
         for k, widget in value_widgets.items():
@@ -282,19 +272,19 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
 
         result["values"] = updated_values
         requirements_result[0] = _requirements_from_table(result, variable_dict)
-        
+
         # Display a confirmation message
         with message_output:
             message_output.clear_output()
             print("Requirements submitted successfully!")
-            
+
         return requirements_result[0]
 
     # ---------------------------------------------------------------
     # 8) add_req(): Adds a new, blank row to the bottom
     # ---------------------------------------------------------------
     def add_req(_):
-        unique_key = (f"req_{len([kk for kk in value_widgets if kk.startswith('req_')]) + 1}")
+        unique_key = f"req_{len([kk for kk in value_widgets if kk.startswith('req_')]) + 1}"
 
         variable_dropdown = widgets.Dropdown(
             options=variable_names,
@@ -341,9 +331,7 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     #   - Also updates custom_presets + JSON file,
     #   - So it persists across restarts.
     # ---------------------------------------------------------------
-    custom_count = len(
-        [k for k in preset_options_dict if k.startswith("Custom-")]
-        )
+    custom_count = len([k for k in preset_options_dict if k.startswith("Custom-")])
 
     def save_requirements(_):
         nonlocal custom_count
@@ -376,26 +364,19 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     # 11) Create & display the buttons
     # ---------------------------------------------------------------
-    submit_button = widgets.Button(
-        description="Submit", button_style="success")
+    submit_button = widgets.Button(description="Submit", button_style="success")
     submit_button.on_click(submit_values)
 
-    add_req_button = widgets.Button(
-        description="Add Requirement", button_style="primary"
-    )
+    add_req_button = widgets.Button(description="Add Requirement", button_style="primary")
     add_req_button.on_click(add_req)
 
-    del_req_button = widgets.Button(
-        description="Delete Requirement", button_style="danger"
-    )
+    del_req_button = widgets.Button(description="Delete Requirement", button_style="danger")
     del_req_button.on_click(delete_req)
 
     save_req_button = widgets.Button(description="Save", button_style="info")
     save_req_button.on_click(save_requirements)
 
-    buttons_box = widgets.HBox(
-        [submit_button, add_req_button, del_req_button, save_req_button]
-    )
+    buttons_box = widgets.HBox([submit_button, add_req_button, del_req_button, save_req_button])
     display(buttons_box)
 
     # Return the requirements object directly - it will be updated when submit is clicked
@@ -423,16 +404,12 @@ def _create_variable_dict(equation_response: EquationExtractionResponse) -> dict
         }
     """
     variable_dict = {}
-    
+
     # Iterate through all equations and their symbols
     for equation in equation_response.equations:
         for symbol in equation.latex_symbols:
             # Only add if not already present (avoid duplicates)
             if symbol.key not in variable_dict:
                 variable_dict[symbol.key] = {"name": symbol.value}
-    
+
     return variable_dict
-
-
-
-

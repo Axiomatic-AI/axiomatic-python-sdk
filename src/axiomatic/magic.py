@@ -1,5 +1,4 @@
 from IPython import get_ipython  # type: ignore
-from IPython.core.magic import register_line_cell_magic, register_line_magic  # type: ignore
 from IPython.display import HTML, display  # type: ignore
 
 import platformdirs  # type: ignore
@@ -35,9 +34,7 @@ class AXMagic:
                 feedback = f"Errors:\n{e}"
             print(feedback)
             current_query = f"{self.query}\n{query}"
-            result = self.client.pic.circuit.refine(
-                query=current_query, code=cell, feedback=feedback
-            )
+            result = self.client.pic.circuit.refine(query=current_query, code=cell, feedback=feedback)
         else:
             # GENERATE FROM SCRATCH
             self.query = query
@@ -62,9 +59,7 @@ class AXMagic:
                 # When running in colab
                 from google.colab import _frontend  # type: ignore
 
-                _frontend.create_scratch_cell(
-                    f"""# {query}\n# %%ax_fix\n{code}""", bottom_pane=True
-                )
+                _frontend.create_scratch_cell(f"""# {query}\n# %%ax_fix\n{code}""", bottom_pane=True)
             else:
                 # When running in jupyter
                 get_ipython().set_next_input(f"# %%ax_fix\n{code}", replace=False)
@@ -81,7 +76,7 @@ class AXMagic:
     def ax_tool(self, tool, cell):
         """
         A custom IPython cell magic that sends python code in a cell to the tools scheduling API
-        using Axiomatic's `client.tools.schedule` and wait for the tool execution to finish and 
+        using Axiomatic's `client.tools.schedule` and wait for the tool execution to finish and
         show the 'stdout' of the script
 
         Usage:
@@ -104,7 +99,7 @@ class AXMagic:
             - jaxfem
             - optiland
             - pyspice
-            - sax-gdsfactory       
+            - sax-gdsfactory
         """
         if not tool.strip():
             print("Please provider a tool name when calling this magic like:  %%tool_schedule [optional_tool_name]")
@@ -119,7 +114,7 @@ class AXMagic:
             output = self.client.tools.schedule(
                 tool_name=tool_name,
                 code=code_string,
-                )
+            )
             if output.is_success is True:
                 job_id = output.job_id
                 result = self.client.tools.status(job_id=output.job_id)
@@ -131,7 +126,7 @@ class AXMagic:
                     else:
                         if result.status == "SUCCEEDED":
                             os.environ["TOOL_RESULT"] = result.output
-                            get_ipython().user_ns['tool_result'] = result.output
+                            get_ipython().user_ns["tool_result"] = result.output
                             print(result.output)
                         else:
                             print(result.error_trace)

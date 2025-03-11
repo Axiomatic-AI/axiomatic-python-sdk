@@ -1,106 +1,119 @@
 from IPython.display import display, Math, HTML  # type: ignore
 import hypernetx as hnx  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
-from dataclasses import asdict
 import re
 
 
 def display_full_results(validation_results, requirements=None, show_hypergraph=True):
     """Display equation validation results optimized for dark theme notebooks."""
     validations = validation_results.get("validations", {})
-    
+
     matching = []
     non_matching = []
-    
+
     for eq_name, value in validations.items():
         equation_data = {
-            'name': eq_name,
-            'latex': value.get('original_format', ''),
-            'lhs': value.get('lhs_value'),
-            'rhs': value.get('rhs_value'),
-            'diff': abs(value.get('lhs_value', 0) - value.get('rhs_value', 0)),
-            'percent_diff': abs(value.get('lhs_value', 0) - value.get('rhs_value', 0)) / max(abs(value.get('rhs_value', 0)), 1e-10) * 100,
-            'used_values': value.get('used_values', {})
+            "name": eq_name,
+            "latex": value.get("original_format", ""),
+            "lhs": value.get("lhs_value"),
+            "rhs": value.get("rhs_value"),
+            "diff": abs(value.get("lhs_value", 0) - value.get("rhs_value", 0)),
+            "percent_diff": abs(value.get("lhs_value", 0) - value.get("rhs_value", 0))
+            / max(abs(value.get("rhs_value", 0)), 1e-10)
+            * 100,
+            "used_values": value.get("used_values", {}),
         }
-        if value.get('is_valid'):
+        if value.get("is_valid"):
             matching.append(equation_data)
         else:
             non_matching.append(equation_data)
 
     # Summary header with dark theme
     total = len(validations)
-    display(HTML(
-        '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-        'border:1px solid #3e3e3e;">'
-        f'<h2 style="font-family:Arial; color:#e0e0e0; margin-bottom:15px">Equation Validation Analysis</h2>'
-        f'<p style="font-family:Arial; font-size:16px; color:#e0e0e0">'
-        f'<b>Total equations analyzed:</b> {total}<br>'
-        f'<span style="color:#4caf50">✅ Matching equations: {len(matching)}</span><br>'
-        f'<span style="color:#ff5252">❌ Non-matching equations: {len(non_matching)}</span></p>'
-        '</div>'
-    ))
+    display(
+        HTML(
+            '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
+            'border:1px solid #3e3e3e;">'
+            f'<h2 style="font-family:Arial; color:#e0e0e0; margin-bottom:15px">Equation Validation Analysis</h2>'
+            f'<p style="font-family:Arial; font-size:16px; color:#e0e0e0">'
+            f"<b>Total equations analyzed:</b> {total}<br>"
+            f'<span style="color:#4caf50">✅ Matching equations: {len(matching)}</span><br>'
+            f'<span style="color:#ff5252">❌ Non-matching equations: {len(non_matching)}</span></p>'
+            "</div>"
+        )
+    )
 
     # Non-matching equations
     if non_matching:
-        display(HTML(
-            '<div style="background-color:#2d1f1f; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #4a2f2f;">'
-            '<h3 style="color:#ff5252; font-family:Arial">⚠️ Equations Not Satisfied</h3>'
-        ))
-        
+        display(
+            HTML(
+                '<div style="background-color:#2d1f1f; padding:20px; border-radius:10px; margin:20px 0; '
+                'border:1px solid #4a2f2f;">'
+                '<h3 style="color:#ff5252; font-family:Arial">⚠️ Equations Not Satisfied</h3>'
+            )
+        )
+
         for eq in non_matching:
             display(HTML(f'<h4 style="color:#e0e0e0; font-family:Arial">{eq["name"]}</h4>'))
-            display(Math(eq['latex']))
-            display(HTML(
-                '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                'background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; '
-                'border-left:4px solid #ff5252">'
-                f'Left side  = {eq["lhs"]:.6g}<br>'
-                f'Right side = {eq["rhs"]:.6g}<br>'
-                f'Absolute difference = {eq["diff"]:.6g}<br>'
-                f'Relative difference = {eq["percent_diff"]:.2f}%<br>'
-                '<br>Used values:<br>' +
-                '<br>'.join([f'{k} = {v:.6g}' for k, v in eq["used_values"].items()]) +
-                '</div>'
-            ))
-        
-        display(HTML('</div>'))
+            display(Math(eq["latex"]))
+            display(
+                HTML(
+                    '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
+                    "background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; "
+                    'border-left:4px solid #ff5252">'
+                    f"Left side  = {eq['lhs']:.6g}<br>"
+                    f"Right side = {eq['rhs']:.6g}<br>"
+                    f"Absolute difference = {eq['diff']:.6g}<br>"
+                    f"Relative difference = {eq['percent_diff']:.2f}%<br>"
+                    "<br>Used values:<br>"
+                    + "<br>".join([f"{k} = {v:.6g}" for k, v in eq["used_values"].items()])
+                    + "</div>"
+                )
+            )
+
+        display(HTML("</div>"))
 
     # Matching equations
     if matching:
-        display(HTML(
-            '<div style="background-color:#1f2d1f; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #2f4a2f;">'
-            '<h3 style="color:#4caf50; font-family:Arial">✅ Satisfied Equations</h3>'
-        ))
-        
+        display(
+            HTML(
+                '<div style="background-color:#1f2d1f; padding:20px; border-radius:10px; margin:20px 0; '
+                'border:1px solid #2f4a2f;">'
+                '<h3 style="color:#4caf50; font-family:Arial">✅ Satisfied Equations</h3>'
+            )
+        )
+
         for eq in matching:
             display(HTML(f'<h4 style="color:#e0e0e0; font-family:Arial">{eq["name"]}</h4>'))
-            display(Math(eq['latex']))
-            display(HTML(
-                '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                'background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; '
-                'border-left:4px solid #4caf50">'
-                f'Value = {eq["lhs"]:.6g}<br>'
-                '<br>Used values:<br>' +
-                '<br>'.join([f'{k} = {v:.6g}' for k, v in eq["used_values"].items()]) +
-                '</div>'
-            ))
-            
-        display(HTML('</div>'))
+            display(Math(eq["latex"]))
+            display(
+                HTML(
+                    '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
+                    "background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; "
+                    'border-left:4px solid #4caf50">'
+                    f"Value = {eq['lhs']:.6g}<br>"
+                    "<br>Used values:<br>"
+                    + "<br>".join([f"{k} = {v:.6g}" for k, v in eq["used_values"].items()])
+                    + "</div>"
+                )
+            )
+
+        display(HTML("</div>"))
 
     # Hypergraph visualization
     if show_hypergraph and requirements:
-        display(HTML(
-            '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #3e3e3e;">'
-            '<h3 style="color:#e0e0e0; font-family:Arial">🔍 Equation Relationship Analysis</h3>'
-            '<p style="font-family:Arial; color:#e0e0e0">The following graph shows how variables are connected through equations:</p>'
-            '</div>'
-        ))
-        
+        display(
+            HTML(
+                '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
+                'border:1px solid #3e3e3e;">'
+                '<h3 style="color:#e0e0e0; font-family:Arial">🔍 Equation Relationship Analysis</h3>'
+                '<p style="font-family:Arial; color:#e0e0e0">The following graph shows how variables are connected through equations:</p>'
+                "</div>"
+            )
+        )
+
         list_api_requirements = requirements
-        
+
         # Match get_eq_hypergraph settings exactly
         plt.rcParams["text.usetex"] = False
         plt.rcParams["mathtext.fontset"] = "stix"
@@ -128,14 +141,9 @@ def display_full_results(validation_results, requirements=None, show_hypergraph=
         )
 
         node_labels = list(H.nodes)
-        symbol_explanations = _get_node_names_for_node_lables(
-            node_labels,
-            list_api_requirements
-        )
-        
-        explanation_text = "\n".join(
-            [f"${symbol}$: {desc}" for symbol, desc in symbol_explanations]
-        )
+        symbol_explanations = _get_node_names_for_node_lables(node_labels, list_api_requirements)
+
+        explanation_text = "\n".join([f"${symbol}$: {desc}" for symbol, desc in symbol_explanations])
         plt.annotate(
             explanation_text,
             xy=(1.05, 0.5),
@@ -143,16 +151,17 @@ def display_full_results(validation_results, requirements=None, show_hypergraph=
             fontsize=14,
             verticalalignment="center",
         )
-        
+
         plt.title(r"Enhanced Hypergraph of Equations and Variables", fontsize=20)
         plt.show()
 
     return None
 
+
 def _get_node_names_for_node_lables(node_labels, api_requirements):
     """
     Creates mapping between symbols and their descriptions.
-    
+
     Args:
         node_labels: List of node labels (symbols) from the hypergraph
         api_requirements: Can be either:
@@ -179,12 +188,14 @@ def _get_node_names_for_node_lables(node_labels, api_requirements):
 
     return node_names
 
+
 def _get_latex_string_format(input_string):
     """
     Properly formats LaTeX strings for matplotlib when text.usetex is False.
     No escaping needed since mathtext handles backslashes properly.
     """
     return f"${input_string}$"  # No backslash escaping required
+
 
 def _get_requirements_set(requirements):
     variable_set = set()
@@ -193,11 +204,9 @@ def _get_requirements_set(requirements):
 
     return variable_set
 
+
 def _find_vars_in_eq(equation, variable_set):
     patterns = [re.escape(var) for var in variable_set]
     combined_pattern = r"|".join(patterns)
     matches = re.findall(combined_pattern, equation)
     return {rf"${match}$" for match in matches}
-
-
-

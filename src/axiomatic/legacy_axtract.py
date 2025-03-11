@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt  # type: ignore
 import re
 from dataclasses import dataclass, asdict
 
+
 @dataclass
 class RequirementUserInput:
     requirement_name: str
@@ -17,10 +18,7 @@ class RequirementUserInput:
 
 
 def _find_symbol(name, variable_dict):
-
-    matching_keys = [
-        key for key, value in variable_dict.items() if name in value["name"]
-    ]
+    matching_keys = [key for key, value in variable_dict.items() if name in value["name"]]
 
     if not matching_keys:
         matching_keys.append("unknown")
@@ -32,7 +30,6 @@ def requirements_from_table(results, variable_dict):
     requirements = []
 
     for key, value in results["values"].items():
-
         latex_symbol = _find_symbol(key, variable_dict)
 
         name = key
@@ -81,7 +78,7 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     IMAGING_TELESCOPE_template = {
         "Resolution (panchromatic)": 0,
-        "Ground sampling distance (panchromatic)":0,
+        "Ground sampling distance (panchromatic)": 0,
         "Resolution (multispectral)": 0,
         "Ground sampling distance (multispectral)": 0,
         "Altitude": 0,
@@ -248,16 +245,8 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
                     default_value = PAYLOAD_1.get(row_name, 0.0)
                     default_unit = IMAGING_TELESCOPE_UNITS.get(row_name, "")
                 elif selected_option in custom_presets:
-                    default_value = (
-                        custom_presets[selected_option]
-                        .get(row_name, {})
-                        .get("Value", 0.0)
-                    )
-                    default_unit = (
-                        custom_presets[selected_option]
-                        .get(row_name, {})
-                        .get("Units", "")
-                    )
+                    default_value = custom_presets[selected_option].get(row_name, {}).get("Value", 0.0)
+                    default_unit = custom_presets[selected_option].get(row_name, {}).get("Units", "")
                 else:
                     default_value = 0.0
                     default_unit = ""
@@ -303,7 +292,7 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # 8) add_req(): Adds a new, blank row to the bottom
     # ---------------------------------------------------------------
     def add_req(_):
-        unique_key = (f"req_{len([kk for kk in value_widgets if kk.startswith('req_')]) + 1}")
+        unique_key = f"req_{len([kk for kk in value_widgets if kk.startswith('req_')]) + 1}"
 
         variable_dropdown = widgets.Dropdown(
             options=variable_names,
@@ -350,9 +339,7 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     #   - Also updates custom_presets + JSON file,
     #   - So it persists across restarts.
     # ---------------------------------------------------------------
-    custom_count = len(
-        [k for k in preset_options_dict if k.startswith("Custom-")]
-        )
+    custom_count = len([k for k in preset_options_dict if k.startswith("Custom-")])
 
     def save_requirements(_):
         nonlocal custom_count
@@ -385,34 +372,25 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     # 11) Create & display the buttons
     # ---------------------------------------------------------------
-    submit_button = widgets.Button(
-        description="Submit", button_style="success")
+    submit_button = widgets.Button(description="Submit", button_style="success")
     submit_button.on_click(submit_values)
 
-    add_req_button = widgets.Button(
-        description="Add Requirement", button_style="primary"
-    )
+    add_req_button = widgets.Button(description="Add Requirement", button_style="primary")
     add_req_button.on_click(add_req)
 
-    del_req_button = widgets.Button(
-        description="Delete Requirement", button_style="danger"
-    )
+    del_req_button = widgets.Button(description="Delete Requirement", button_style="danger")
     del_req_button.on_click(delete_req)
 
     save_req_button = widgets.Button(description="Save", button_style="info")
     save_req_button.on_click(save_requirements)
 
-    buttons_box = widgets.HBox(
-        [submit_button, add_req_button, del_req_button, save_req_button]
-    )
+    buttons_box = widgets.HBox([submit_button, add_req_button, del_req_button, save_req_button])
     display(buttons_box)
 
     return result
 
 
-
 def _get_node_names_for_node_lables(node_labels, api_requirements):
-
     # Create the output list
     node_names = []
 
@@ -423,9 +401,7 @@ def _get_node_names_for_node_lables(node_labels, api_requirements):
         for req in api_requirements:
             if req["latex_symbol"] == symbol:
                 # Add the matching tuple to SS
-                node_names.append(
-                    (req["latex_symbol"], req["requirement_name"])
-                    )
+                node_names.append((req["latex_symbol"], req["requirement_name"]))
                 break  # Stop searching once a match is found
 
     return node_names
@@ -470,96 +446,108 @@ def _add_used_vars_to_results(api_results, api_requirements):
 def display_full_results(equations_dict, requirements=None, show_hypergraph=True):
     """Display equation validation results optimized for dark theme notebooks."""
     results = equations_dict.get("results", {})
-    
+
     def format_equation(latex_eq):
         inner = latex_eq[3:-1]
-        lhs, rhs = inner.split(',', 1)
+        lhs, rhs = inner.split(",", 1)
         return f"{lhs} = {rhs}"
-    
+
     matching = []
     non_matching = []
-    
+
     for key, value in results.items():
         equation_data = {
-            'latex': format_equation(value.get('latex_equation')),
-            'lhs': value.get('lhs'),
-            'rhs': value.get('rhs'),
-            'diff': abs(value.get('lhs', 0) - value.get('rhs', 0)),
-            'percent_diff': abs(value.get('lhs', 0) - value.get('rhs', 0)) / max(abs(value.get('rhs', 0)), 1e-10) * 100
+            "latex": format_equation(value.get("latex_equation")),
+            "lhs": value.get("lhs"),
+            "rhs": value.get("rhs"),
+            "diff": abs(value.get("lhs", 0) - value.get("rhs", 0)),
+            "percent_diff": abs(value.get("lhs", 0) - value.get("rhs", 0)) / max(abs(value.get("rhs", 0)), 1e-10) * 100,
         }
-        if value.get('match'):
+        if value.get("match"):
             matching.append(equation_data)
         else:
             non_matching.append(equation_data)
 
     # Summary header with dark theme
     total = len(results)
-    display(HTML(
-        '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-        'border:1px solid #3e3e3e;">'
-        f'<h2 style="font-family:Arial; color:#e0e0e0; margin-bottom:15px">Equation Validation Analysis</h2>'
-        f'<p style="font-family:Arial; font-size:16px; color:#e0e0e0">'
-        f'<b>Total equations analyzed:</b> {total}<br>'
-        f'<span style="color:#4caf50">✅ Matching equations: {len(matching)}</span><br>'
-        f'<span style="color:#ff5252">❌ Non-matching equations: {len(non_matching)}</span></p>'
-        '</div>'
-    ))
+    display(
+        HTML(
+            '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
+            'border:1px solid #3e3e3e;">'
+            f'<h2 style="font-family:Arial; color:#e0e0e0; margin-bottom:15px">Equation Validation Analysis</h2>'
+            f'<p style="font-family:Arial; font-size:16px; color:#e0e0e0">'
+            f"<b>Total equations analyzed:</b> {total}<br>"
+            f'<span style="color:#4caf50">✅ Matching equations: {len(matching)}</span><br>'
+            f'<span style="color:#ff5252">❌ Non-matching equations: {len(non_matching)}</span></p>'
+            "</div>"
+        )
+    )
 
     # Non-matching equations
     if non_matching:
-        display(HTML(
-            '<div style="background-color:#2d1f1f; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #4a2f2f;">'
-            '<h3 style="color:#ff5252; font-family:Arial">⚠️ Equations Not Satisfied</h3>'
-        ))
-        
+        display(
+            HTML(
+                '<div style="background-color:#2d1f1f; padding:20px; border-radius:10px; margin:20px 0; '
+                'border:1px solid #4a2f2f;">'
+                '<h3 style="color:#ff5252; font-family:Arial">⚠️ Equations Not Satisfied</h3>'
+            )
+        )
+
         for eq in non_matching:
-            display(Math(eq['latex']))
-            display(HTML(
-                '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                'background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; '
-                'border-left:4px solid #ff5252">'
-                f'Left side  = {eq["lhs"]:.6g}<br>'
-                f'Right side = {eq["rhs"]:.6g}<br>'
-                f'Absolute difference = {eq["diff"]:.6g}<br>'
-                f'Relative difference = {eq["percent_diff"]:.2f}%'
-                '</div>'
-            ))
-        
-        display(HTML('</div>'))
+            display(Math(eq["latex"]))
+            display(
+                HTML(
+                    '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
+                    "background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; "
+                    'border-left:4px solid #ff5252">'
+                    f"Left side  = {eq['lhs']:.6g}<br>"
+                    f"Right side = {eq['rhs']:.6g}<br>"
+                    f"Absolute difference = {eq['diff']:.6g}<br>"
+                    f"Relative difference = {eq['percent_diff']:.2f}%"
+                    "</div>"
+                )
+            )
+
+        display(HTML("</div>"))
 
     # Matching equations
     if matching:
-        display(HTML(
-            '<div style="background-color:#1f2d1f; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #2f4a2f;">'
-            '<h3 style="color:#4caf50; font-family:Arial">✅ Satisfied Equations</h3>'
-        ))
-        
+        display(
+            HTML(
+                '<div style="background-color:#1f2d1f; padding:20px; border-radius:10px; margin:20px 0; '
+                'border:1px solid #2f4a2f;">'
+                '<h3 style="color:#4caf50; font-family:Arial">✅ Satisfied Equations</h3>'
+            )
+        )
+
         for eq in matching:
-            display(Math(eq['latex']))
-            display(HTML(
-                '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                'background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; '
-                'border-left:4px solid #4caf50">'
-                f'Value = {eq["lhs"]:.6g}'
-                '</div>'
-            ))
-            
-        display(HTML('</div>'))
+            display(Math(eq["latex"]))
+            display(
+                HTML(
+                    '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
+                    "background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; "
+                    'border-left:4px solid #4caf50">'
+                    f"Value = {eq['lhs']:.6g}"
+                    "</div>"
+                )
+            )
+
+        display(HTML("</div>"))
 
     # Hypergraph visualization
     if show_hypergraph and requirements:
-        display(HTML(
-            '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #3e3e3e;">'
-            '<h3 style="color:#e0e0e0; font-family:Arial">🔍 Equation Relationship Analysis</h3>'
-            '<p style="font-family:Arial; color:#e0e0e0">The following graph shows how variables are connected through equations:</p>'
-            '</div>'
-        ))
-        
+        display(
+            HTML(
+                '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
+                'border:1px solid #3e3e3e;">'
+                '<h3 style="color:#e0e0e0; font-family:Arial">🔍 Equation Relationship Analysis</h3>'
+                '<p style="font-family:Arial; color:#e0e0e0">The following graph shows how variables are connected through equations:</p>'
+                "</div>"
+            )
+        )
+
         list_api_requirements = [asdict(req) for req in requirements]
-        
+
         # Match get_eq_hypergraph settings exactly
         plt.rcParams["text.usetex"] = False
         plt.rcParams["mathtext.fontset"] = "stix"
@@ -570,8 +558,7 @@ def display_full_results(equations_dict, requirements=None, show_hypergraph=True
         # Prepare hypergraph data
         hyperedges = {}
         for eq, details in equations_dict["results"].items():
-            hyperedges[
-                _get_latex_string_format(details["latex_equation"])] = details["used_vars"]
+            hyperedges[_get_latex_string_format(details["latex_equation"])] = details["used_vars"]
 
         # Create and plot the hypergraph
         H = hnx.Hypergraph(hyperedges)
@@ -588,14 +575,9 @@ def display_full_results(equations_dict, requirements=None, show_hypergraph=True
         )
 
         node_labels = list(H.nodes)
-        symbol_explanations = _get_node_names_for_node_lables(
-            node_labels,
-            list_api_requirements
-        )
-        
-        explanation_text = "\n".join(
-            [f"${symbol}$: {desc}" for symbol, desc in symbol_explanations]
-        )
+        symbol_explanations = _get_node_names_for_node_lables(node_labels, list_api_requirements)
+
+        explanation_text = "\n".join([f"${symbol}$: {desc}" for symbol, desc in symbol_explanations])
         plt.annotate(
             explanation_text,
             xy=(1.05, 0.5),
@@ -603,14 +585,14 @@ def display_full_results(equations_dict, requirements=None, show_hypergraph=True
             fontsize=14,
             verticalalignment="center",
         )
-        
+
         plt.title(r"Enhanced Hypergraph of Equations and Variables", fontsize=20)
         plt.show()
 
     return None
 
 
-def get_numerical_values(ax_client, path, constants_of_interest):  
+def get_numerical_values(ax_client, path, constants_of_interest):
     with open(path, "rb") as f:
         file = f.read()
 
@@ -618,40 +600,31 @@ def get_numerical_values(ax_client, path, constants_of_interest):
     print(constants)
     # Create a dictionary to store processed values
     processed_values = {}
-    
+
     # Process each constant name from the constants dictionary
     for constant_name in constants:
         value_str = constants[constant_name]  # Get the value directly from the dictionary
-        
+
         if value_str is None:
             # Handle None values
-            processed_values[constant_name] = {
-                "Value": 0.0,
-                "Units": "unknown"
-            }
-        elif 'F/' in value_str:
+            processed_values[constant_name] = {"Value": 0.0, "Units": "unknown"}
+        elif "F/" in value_str:
             # Handle F-number values
-            f_number = float(value_str.split('/')[-1])
-            processed_values[constant_name] = {
-                "Value": f_number,
-                "Units": "dimensionless"
-            }
-        elif 'f/' in value_str:
+            f_number = float(value_str.split("/")[-1])
+            processed_values[constant_name] = {"Value": f_number, "Units": "dimensionless"}
+        elif "f/" in value_str:
             # Handle F-number values
-            f_number = float(value_str.split('/')[-1])
-            processed_values[constant_name] = {
-                "Value": f_number,
-                "Units": "dimensionless"
-            }
+            f_number = float(value_str.split("/")[-1])
+            processed_values[constant_name] = {"Value": f_number, "Units": "dimensionless"}
         else:
             # Handle normal values with units
             # Split on the last space to separate value and unit
-            parts = value_str.rsplit(' ', 1)
+            parts = value_str.rsplit(" ", 1)
             if len(parts) == 2:
                 value, unit = parts
                 # Convert value to float
                 value = float(value)
-                
+
                 # Handle unit conversions to meters
                 if unit == "\u00b5m":  # micrometer
                     value *= 1e-6
@@ -666,18 +639,12 @@ def get_numerical_values(ax_client, path, constants_of_interest):
                 elif unit in ["deg", "°", "degree", "degrees"]:  # degrees
                     value = value * (3.14159265359 / 180.0)  # convert to radians
                     unit = "rad"
-                
-                processed_values[constant_name] = {
-                    "Value": value,
-                    "Units": unit
-                }
+
+                processed_values[constant_name] = {"Value": value, "Units": unit}
             else:
                 # If no unit is found
-                processed_values[constant_name] = {
-                    "Value": float(parts[0]),
-                    "Units": "unknown"
-                }
-    
+                processed_values[constant_name] = {"Value": float(parts[0]), "Units": "unknown"}
+
     # Save as custom preset
     filename = os.path.basename(path)
     with open("./custom_presets.json", "r+") as f:
@@ -688,7 +655,3 @@ def get_numerical_values(ax_client, path, constants_of_interest):
         f.truncate()
 
     return processed_values
-
-
-
-
