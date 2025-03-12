@@ -1,5 +1,5 @@
 import base64
-import dill
+import dill  # type: ignore
 import json
 import requests
 import os
