@@ -1,4 +1,5 @@
 dill>=0.3.4
+fastjsonschema>=2.21.1
 httpx>=0.21.2
 hypernetx>=2.0.0
 ipywidgets>=7.0.0

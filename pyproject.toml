@@ -3,7 +3,7 @@ name = "axiomatic"
 
 [tool.poetry]
 name = "axiomatic"
-version = "0.0.108"
+version = "0.0.109"
 description = ""
 readme = "README.md"
 authors = []
@@ -36,6 +36,7 @@ Repository = 'https://github.com/axiomatic-ai/axiomatic-python-sdk'
 [tool.poetry.dependencies]
 python = "^3.8"
 dill = ">=0.3.4"
+fastjsonschema = ">=2.21.1"
 httpx = ">=0.21.2"
 hypernetx = ">=2.0.0"
 ipywidgets = ">=7.0.0"
