@@ -4,10 +4,15 @@ import json
 import requests
 import os
 import time
-from typing import Dict
+import json
+from typing import Dict, List, Optional, Union
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import ParseResponse
+from . import ParseResponse, EquationExtractionResponse, EquationProcessingResponse
+from .axtract.axtract_report import create_report
+from .axtract.validation_results import display_full_results
+from .axtract.interactive_table import _create_variable_dict
+from .types.variable_requirement import VariableRequirement as ApiVariableRequirement
 
 
 class Axiomatic(BaseClient):
@@ -18,6 +23,66 @@ class Axiomatic(BaseClient):
 
         self.document_helper = DocumentHelper(self)
         self.tools_helper = ToolsHelper(self)
+        self.axtract_helper = AxtractHelper(self)
+
+
+class AxtractHelper:
+    from .axtract.interactive_table import VariableRequirement
+
+    _ax_client: Axiomatic
+
+    def __init__(self, ax_client: Axiomatic):
+        self._ax_client = ax_client
+
+    def create_report(self, response: EquationExtractionResponse, path: str):
+        create_report(response, path)
+
+    def analyze_equations(
+        self,
+        file_path: Optional[str] = None,
+        url_path: Optional[str] = None,
+        parsed_paper: Optional[ParseResponse] = None,
+    ) -> Optional[EquationExtractionResponse]:
+        response: Union[EquationExtractionResponse, EquationProcessingResponse]
+        
+        if file_path:
+            with open(file_path, "rb") as file:
+                response = self._ax_client.document.equation.from_pdf(document=file)
+        elif url_path:
+            if "arxiv" in url_path and "abs" in url_path:
+                url_path = url_path.replace("abs", "pdf")
+
+            response = self._ax_client.document.equation.from_pdf(document=url_path)
+        elif parsed_paper:
+            response = self._ax_client.document.equation.process(**parsed_paper.model_dump())
+        else:
+            print("Please provide either a file path or a URL to analyze.")
+            return None
+
+        return EquationExtractionResponse(equations=response.equations)
+
+    def validate_equations(
+        self,
+        requirements: List[VariableRequirement],
+        loaded_equations: EquationExtractionResponse,
+        show_hypergraph: bool = True,
+    ):
+        api_requirements = [
+            ApiVariableRequirement(
+                symbol=req.symbol, name=req.name, value=req.value, units=req.units, tolerance=req.tolerance
+            )
+            for req in requirements
+        ]
+
+        variable_dict = _create_variable_dict(loaded_equations)
+        api_response = self._ax_client.document.equation.validate(request=api_requirements)
+        display_full_results(api_response.model_dump(), variable_dict, show_hypergraph=show_hypergraph)
+
+    def set_numerical_requirements(self, extracted_equations):
+        from .axtract.interactive_table import interactive_table
+
+        result = interactive_table(extracted_equations)
+        return result
 
 
 class DocumentHelper:
@@ -73,13 +138,19 @@ class DocumentHelper:
     def save_parsed_pdf(self, response: ParseResponse, path: str):
         """Save a parsed PDF response to a file."""
         os.makedirs(path, exist_ok=True)
+        with open(os.path.join(path, "text.md"), "w") as f:
+            f.write(response.markdown)
+
         if response.images:
             for img_name, img in response.images.items():
                 with open(os.path.join(path, f"{img_name}.png"), "wb") as f:
                     f.write(base64.b64decode(img))
 
-        with open(os.path.join(path, "text.md"), "w") as f:
-            f.write(response.markdown)
+        with open(os.path.join(path, "interline_equations.json"), "w") as f:
+            json.dump(response.interline_equations, f)
+
+        with open(os.path.join(path, "inline_equations.json"), "w") as f:
+            json.dump(response.inline_equations, f)
 
     def load_parsed_pdf(self, path: str) -> ParseResponse:
         """Load a parsed PDF response from a file."""
@@ -92,7 +163,18 @@ class DocumentHelper:
                 with open(os.path.join(path, img_name), "rb") as img_file:
                     images[img_name] = base64.b64encode(img_file.read()).decode("utf-8")
 
-        return ParseResponse(markdown=markdown, images=images)
+        with open(os.path.join(path, "interline_equations.json"), "r") as f:
+            interline_equations = json.load(f)
+
+        with open(os.path.join(path, "inline_equations.json"), "r") as f:
+            inline_equations = json.load(f)
+
+        return ParseResponse(
+            markdown=markdown,
+            images=images,
+            interline_equations=interline_equations,
+            inline_equations=inline_equations,
+        )
 
 
 class ToolsHelper:

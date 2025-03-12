@@ -1,20 +1,8 @@
 import ipywidgets as widgets  # type: ignore
-from IPython.display import display, Math, HTML  # type: ignore
+from IPython.display import display  # type: ignore
 import json  # type: ignore
-import os
-import hypernetx as hnx  # type: ignore
-import matplotlib.pyplot as plt  # type: ignore
-import re
-from dataclasses import dataclass, asdict
-
-
-@dataclass
-class RequirementUserInput:
-    requirement_name: str
-    latex_symbol: str
-    value: int
-    units: str
-    tolerance: float
+import os  # type: ignore
+from .. import EquationExtractionResponse, VariableRequirement
 
 
 def _find_symbol(name, variable_dict):
@@ -26,22 +14,18 @@ def _find_symbol(name, variable_dict):
     return matching_keys[0]
 
 
-def requirements_from_table(results, variable_dict):
+def _requirements_from_table(results, variable_dict):
     requirements = []
 
     for key, value in results["values"].items():
         latex_symbol = _find_symbol(key, variable_dict)
 
-        name = key
-        numerical_value = value["Value"]
-        unit = value["Units"]
-
         requirements.append(
-            RequirementUserInput(
-                requirement_name=name,
-                latex_symbol=latex_symbol,
-                value=numerical_value,
-                units=unit,
+            VariableRequirement(
+                symbol=latex_symbol,
+                name=key,
+                value=value["Value"],
+                units=value["Units"],
                 tolerance=0.0,
             )
         )
@@ -49,7 +33,7 @@ def requirements_from_table(results, variable_dict):
     return requirements
 
 
-def interactive_table(variable_dict, file_path="./custom_presets.json"):
+def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     """
     Creates an interactive table for IMAGING_TELESCOPE,
     PAYLOAD, and user-defined custom templates.
@@ -57,20 +41,15 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
 
     Parameters
     ----------
-    variable_dict : dict
-        Dictionary used to populate the "Add Requirement" dropdown, e.g.:
-          {
-            "var_key1": {"name": "Human-readable variable name1"},
-            "var_key2": {"name": "Human-readable variable name2"},
-            ...
-          }
+    loaded_equations : EquationExtractionResponse
+        The extracted equations containing variable information
     file_path : str, optional
         JSON file path where we load and save user-created custom templates.
 
     Returns
     -------
-    dict
-        Contains user inputs after pressing "Submit" button.
+    list
+        List of VariableRequirement objects after pressing "Submit" button.
     """
 
     # ---------------------------------------------------------------
@@ -161,6 +140,7 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     # 4) Load custom presets from JSON (if any) and integrate them
     # ---------------------------------------------------------------
+    variable_dict = _create_variable_dict(loaded_equations)
     custom_presets = load_custom_presets(file_path)
 
     for custom_name, values_dict in custom_presets.items():
@@ -278,6 +258,9 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     # 7) submit_values(): Gather the current table's values into `result`
     # ---------------------------------------------------------------
+    # Store the requirements to return later
+    requirements_result = [None]  # Using a list to store mutable reference
+
     def submit_values(_):
         updated_values = {}
         for k, widget in value_widgets.items():
@@ -287,6 +270,14 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
             updated_values[label_or_variable] = {"Value": val, "Units": unit}
 
         result["values"] = updated_values
+        requirements_result[0] = _requirements_from_table(result, variable_dict)
+
+        # Display a confirmation message
+        with message_output:
+            message_output.clear_output()
+            print("Requirements submitted successfully!")
+
+        return requirements_result[0]
 
     # ---------------------------------------------------------------
     # 8) add_req(): Adds a new, blank row to the bottom
@@ -387,271 +378,37 @@ def interactive_table(variable_dict, file_path="./custom_presets.json"):
     buttons_box = widgets.HBox([submit_button, add_req_button, del_req_button, save_req_button])
     display(buttons_box)
 
-    return result
+    # Return the requirements object directly - it will be updated when submit is clicked
+    return requirements_result
 
 
-def _get_node_names_for_node_lables(node_labels, api_requirements):
-    # Create the output list
-    node_names = []
-
-    # Iterate through each symbol in S
-    for symbol in node_labels:
-        # Search for the matching requirement
-        symbol = symbol.replace("$", "")
-        for req in api_requirements:
-            if req["latex_symbol"] == symbol:
-                # Add the matching tuple to SS
-                node_names.append((req["latex_symbol"], req["requirement_name"]))
-                break  # Stop searching once a match is found
-
-    return node_names
-
-
-def _get_latex_string_format(input_string):
+def _create_variable_dict(equation_response: EquationExtractionResponse) -> dict:
     """
-    Properly formats LaTeX strings for matplotlib when text.usetex is False.
-    No escaping needed since mathtext handles backslashes properly.
-    """
-    return f"${input_string}$"  # No backslash escaping required
+    Creates a variable dictionary from an EquationExtractionResponse object
+    for use with the interactive_table function.
 
+    Parameters
+    ----------
+    equation_response : EquationExtractionResponse
+        The equation extraction response containing equations and their symbols
 
-def _get_requirements_set(requirements):
-    variable_set = set()
-    for req in requirements:
-        variable_set.add(req["latex_symbol"])
-
-    return variable_set
-
-
-def _find_vars_in_eq(equation, variable_set):
-    patterns = [re.escape(var) for var in variable_set]
-    combined_pattern = r"|".join(patterns)
-    matches = re.findall(combined_pattern, equation)
-    return {rf"${match}$" for match in matches}
-
-
-def _add_used_vars_to_results(api_results, api_requirements):
-    requirements = _get_requirements_set(api_requirements)
-
-    for key, value in api_results["results"].items():
-        latex_equation = value.get("latex_equation")
-        # print(latex_equation)
-        if latex_equation:
-            used_vars = _find_vars_in_eq(latex_equation, requirements)
-            api_results["results"][key]["used_vars"] = used_vars
-
-    return api_results
-
-
-def display_full_results(equations_dict, requirements=None, show_hypergraph=True):
-    """Display equation validation results optimized for dark theme notebooks."""
-    results = equations_dict.get("results", {})
-
-    def format_equation(latex_eq):
-        inner = latex_eq[3:-1]
-        lhs, rhs = inner.split(",", 1)
-        return f"{lhs} = {rhs}"
-
-    matching = []
-    non_matching = []
-
-    for key, value in results.items():
-        equation_data = {
-            "latex": format_equation(value.get("latex_equation")),
-            "lhs": value.get("lhs"),
-            "rhs": value.get("rhs"),
-            "diff": abs(value.get("lhs", 0) - value.get("rhs", 0)),
-            "percent_diff": abs(value.get("lhs", 0) - value.get("rhs", 0)) / max(abs(value.get("rhs", 0)), 1e-10) * 100,
+    Returns
+    -------
+    dict
+        A dictionary in the format:
+        {
+            "symbol1": {"name": "Human-readable description1"},
+            "symbol2": {"name": "Human-readable description2"},
+            ...
         }
-        if value.get("match"):
-            matching.append(equation_data)
-        else:
-            non_matching.append(equation_data)
+    """
+    variable_dict = {}
 
-    # Summary header with dark theme
-    total = len(results)
-    display(
-        HTML(
-            '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-            'border:1px solid #3e3e3e;">'
-            f'<h2 style="font-family:Arial; color:#e0e0e0; margin-bottom:15px">Equation Validation Analysis</h2>'
-            f'<p style="font-family:Arial; font-size:16px; color:#e0e0e0">'
-            f"<b>Total equations analyzed:</b> {total}<br>"
-            f'<span style="color:#4caf50">✅ Matching equations: {len(matching)}</span><br>'
-            f'<span style="color:#ff5252">❌ Non-matching equations: {len(non_matching)}</span></p>'
-            "</div>"
-        )
-    )
+    # Iterate through all equations and their symbols
+    for equation in equation_response.equations:
+        for symbol in equation.latex_symbols:
+            # Only add if not already present (avoid duplicates)
+            if symbol.key not in variable_dict:
+                variable_dict[symbol.key] = {"name": symbol.key}
 
-    # Non-matching equations
-    if non_matching:
-        display(
-            HTML(
-                '<div style="background-color:#2d1f1f; padding:20px; border-radius:10px; margin:20px 0; '
-                'border:1px solid #4a2f2f;">'
-                '<h3 style="color:#ff5252; font-family:Arial">⚠️ Equations Not Satisfied</h3>'
-            )
-        )
-
-        for eq in non_matching:
-            display(Math(eq["latex"]))
-            display(
-                HTML(
-                    '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                    "background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; "
-                    'border-left:4px solid #ff5252">'
-                    f"Left side  = {eq['lhs']:.6g}<br>"
-                    f"Right side = {eq['rhs']:.6g}<br>"
-                    f"Absolute difference = {eq['diff']:.6g}<br>"
-                    f"Relative difference = {eq['percent_diff']:.2f}%"
-                    "</div>"
-                )
-            )
-
-        display(HTML("</div>"))
-
-    # Matching equations
-    if matching:
-        display(
-            HTML(
-                '<div style="background-color:#1f2d1f; padding:20px; border-radius:10px; margin:20px 0; '
-                'border:1px solid #2f4a2f;">'
-                '<h3 style="color:#4caf50; font-family:Arial">✅ Satisfied Equations</h3>'
-            )
-        )
-
-        for eq in matching:
-            display(Math(eq["latex"]))
-            display(
-                HTML(
-                    '<div style="font-family:monospace; margin-left:20px; margin-bottom:20px; '
-                    "background-color:#2a2a2a; color:#e0e0e0; padding:15px; border-radius:5px; "
-                    'border-left:4px solid #4caf50">'
-                    f"Value = {eq['lhs']:.6g}"
-                    "</div>"
-                )
-            )
-
-        display(HTML("</div>"))
-
-    # Hypergraph visualization
-    if show_hypergraph and requirements:
-        display(
-            HTML(
-                '<div style="background-color:#1e1e1e; padding:20px; border-radius:10px; margin:20px 0; '
-                'border:1px solid #3e3e3e;">'
-                '<h3 style="color:#e0e0e0; font-family:Arial">🔍 Equation Relationship Analysis</h3>'
-                '<p style="font-family:Arial; color:#e0e0e0">The following graph shows how variables are connected through equations:</p>'
-                "</div>"
-            )
-        )
-
-        list_api_requirements = [asdict(req) for req in requirements]
-
-        # Match get_eq_hypergraph settings exactly
-        plt.rcParams["text.usetex"] = False
-        plt.rcParams["mathtext.fontset"] = "stix"
-        plt.rcParams["font.family"] = "serif"
-
-        equations_dict = _add_used_vars_to_results(equations_dict, list_api_requirements)
-
-        # Prepare hypergraph data
-        hyperedges = {}
-        for eq, details in equations_dict["results"].items():
-            hyperedges[_get_latex_string_format(details["latex_equation"])] = details["used_vars"]
-
-        # Create and plot the hypergraph
-        H = hnx.Hypergraph(hyperedges)
-        plt.figure(figsize=(16, 12))
-
-        # Draw hypergraph with exact same settings as get_eq_hypergraph
-        hnx.draw(
-            H,
-            with_edge_labels=True,
-            edge_labels_on_edge=False,
-            node_labels_kwargs={"fontsize": 14},
-            edge_labels_kwargs={"fontsize": 14},
-            layout_kwargs={"seed": 42, "scale": 2.5},
-        )
-
-        node_labels = list(H.nodes)
-        symbol_explanations = _get_node_names_for_node_lables(node_labels, list_api_requirements)
-
-        explanation_text = "\n".join([f"${symbol}$: {desc}" for symbol, desc in symbol_explanations])
-        plt.annotate(
-            explanation_text,
-            xy=(1.05, 0.5),
-            xycoords="axes fraction",
-            fontsize=14,
-            verticalalignment="center",
-        )
-
-        plt.title(r"Enhanced Hypergraph of Equations and Variables", fontsize=20)
-        plt.show()
-
-    return None
-
-
-def get_numerical_values(ax_client, path, constants_of_interest):
-    with open(path, "rb") as f:
-        file = f.read()
-
-    constants = ax_client.document.constants(file=file, constants=constants_of_interest).constants
-    print(constants)
-    # Create a dictionary to store processed values
-    processed_values = {}
-
-    # Process each constant name from the constants dictionary
-    for constant_name in constants:
-        value_str = constants[constant_name]  # Get the value directly from the dictionary
-
-        if value_str is None:
-            # Handle None values
-            processed_values[constant_name] = {"Value": 0.0, "Units": "unknown"}
-        elif "F/" in value_str:
-            # Handle F-number values
-            f_number = float(value_str.split("/")[-1])
-            processed_values[constant_name] = {"Value": f_number, "Units": "dimensionless"}
-        elif "f/" in value_str:
-            # Handle F-number values
-            f_number = float(value_str.split("/")[-1])
-            processed_values[constant_name] = {"Value": f_number, "Units": "dimensionless"}
-        else:
-            # Handle normal values with units
-            # Split on the last space to separate value and unit
-            parts = value_str.rsplit(" ", 1)
-            if len(parts) == 2:
-                value, unit = parts
-                # Convert value to float
-                value = float(value)
-
-                # Handle unit conversions to meters
-                if unit == "\u00b5m":  # micrometer
-                    value *= 1e-6
-                    unit = "m"
-                elif unit == "mm":  # millimeter
-                    value *= 1e-3
-                    unit = "m"
-                elif unit == "km":  # kilometer
-                    value *= 1e3
-                    unit = "m"
-                # Handle degree conversions to radians
-                elif unit in ["deg", "°", "degree", "degrees"]:  # degrees
-                    value = value * (3.14159265359 / 180.0)  # convert to radians
-                    unit = "rad"
-
-                processed_values[constant_name] = {"Value": value, "Units": unit}
-            else:
-                # If no unit is found
-                processed_values[constant_name] = {"Value": float(parts[0]), "Units": "unknown"}
-
-    # Save as custom preset
-    filename = os.path.basename(path)
-    with open("./custom_presets.json", "r+") as f:
-        presets = json.load(f)
-        presets[filename] = processed_values
-        f.seek(0)
-        json.dump(presets, f, indent=2)
-        f.truncate()
-
-    return processed_values
+    return variable_dict
