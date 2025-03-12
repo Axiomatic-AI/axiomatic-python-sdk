@@ -2,7 +2,7 @@ import base64
 import requests
 import os
 import time
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional
 
 from .base_client import BaseClient, AsyncBaseClient
 from . import ParseResponse
@@ -17,6 +17,7 @@ class Axiomatic(BaseClient):
 
         self.document_helper = DocumentHelper(self)
         self.tools_helper = ToolsHelper(self)
+        self.axtract_helper = AxtractHelper(self)
 
 
 class AxtractHelper:
@@ -32,11 +33,7 @@ class AxtractHelper:
 
         create_report(response, path)
 
-    def analyze_equations(
-        self,
-        file_path: Optional[str] = None,
-        url_path: Optional[str] = None
-    ) -> Optional[EquationExtractionResponse]:
+    def analyze_equations(self, file_path: Optional[str] = None, url_path: Optional[str] = None):
         if file_path:
             with open(file_path, "rb") as file:
                 response = self._ax_client.document.equation.from_pdf(document=file)
@@ -44,14 +41,13 @@ class AxtractHelper:
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
-            
-            response = self._ax_client.document.equation.from_pdf(document=url_path)
+            file = requests.get(url_path)
+            response = self._ax_client.document.equation.from_pdf(document=file.content)
 
         else:
             print("Please provide either a file path or a URL to analyze.")
             return None
-
-        return EquationExtractionResponse(equations=response.equations)
+        return response
 
     def validate_equations(
         self,
@@ -65,12 +61,9 @@ class AxtractHelper:
 
         api_requirements = [
             ApiVariableRequirement(
-                symbol=req.symbol,
-                name=req.name,
-                value=req.value,
-                units=req.units,
-                tolerance=req.tolerance
-            ) for req in requirements
+                symbol=req.symbol, name=req.name, value=req.value, units=req.units, tolerance=req.tolerance
+            )
+            for req in requirements
         ]
 
         variable_dict = _create_variable_dict(loaded_equations)

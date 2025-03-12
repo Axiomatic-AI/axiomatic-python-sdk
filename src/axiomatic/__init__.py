@@ -94,7 +94,7 @@ from . import (
     requirements,
     tools,
 )
-from .client import AsyncAxiomatic, Axiomatic, AxtractHelper
+from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
 from .version import __version__
 
@@ -103,7 +103,6 @@ __all__ = [
     "AxesInfo",
     "Axiomatic",
     "AxiomaticEnvironment",
-    "AxtractHelper",
     "Bundle",
     "BundleSettingsValue",
     "Computation",

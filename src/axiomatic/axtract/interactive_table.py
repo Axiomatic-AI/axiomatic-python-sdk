@@ -151,7 +151,7 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     # 5) For the "Add Requirement" dropdown
     # ---------------------------------------------------------------
     variable_names = [details["name"] for details in variable_dict.values()]
-
+    print(variable_names)
     # This dict will store the final user inputs after pressing "Submit"
     result = {}
 
