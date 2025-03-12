@@ -194,12 +194,12 @@ class ToolsHelper:
             tool_name = tool.strip()
             code_string = code
 
-            output = self._ax_client.tools.schedule(
+            tool_result = self._ax_client.tools.schedule(
                 tool_name=tool_name,
                 code=code_string,
             )
-            if output.is_success is True:
-                job_id = str(output.job_id)
+            if tool_result.is_success is True:
+                job_id = str(tool_result.job_id)
                 result = self._ax_client.tools.status(job_id=job_id)
                 if debug:
                     print(f"job_id: {job_id}")
@@ -213,7 +213,7 @@ class ToolsHelper:
                         if debug:
                             print(f"status: {result.status}")
                         if result.status == "SUCCEEDED":
-                            output = json.loads(result.output)
+                            output = json.loads(result.output or "{}")
                             if not output['objects']:
                                 return result.output
                             else:
@@ -224,12 +224,12 @@ class ToolsHelper:
                         else:
                             return result.error_trace
             else:
-                return output.error_trace
+                return tool_result.error_trace
 
     def load(self, job_id: str, obj_key: str):
         result = self._ax_client.tools.status(job_id=job_id)
         if result.status == "SUCCEEDED":
-            output = json.loads(result.output)
+            output = json.loads(result.output or "{}")
             if not output['objects']:
                 return result.output
             else:
