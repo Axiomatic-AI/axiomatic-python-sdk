@@ -247,8 +247,8 @@ def create_report(report_data: EquationExtractionResponse, report_path: str = ".
         for symbol in eq.latex_symbols:
             html_content += f"""
                         <tr>
-                            <td>\\({symbol["key"]}\\)</td>
-                            <td>{symbol["value"]}</td>
+                            <td>\\({symbol.key}\\)</td>
+                            <td>{symbol.key}</td>
                         </tr>
             """
 
