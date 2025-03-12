@@ -1,12 +1,18 @@
 import base64
+import dill  # type: ignore
+import json
 import requests
 import os
 import time
-from typing import Dict, List, Optional
+import json
+from typing import Dict, List, Optional, Union
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import ParseResponse
-from .axtract.models import EquationExtractionResponse
+from . import ParseResponse, EquationExtractionResponse, EquationProcessingResponse
+from .axtract.axtract_report import create_report
+from .axtract.validation_results import display_full_results
+from .axtract.interactive_table import _create_variable_dict
+from .types.variable_requirement import VariableRequirement as ApiVariableRequirement
 
 
 class Axiomatic(BaseClient):
@@ -29,24 +35,33 @@ class AxtractHelper:
         self._ax_client = ax_client
 
     def create_report(self, response: EquationExtractionResponse, path: str):
-        from .axtract.axtract_report import create_report
-
         create_report(response, path)
 
-    def analyze_equations(self, file_path: Optional[str] = None, url_path: Optional[str] = None):
+    def analyze_equations(
+        self,
+        file_path: Optional[str] = None,
+        url_path: Optional[str] = None,
+        parsed_paper: Optional[ParseResponse] = None,
+    ):
+        response: Union[EquationExtractionResponse, EquationProcessingResponse]
+        
         if file_path:
             with open(file_path, "rb") as file:
                 response = self._ax_client.document.equation.from_pdf(document=file)
-
+        
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
             file = requests.get(url_path)
             response = self._ax_client.document.equation.from_pdf(document=file.content)
-
+        
+        elif parsed_paper:
+            response = self._ax_client.document.equation.process(**parsed_paper.model_dump())
+        
         else:
             print("Please provide either a file path or a URL to analyze.")
             return None
+        
         return response
 
     def validate_equations(
@@ -55,10 +70,6 @@ class AxtractHelper:
         loaded_equations: EquationExtractionResponse,
         show_hypergraph: bool = True,
     ):
-        from .axtract.validation_results import display_full_results
-        from .axtract.interactive_table import _create_variable_dict
-        from axiomatic.types.variable_requirement import VariableRequirement as ApiVariableRequirement
-
         api_requirements = [
             ApiVariableRequirement(
                 symbol=req.symbol, name=req.name, value=req.value, units=req.units, tolerance=req.tolerance
@@ -130,13 +141,19 @@ class DocumentHelper:
     def save_parsed_pdf(self, response: ParseResponse, path: str):
         """Save a parsed PDF response to a file."""
         os.makedirs(path, exist_ok=True)
+        with open(os.path.join(path, "text.md"), "w") as f:
+            f.write(response.markdown)
+
         if response.images:
             for img_name, img in response.images.items():
                 with open(os.path.join(path, f"{img_name}.png"), "wb") as f:
                     f.write(base64.b64decode(img))
 
-        with open(os.path.join(path, "text.md"), "w") as f:
-            f.write(response.markdown)
+        with open(os.path.join(path, "interline_equations.json"), "w") as f:
+            json.dump(response.interline_equations, f)
+
+        with open(os.path.join(path, "inline_equations.json"), "w") as f:
+            json.dump(response.inline_equations, f)
 
     def load_parsed_pdf(self, path: str) -> ParseResponse:
         """Load a parsed PDF response from a file."""
@@ -149,7 +166,18 @@ class DocumentHelper:
                 with open(os.path.join(path, img_name), "rb") as img_file:
                     images[img_name] = base64.b64encode(img_file.read()).decode("utf-8")
 
-        return ParseResponse(markdown=markdown, images=images)
+        with open(os.path.join(path, "interline_equations.json"), "r") as f:
+            interline_equations = json.load(f)
+
+        with open(os.path.join(path, "inline_equations.json"), "r") as f:
+            inline_equations = json.load(f)
+
+        return ParseResponse(
+            markdown=markdown,
+            images=images,
+            interline_equations=interline_equations,
+            inline_equations=inline_equations,
+        )
 
 
 class ToolsHelper:
@@ -169,12 +197,12 @@ class ToolsHelper:
             tool_name = tool.strip()
             code_string = code
 
-            output = self._ax_client.tools.schedule(
+            tool_result = self._ax_client.tools.schedule(
                 tool_name=tool_name,
                 code=code_string,
             )
-            if output.is_success is True:
-                job_id = str(output.job_id)
+            if tool_result.is_success is True:
+                job_id = str(tool_result.job_id)
                 result = self._ax_client.tools.status(job_id=job_id)
                 if debug:
                     print(f"job_id: {job_id}")
@@ -188,11 +216,41 @@ class ToolsHelper:
                         if debug:
                             print(f"status: {result.status}")
                         if result.status == "SUCCEEDED":
-                            return result.output
+                            output = json.loads(result.output or "{}")
+                            if not output['objects']:
+                                return result.output
+                            else:
+                                return {
+                                    "messages": output['messages'],
+                                    "objects": self._load_objects_from_base64(output['objects'])
+                                }
                         else:
                             return result.error_trace
             else:
-                return output.error_trace
+                return tool_result.error_trace
+
+    def load(self, job_id: str, obj_key: str):
+        result = self._ax_client.tools.status(job_id=job_id)
+        if result.status == "SUCCEEDED":
+            output = json.loads(result.output or "{}")
+            if not output['objects']:
+                return result.output
+            else:
+                return self._load_objects_from_base64(output['objects'])[obj_key]
+        else:
+            return result.error_trace
+
+    def _load_objects_from_base64(self, encoded_dict):
+        loaded_objects = {}
+        for key, encoded_str in encoded_dict.items():
+            try:
+                decoded_bytes = base64.b64decode(encoded_str)
+                loaded_obj = dill.loads(decoded_bytes)
+                loaded_objects[key] = loaded_obj
+            except Exception as e:
+                print(f"Error loading object for key '{key}': {e}")
+                loaded_objects[key] = None
+        return loaded_objects
 
 
 class AsyncAxiomatic(AsyncBaseClient): ...

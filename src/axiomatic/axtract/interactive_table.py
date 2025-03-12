@@ -2,8 +2,7 @@ import ipywidgets as widgets  # type: ignore
 from IPython.display import display  # type: ignore
 import json  # type: ignore
 import os  # type: ignore
-from .axtract_report import EquationExtractionResponse
-from .models import VariableRequirement
+from .. import EquationExtractionResponse, VariableRequirement
 
 
 def _find_symbol(name, variable_dict):
@@ -410,6 +409,6 @@ def _create_variable_dict(equation_response: EquationExtractionResponse) -> dict
         for symbol in equation.latex_symbols:
             # Only add if not already present (avoid duplicates)
             if symbol.key not in variable_dict:
-                variable_dict[symbol.key] = {"name": symbol.value}
+                variable_dict[symbol.key] = {"name": symbol.key}
 
     return variable_dict

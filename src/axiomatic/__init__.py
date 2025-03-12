@@ -56,7 +56,6 @@ from .types import (
     PlotParserOutput,
     RefineCodeResponse,
     RefineComponentCodeResponse,
-    ResponseEquation,
     ScheduleJobResponse,
     SolutionResponse,
     SolutionResponseSolutionValue,
@@ -84,16 +83,7 @@ from .types import (
     Z3Expression,
 )
 from .errors import UnprocessableEntityError
-from . import (
-    code_execution,
-    document,
-    formalization,
-    fso,
-    lean,
-    pic,
-    requirements,
-    tools,
-)
+from . import code_execution, document, formalization, fso, lean, pic, requirements, tools
 from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
 from .version import __version__
@@ -157,7 +147,6 @@ __all__ = [
     "PlotParserOutput",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
-    "ResponseEquation",
     "ScheduleJobResponse",
     "SolutionResponse",
     "SolutionResponseSolutionValue",

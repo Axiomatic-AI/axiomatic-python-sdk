@@ -1,5 +1,5 @@
 from .relation_graph import generate_relation_graph
-from .models import EquationExtractionResponse
+from .. import EquationExtractionResponse
 import os
 import re
 
@@ -248,7 +248,7 @@ def create_report(report_data: EquationExtractionResponse, report_path: str = ".
             html_content += f"""
                         <tr>
                             <td>\\({symbol.key}\\)</td>
-                            <td>{symbol.value}</td>
+                            <td>{symbol.key}</td>
                         </tr>
             """
 
