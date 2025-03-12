@@ -1,4 +1,6 @@
 import base64
+import dill  # type: ignore
+import json
 import requests
 import os
 import time
@@ -192,12 +194,12 @@ class ToolsHelper:
             tool_name = tool.strip()
             code_string = code
 
-            output = self._ax_client.tools.schedule(
+            tool_result = self._ax_client.tools.schedule(
                 tool_name=tool_name,
                 code=code_string,
             )
-            if output.is_success is True:
-                job_id = str(output.job_id)
+            if tool_result.is_success is True:
+                job_id = str(tool_result.job_id)
                 result = self._ax_client.tools.status(job_id=job_id)
                 if debug:
                     print(f"job_id: {job_id}")
@@ -211,11 +213,41 @@ class ToolsHelper:
                         if debug:
                             print(f"status: {result.status}")
                         if result.status == "SUCCEEDED":
-                            return result.output
+                            output = json.loads(result.output or "{}")
+                            if not output['objects']:
+                                return result.output
+                            else:
+                                return {
+                                    "messages": output['messages'],
+                                    "objects": self._load_objects_from_base64(output['objects'])
+                                }
                         else:
                             return result.error_trace
             else:
-                return output.error_trace
+                return tool_result.error_trace
+
+    def load(self, job_id: str, obj_key: str):
+        result = self._ax_client.tools.status(job_id=job_id)
+        if result.status == "SUCCEEDED":
+            output = json.loads(result.output or "{}")
+            if not output['objects']:
+                return result.output
+            else:
+                return self._load_objects_from_base64(output['objects'])[obj_key]
+        else:
+            return result.error_trace
+
+    def _load_objects_from_base64(self, encoded_dict):
+        loaded_objects = {}
+        for key, encoded_str in encoded_dict.items():
+            try:
+                decoded_bytes = base64.b64decode(encoded_str)
+                loaded_obj = dill.loads(decoded_bytes)
+                loaded_objects[key] = loaded_obj
+            except Exception as e:
+                print(f"Error loading object for key '{key}': {e}")
+                loaded_objects[key] = None
+        return loaded_objects
 
 
 class AsyncAxiomatic(AsyncBaseClient): ...
