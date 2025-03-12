@@ -408,7 +408,7 @@ def _create_variable_dict(equation_response: EquationExtractionResponse) -> dict
     for equation in equation_response.equations:
         for symbol in equation.latex_symbols:
             # Only add if not already present (avoid duplicates)
-            if symbol.key not in variable_dict:
-                variable_dict[symbol.key] = {"name": symbol.value}
+            if symbol['key'] not in variable_dict:
+                variable_dict[symbol['key']] = {"name": symbol['value']}
 
     return variable_dict

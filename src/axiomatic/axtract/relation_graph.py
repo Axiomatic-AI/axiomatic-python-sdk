@@ -58,7 +58,7 @@ def generate_relation_graph(equations: List[EquationExtraction]) -> str:
         # Add variable nodes and edges
         for symbol in eq.latex_symbols:
             # Normalize the variable name
-            var_name = normalize_latex_symbol(symbol.key)
+            var_name = normalize_latex_symbol(symbol["key"])
             if var_name not in all_variables:
                 net.add_node(
                     var_name,
@@ -67,7 +67,7 @@ def generate_relation_graph(equations: List[EquationExtraction]) -> str:
                     shape="dot",
                     size=20,
                     font=dict(size=16, color="#000000"),
-                    title=f"{var_name}: {symbol.value}",
+                    title=f"{var_name}: {symbol['value']}",
                 )
                 all_variables.add(var_name)
 
