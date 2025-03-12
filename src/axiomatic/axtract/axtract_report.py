@@ -248,7 +248,7 @@ def create_report(report_data: EquationExtractionResponse, report_path: str = ".
             html_content += f"""
                         <tr>
                             <td>\\({symbol.key}\\)</td>
-                            <td>{symbol.key}</td>
+                            <td>{symbol.value}</td>
                         </tr>
             """
 
