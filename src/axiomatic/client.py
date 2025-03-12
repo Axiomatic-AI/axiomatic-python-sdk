@@ -42,7 +42,7 @@ class AxtractHelper:
         file_path: Optional[str] = None,
         url_path: Optional[str] = None,
         parsed_paper: Optional[ParseResponse] = None,
-    ):        
+    ) -> Optional[EquationExtractionResponse]:        
         if file_path:
             with open(file_path, "rb") as file:
                 response = self._ax_client.document.equation.from_pdf(document=file)
@@ -50,11 +50,15 @@ class AxtractHelper:
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
-            file = requests.get(url_path)
-            response = self._ax_client.document.equation.from_pdf(document=file.content)
+            response = requests.get(url_path)
+            from io import BytesIO
+            pdf_content = BytesIO(response.content)
+            response = self._ax_client.document.equation.from_pdf(document=pdf_content)
         
         elif parsed_paper:
-            response = self._ax_client.document.equation.process(**parsed_paper.model_dump())
+            response = EquationExtractionResponse.model_validate(
+                self._ax_client.document.equation.process(**parsed_paper.model_dump()).model_dump()
+            )
         
         else:
             print("Please provide either a file path or a URL to analyze.")

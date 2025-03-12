@@ -141,7 +141,6 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     # 4) Load custom presets from JSON (if any) and integrate them
     # ---------------------------------------------------------------
     variable_dict = _create_variable_dict(loaded_equations)
-    print(variable_dict)
     custom_presets = load_custom_presets(file_path)
 
     for custom_name, values_dict in custom_presets.items():
@@ -151,7 +150,6 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     # 5) For the "Add Requirement" dropdown
     # ---------------------------------------------------------------
     variable_names = [details["name"] for details in variable_dict.values()]
-    print(variable_dict)
 
     # This dict will store the final user inputs after pressing "Submit"
     result = {}
