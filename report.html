@@ -1,0 +1,1448 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Equation Extraction Report</title>
+        <meta charset="UTF-8">
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <style>
+            :root {
+                --system1-bg: #fff;
+                --system1-text: #000;
+                --system1-border: #000;
+                --system1-highlight: #000;
+            }
+            
+            body { 
+                font-family: 'Chicago', 'Helvetica', sans-serif;
+                margin: 8px; 
+                padding: 0;
+                background-color: var(--system1-bg);
+                color: var(--system1-text);
+                font-size: 12px;
+            }
+            
+            /* Menu Bar Styles */
+            .menu-bar {
+                background: var(--system1-bg);
+                border-bottom: 1px solid var(--system1-border);
+                padding: 2px;
+                display: flex;
+                gap: 16px;
+                margin-bottom: 8px;
+            }
+            
+            .menu-button {
+                background: var(--system1-bg);
+                border: 1.5px solid var(--system1-border);
+                border-radius: 8px;
+                padding: 2px 8px;
+                font-family: 'Chicago', 'Helvetica', sans-serif;
+                font-size: 12px;
+                cursor: pointer;
+                position: relative;
+                white-space: nowrap;
+            }
+            
+            .menu-button:active {
+                background: var(--system1-text);
+                color: var(--system1-bg);
+            }
+            
+            h1 { 
+                margin: 0 0 16px 0;
+                padding: 4px;
+                font-size: 14px;
+                font-weight: bold;
+                text-align: center;
+                border-bottom: 1.5px solid var(--system1-border);
+            }
+            
+            .container {
+                display: flex;
+                gap: 16px;
+                height: calc(100vh - 100px);
+            }
+            
+            .equation-list {
+                width: 300px;
+                border: 1.5px solid var(--system1-border);
+                border-radius: 8px;
+                padding: 8px;
+                overflow-y: auto;
+            }
+            
+            .equation-item { 
+                border: 1.5px solid transparent;
+                margin-bottom: 12px;
+                padding: 8px;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+            
+            .equation-item:hover { 
+                background: var(--system1-text);
+                color: var(--system1-bg);
+            }
+            
+            .equation-item.active {
+                background: var(--system1-text);
+                color: var(--system1-bg);
+            }
+            
+            .details-panel {
+                flex: 1;
+                border: 1.5px solid var(--system1-border);
+                border-radius: 8px;
+                padding: 16px;
+                overflow-y: auto;
+            }
+            
+            .details-panel.empty {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-style: italic;
+            }
+            
+            .equation-details h2 {
+                margin: 0 0 16px 0;
+                font-size: 14px;
+                text-align: center;
+            }
+            
+            .equation-details p {
+                margin: 16px 0 8px 0;
+            }
+            
+            .symbol-table { 
+                width: 100%; 
+                border-collapse: collapse;
+                margin-top: 8px;
+                border: 1.5px solid var(--system1-border);
+            }
+            
+            .symbol-table td, .symbol-table th { 
+                border: 1px solid var(--system1-border);
+                padding: 6px 8px;
+                text-align: left;
+            }
+            
+            .symbol-table th {
+                background: var(--system1-text);
+                color: var(--system1-bg);
+                font-weight: bold;
+            }
+            
+            .equation-title {
+                margin: 0 0 8px 0;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            /* MathJax container spacing */
+            .mjx-chtml {
+                margin: 8px 0 !important;
+            }
+
+            /* Classic System 1 scrollbar */
+            ::-webkit-scrollbar {
+                width: 16px;
+                height: 16px;
+            }
+            
+            ::-webkit-scrollbar-track {
+                background: var(--system1-bg);
+                border: 1.5px solid var(--system1-border);
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                background: var(--system1-text);
+                border: 1.5px solid var(--system1-border);
+            }
+            
+            ::-webkit-scrollbar-button {
+                display: none;
+            }
+        </style>
+        <script>
+            function showDetails(eqId) {
+                document.querySelectorAll('.equation-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                document.getElementById('eq-item-' + eqId).classList.add('active');
+                
+                document.querySelectorAll('.equation-details').forEach(detail => {
+                    detail.style.display = 'none';
+                });
+                document.getElementById('empty-message').style.display = 'none';
+                document.getElementById('details-' + eqId).style.display = 'block';
+            }
+        </script>
+    </head>
+
+    <body>
+        <div class="menu-bar">
+            <a href="relation_graph.html" target="_blank" class="menu-button">Relation Graph</a>
+        </div>
+        
+        <h1>Equation Extraction Report</h1>
+        <div class="container">
+            <div class="equation-list">
+    
+                <div class="equation-item" id="eq-item-0" onclick="showDetails(0)">
+                    <div class="equation-title">Velocity Equation</div>
+                    \[{\vec{v}}(t)={\frac{d{\vec{r}}(t)}{d t}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-1" onclick="showDetails(1)">
+                    <div class="equation-title">Speed from Velocity Magnitude</div>
+                    \[v=|\vec{v}(t)|\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-2" onclick="showDetails(2)">
+                    <div class="equation-title">Acceleration Equation</div>
+                    \[\vec{a}(t)=\frac{d\vec{v}(t)}{d t}=\frac{d^{2}\vec{r}(t)}{d t^{2}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-3" onclick="showDetails(3)">
+                    <div class="equation-title">Newton's Second Law</div>
+                    \[{\vec{F}}=m{\vec{a}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-4" onclick="showDetails(4)">
+                    <div class="equation-title">Newton's Second Law in terms of Momentum</div>
+                    \[{\vec{F}}={\frac{d{\vec{p}}}{d t}},\quad{\mathrm{where~}}{\vec{p}}=m{\vec{v}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-5" onclick="showDetails(5)">
+                    <div class="equation-title">Infinitesimal Work Equation</div>
+                    \[d W={\vec{F}}\cdot{\vec{d r}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-6" onclick="showDetails(6)">
+                    <div class="equation-title">Work Equation</div>
+                    \[W=\int{\vec{F}}\cdot d{\vec{r}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-7" onclick="showDetails(7)">
+                    <div class="equation-title">Work-Energy Theorem</div>
+                    \[W=\Delta K\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-8" onclick="showDetails(8)">
+                    <div class="equation-title">Conservation of Energy Equation</div>
+                    \[E=K+U\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-9" onclick="showDetails(9)">
+                    <div class="equation-title">Total Momentum of a System of Particles</div>
+                    \[\vec{P}=\sum_{i}\vec{p_{i}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-10" onclick="showDetails(10)">
+                    <div class="equation-title">Torque Equation</div>
+                    \[{\vec{\tau}}={\vec{r}}\times{\vec{F}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-11" onclick="showDetails(11)">
+                    <div class="equation-title">Angular Momentum Equation</div>
+                    \[\vec{L}=\vec{r}\times\vec{p!}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-12" onclick="showDetails(12)">
+                    <div class="equation-title">Newton's Second Law for Rotation</div>
+                    \[{\vec{\tau}}={\frac{d{\vec{L}}}{d t}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-13" onclick="showDetails(13)">
+                    <div class="equation-title">Moment of Inertia Equation</div>
+                    \[I=\sum_{i}m_{i}r_{i}^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-14" onclick="showDetails(14)">
+                    <div class="equation-title">Rotational Kinetic Energy</div>
+                    \[K_{\mathrm{rot}}={\frac{1}{2}}I\omega^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-15" onclick="showDetails(15)">
+                    <div class="equation-title">Newton's Law of Universal Gravitation</div>
+                    \[F_{g}=G{\frac{m_{1}m_{2}}{r^{2}}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-16" onclick="showDetails(16)">
+                    <div class="equation-title">Gravitational Potential Energy</div>
+                    \[U_{g}=-G{\frac{m_{1}m_{2}}{r}}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-17" onclick="showDetails(17)">
+                    <div class="equation-title">Hooke's Law for Springs</div>
+                    \[F_{s}=-k x\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-18" onclick="showDetails(18)">
+                    <div class="equation-title">Simple Harmonic Motion Equation</div>
+                    \[\frac{d^{2}x}{d t^{2}}+\frac{k}{m}x=0.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-19" onclick="showDetails(19)">
+                    <div class="equation-title">Simple Harmonic Motion Equation</div>
+                    \[x(t)=A\cos(\omega t+\phi)\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-20" onclick="showDetails(20)">
+                    <div class="equation-title">Parallel Component of Gravitational Force on Incline</div>
+                    \[F_{\parallel}=m g\cos\theta\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-21" onclick="showDetails(21)">
+                    <div class="equation-title">Equation of Motion on an Inclined Plane</div>
+                    \[m a = m g \cos\theta\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-22" onclick="showDetails(22)">
+                    <div class="equation-title">Acceleration on an Inclined Plane</div>
+                    \[a=g\cos\theta\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-23" onclick="showDetails(23)">
+                    <div class="equation-title">Acceleration on an Inclined Plane</div>
+                    \[a=(9.81)(\cos30^{\circ})\approx8.49~\mathrm{m/s^{2}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-24" onclick="showDetails(24)">
+                    <div class="equation-title">Kinematic Equation for Constant Acceleration</div>
+                    \[v^{2}=v_{0}^{2}+2a s\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-25" onclick="showDetails(25)">
+                    <div class="equation-title">Velocity of a Block on an Incline</div>
+                    \[v={\sqrt{2(8.49)(2)}}\approx5.83~{\mathrm{m/s}}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-26" onclick="showDetails(26)">
+                    <div class="equation-title">Kinematic Equation for Displacement</div>
+                    \[s=v_{0}t+{\frac{1}{2}}a t^{2}\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-27" onclick="showDetails(27)">
+                    <div class="equation-title">Time to Reach the Bottom of Incline</div>
+                    \[4={\frac{1}{2}}(8.49)t^{2}.\]
+                </div>
+        
+                <div class="equation-item" id="eq-item-28" onclick="showDetails(28)">
+                    <div class="equation-title">Time to Reach the Bottom of Incline</div>
+                    \[t=\sqrt{\frac{2(4)}{8.49}}\approx0.97~\mathrm{s}.\]
+                </div>
+        
+            </div>
+            <div class="details-panel">
+                <div id="empty-message" style="text-align: center; color: #666;">
+                    Select an equation to view details
+                </div>
+    
+                <div class="equation-details" id="details-0" style="display: none;">
+                    <h2>Velocity Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines the velocity \( \vec{v}(t) \) as the time derivative of the position vector \( \vec{r}(t) \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{v}}(t)={\frac{d{\vec{r}}(t)}{d t}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{v}(t)\)</td>
+                            <td>Velocity vector at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{r}(t)\)</td>
+                            <td>Position vector at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-1" style="display: none;">
+                    <h2>Speed from Velocity Magnitude</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines speed as the magnitude of the velocity vector.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v=|\vec{v}(t)|\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{v}(t)\)</td>
+                            <td>Velocity vector at time t</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-2" style="display: none;">
+                    <h2>Acceleration Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines acceleration \( \vec{a}(t) \) as the time derivative of velocity \( \vec{v}(t) \) and the second time derivative of position \( \vec{r}(t) \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\vec{a}(t)=\frac{d\vec{v}(t)}{d t}=\frac{d^{2}\vec{r}(t)}{d t^{2}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{a}(t)\)</td>
+                            <td>Acceleration vector as a function of time</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{v}(t)\)</td>
+                            <td>Velocity vector at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{r}(t)\)</td>
+                            <td>Position vector at time t</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-3" style="display: none;">
+                    <h2>Newton's Second Law</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>Newton’s Second Law states that the net force \( \vec{F} \) acting on a particle of mass \( m \) produces an acceleration \( \vec{a} \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{F}}=m{\vec{a}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{F}\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{a}\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-4" style="display: none;">
+                    <h2>Newton's Second Law in terms of Momentum</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation expresses Newton's Second Law of Motion in terms of the time rate of change of momentum. It states that the force acting on a particle is equal to the derivative of its momentum with respect to time.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{F}}={\frac{d{\vec{p}}}{d t}},\quad{\mathrm{where~}}{\vec{p}}=m{\vec{v}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{F}\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{p}\)</td>
+                            <td>Linear momentum of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{v}\)</td>
+                            <td>Velocity of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-5" style="display: none;">
+                    <h2>Infinitesimal Work Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the infinitesimal work done by a force \( \vec{F} \) acting on a particle undergoing a displacement \( \vec{d r} \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[d W={\vec{F}}\cdot{\vec{d r}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(d W\)</td>
+                            <td>Infinitesimal work done</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{F}\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{d r}\)</td>
+                            <td>Infinitesimal displacement vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-6" style="display: none;">
+                    <h2>Work Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the total work done by a force \( \vec{F} \) acting on a particle along a path, calculated by integrating the dot product of the force and the differential displacement \( d\vec{r} \).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[W=\int{\vec{F}}\cdot d{\vec{r}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(W\)</td>
+                            <td>Work done</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{F}\)</td>
+                            <td>Net force acting on a particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(d\vec{r}\)</td>
+                            <td>Infinitesimal displacement vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-7" style="display: none;">
+                    <h2>Work-Energy Theorem</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation relates the work done (W) on a particle to the change in its kinetic energy (ΔK).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[W=\Delta K\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(W\)</td>
+                            <td>Work done</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\Delta K\)</td>
+                            <td>Change in kinetic energy</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-8" style="display: none;">
+                    <h2>Conservation of Energy Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the conservation of energy in a mechanical system, where the total energy E is the sum of kinetic energy K and potential energy U.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[E=K+U\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(E\)</td>
+                            <td>Total mechanical energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(K\)</td>
+                            <td>Kinetic energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(U\)</td>
+                            <td>Potential energy</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-9" style="display: none;">
+                    <h2>Total Momentum of a System of Particles</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the total momentum \( \vec{P} \) of a system as the vector sum of the individual momenta \( \vec{p_{i}} \) of the particles in the system.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\vec{P}=\sum_{i}\vec{p_{i}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{P}\)</td>
+                            <td>Total momentum of the system</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{p_{i}}\)</td>
+                            <td>Momentum of the i-th particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-10" style="display: none;">
+                    <h2>Torque Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines torque as the cross product of the position vector and the force vector.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{\tau}}={\vec{r}}\times{\vec{F}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\({\vec{\tau}}\)</td>
+                            <td>Torque vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\({\vec{r}}\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\({\vec{F}}\)</td>
+                            <td>Force vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-11" style="display: none;">
+                    <h2>Angular Momentum Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines the angular momentum (\vec{L}) of a particle as the cross product of its position vector (\vec{r}) and its linear momentum (\vec{p}).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\vec{L}=\vec{r}\times\vec{p!}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{L}\)</td>
+                            <td>Angular momentum</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{r}\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{p}\)</td>
+                            <td>Linear momentum of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-12" style="display: none;">
+                    <h2>Newton's Second Law for Rotation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation relates torque (\vec{\tau}) to the time rate of change of angular momentum (\vec{L}).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[{\vec{\tau}}={\frac{d{\vec{L}}}{d t}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\vec{\tau}\)</td>
+                            <td>Torque</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\vec{L}\)</td>
+                            <td>Angular momentum</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-13" style="display: none;">
+                    <h2>Moment of Inertia Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation defines the moment of inertia (I) as the sum of the products of the mass (m_i) of each particle and the square of its distance (r_i) from the axis of rotation.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[I=\sum_{i}m_{i}r_{i}^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(I\)</td>
+                            <td>Moment of inertia</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{i}\)</td>
+                            <td>Mass of the i-th particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(r_{i}\)</td>
+                            <td>Distance of the i-th particle from the axis of rotation</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-14" style="display: none;">
+                    <h2>Rotational Kinetic Energy</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the rotational kinetic energy (K_{\mathrm{rot}}) of a rotating object, which depends on its moment of inertia (I) and angular velocity (\omega).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[K_{\mathrm{rot}}={\frac{1}{2}}I\omega^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(K_{\mathrm{rot}}\)</td>
+                            <td>Rotational kinetic energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(I\)</td>
+                            <td>Moment of inertia</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\omega\)</td>
+                            <td>Angular velocity</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-15" style="display: none;">
+                    <h2>Newton's Law of Universal Gravitation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the gravitational force between two masses m_1 and m_2 separated by a distance r.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[F_{g}=G{\frac{m_{1}m_{2}}{r^{2}}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(F_{g}\)</td>
+                            <td>Gravitational force between two masses</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(G\)</td>
+                            <td>Gravitational constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{1}\)</td>
+                            <td>Mass of the first object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{2}\)</td>
+                            <td>Mass of the second object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(r\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-16" style="display: none;">
+                    <h2>Gravitational Potential Energy</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>The gravitational potential energy (U_g) between two masses (m_1 and m_2) separated by a distance (r) in a gravitational field.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[U_{g}=-G{\frac{m_{1}m_{2}}{r}}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(U_{g}\)</td>
+                            <td>Gravitational potential energy</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(G\)</td>
+                            <td>Gravitational constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{1}\)</td>
+                            <td>Mass of the first object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m_{2}\)</td>
+                            <td>Mass of the second object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(r\)</td>
+                            <td>Position vector</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-17" style="display: none;">
+                    <h2>Hooke's Law for Springs</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the force exerted by a spring when it is displaced from its equilibrium position.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[F_{s}=-k x\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(F_{s}\)</td>
+                            <td>Force exerted by the spring</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(k\)</td>
+                            <td>Spring constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(x\)</td>
+                            <td>Displacement from equilibrium</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-18" style="display: none;">
+                    <h2>Simple Harmonic Motion Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the motion of a simple harmonic oscillator, such as a mass on a spring, where the acceleration is proportional to the displacement and directed towards the equilibrium position.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[\frac{d^{2}x}{d t^{2}}+\frac{k}{m}x=0.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(\frac{d^{2}x}{d t^{2}}\)</td>
+                            <td>Second derivative of displacement with respect to time (acceleration)</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(x\)</td>
+                            <td>Displacement from equilibrium</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(k\)</td>
+                            <td>Spring constant</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-19" style="display: none;">
+                    <h2>Simple Harmonic Motion Equation</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the displacement x(t) of a simple harmonic oscillator as a function of time, where A is the amplitude, ω is the angular frequency, and φ is the phase constant.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[x(t)=A\cos(\omega t+\phi)\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(x(t)\)</td>
+                            <td>Position of the oscillator at time t</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(A\)</td>
+                            <td>Amplitude of the oscillation</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\omega\)</td>
+                            <td>Angular velocity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\phi\)</td>
+                            <td>Phase constant</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-20" style="display: none;">
+                    <h2>Parallel Component of Gravitational Force on Incline</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation represents the component of gravitational force acting parallel to an inclined plane.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[F_{\parallel}=m g\cos\theta\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(F_{\parallel}\)</td>
+                            <td>Parallel component of gravitational force</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\theta\)</td>
+                            <td>Angle of the incline with the horizontal</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-21" style="display: none;">
+                    <h2>Equation of Motion on an Inclined Plane</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the motion of a block on a frictionless inclined plane, where the only force causing motion is the component of gravity parallel to the incline.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[m a = m g \cos\theta\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(m\)</td>
+                            <td>Mass of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\theta\)</td>
+                            <td>Angle of the incline with the horizontal</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-22" style="display: none;">
+                    <h2>Acceleration on an Inclined Plane</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the acceleration of a block sliding down a frictionless inclined plane under the influence of gravity.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[a=g\cos\theta\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(g\)</td>
+                            <td>Acceleration due to gravity</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\theta\)</td>
+                            <td>Angle of the incline with the horizontal</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-23" style="display: none;">
+                    <h2>Acceleration on an Inclined Plane</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the acceleration of a block sliding down a frictionless inclined plane with an angle of 30 degrees.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[a=(9.81)(\cos30^{\circ})\approx8.49~\mathrm{m/s^{2}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(9.81\)</td>
+                            <td>Acceleration due to gravity in m/s^2</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(\cos30^{\circ}\)</td>
+                            <td>Cosine of the angle of the incline (30 degrees)</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-24" style="display: none;">
+                    <h2>Kinematic Equation for Constant Acceleration</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation relates the final velocity (v) of an object to its initial velocity (v_0), acceleration (a), and displacement (s) under constant acceleration.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v^{2}=v_{0}^{2}+2a s\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(v_{0}\)</td>
+                            <td>Initial velocity of the object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(s\)</td>
+                            <td>Displacement of the object</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-25" style="display: none;">
+                    <h2>Velocity of a Block on an Incline</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the velocity of a block sliding down a frictionless inclined plane after traveling a certain distance.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[v={\sqrt{2(8.49)(2)}}\approx5.83~{\mathrm{m/s}}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(v\)</td>
+                            <td>Speed</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(8.49\)</td>
+                            <td>Acceleration of the block along the incline (m/s^2)</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(2\)</td>
+                            <td>Distance traveled by the block (m)</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-26" style="display: none;">
+                    <h2>Kinematic Equation for Displacement</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation describes the displacement (s) of an object under constant acceleration (a), starting with an initial velocity (v_0) over time (t).</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[s=v_{0}t+{\frac{1}{2}}a t^{2}\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(s\)</td>
+                            <td>Displacement of the object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(v_{0}\)</td>
+                            <td>Initial velocity of the object</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(a\)</td>
+                            <td>Acceleration of the particle</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-27" style="display: none;">
+                    <h2>Time to Reach the Bottom of Incline</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the time it takes for a block to reach the bottom of a frictionless inclined plane, given the acceleration and distance traveled.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[4={\frac{1}{2}}(8.49)t^{2}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(4\)</td>
+                            <td>Distance traveled along the incline (L = 4 m)</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(8.49\)</td>
+                            <td>Acceleration of the block along the incline (m/s^2)</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+                <div class="equation-details" id="details-28" style="display: none;">
+                    <h2>Time to Reach the Bottom of Incline</h2>
+                    <p><strong>Description:</strong></p>
+                    <p>This equation calculates the time it takes for a block to reach the bottom of a frictionless inclined plane, given the acceleration and distance traveled.</p>
+                    
+                    <p><strong>Original Format:</strong></p>
+                    \[t=\sqrt{\frac{2(4)}{8.49}}\approx0.97~\mathrm{s}.\]
+                    
+                    <p><strong>Symbols:</strong></p>
+                    <table class="symbol-table">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Description</th>
+                        </tr>
+        
+                        <tr>
+                            <td>\(t\)</td>
+                            <td>Time variable</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(4\)</td>
+                            <td>Distance traveled along the incline (L = 4 m)</td>
+                        </tr>
+            
+                        <tr>
+                            <td>\(8.49\)</td>
+                            <td>Acceleration of the block along the incline (m/s^2)</td>
+                        </tr>
+            
+                    </table>
+                </div>
+        
+            </div>
+        </div>
+        
+        <!-- Graph Modal -->
+        <div id="hypergraph-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+             background: rgba(0,0,0,0.8); z-index: 1000;">
+            <div style="position: relative; width: 90%; height: 90%; margin: 2% auto; background: var(--system1-bg); 
+                 padding: 20px; border-radius: 8px; overflow: hidden;">
+                <button onclick="hideHypergraph()" style="position: absolute; right: 10px; top: 10px; z-index: 1001;" 
+                        class="menu-button">Close</button>
+                <div id="graph-container" style="width: 100%; height: 100%;">
+    
+    <button class="back-button" onclick="window.close()">Close Graph</button>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Velocity Equation (abf9c9a1-66b4-4bc4-9c63-abc8779d9600)", "label": "Velocity Equation", "shape": "box", "size": 30, "title": "Velocity Equation\n{\\vec{v}}(t)={\\frac{d{\\vec{r}}(t)}{d t}}.\nThis equation defines the velocity \\( \\vec{v}(t) \\) as the time derivative of the position vector \\( \\vec{r}(t) \\)."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{v}(t)", "label": "\\vec{v}(t)", "shape": "dot", "size": 20, "title": "\\vec{v}(t): Velocity vector at time t"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{r}(t)", "label": "\\vec{r}(t)", "shape": "dot", "size": 20, "title": "\\vec{r}(t): Position vector at time t"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "t", "label": "t", "shape": "dot", "size": 20, "title": "t: Time variable"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Speed from Velocity Magnitude (9bca8f1a-7333-4ce0-b611-c6b9047a88b1)", "label": "Speed from Velocity Magnitude", "shape": "box", "size": 30, "title": "Speed from Velocity Magnitude\nv=|\\vec{v}(t)|\nThis equation defines speed as the magnitude of the velocity vector."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "v", "label": "v", "shape": "dot", "size": 20, "title": "v: Speed"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Acceleration Equation (7f8480f7-872d-4627-9951-e5d72aa1238e)", "label": "Acceleration Equation", "shape": "box", "size": 30, "title": "Acceleration Equation\n\\vec{a}(t)=\\frac{d\\vec{v}(t)}{d t}=\\frac{d^{2}\\vec{r}(t)}{d t^{2}}.\nThis equation defines acceleration \\( \\vec{a}(t) \\) as the time derivative of velocity \\( \\vec{v}(t) \\) and the second time derivative of position \\( \\vec{r}(t) \\)."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{a}(t)", "label": "\\vec{a}(t)", "shape": "dot", "size": 20, "title": "\\vec{a}(t): Acceleration vector as a function of time"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Newton\u0027s Second Law (02033868-e018-45ab-a2b0-362fd087ec0b)", "label": "Newton\u0027s Second Law", "shape": "box", "size": 30, "title": "Newton\u0027s Second Law\n{\\vec{F}}=m{\\vec{a}}.\nNewton\u2019s Second Law states that the net force \\( \\vec{F} \\) acting on a particle of mass \\( m \\) produces an acceleration \\( \\vec{a} \\)."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{F}", "label": "\\vec{F}", "shape": "dot", "size": 20, "title": "\\vec{F}: Net force acting on a particle"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "m", "label": "m", "shape": "dot", "size": 20, "title": "m: Mass of the particle"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{a}", "label": "\\vec{a}", "shape": "dot", "size": 20, "title": "\\vec{a}: Acceleration of the particle"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Newton\u0027s Second Law in terms of Momentum (1c869b01-9289-4cf4-ab04-bb43c19380e5)", "label": "Newton\u0027s Second Law in terms of Momentum", "shape": "box", "size": 30, "title": "Newton\u0027s Second Law in terms of Momentum\n{\\vec{F}}={\\frac{d{\\vec{p}}}{d t}},\\quad{\\mathrm{where~}}{\\vec{p}}=m{\\vec{v}}.\nThis equation expresses Newton\u0027s Second Law of Motion in terms of the time rate of change of momentum. It states that the force acting on a particle is equal to the derivative of its momentum with respect to time."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{p}", "label": "\\vec{p}", "shape": "dot", "size": 20, "title": "\\vec{p}: Linear momentum of the particle"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{v}", "label": "\\vec{v}", "shape": "dot", "size": 20, "title": "\\vec{v}: Velocity of the particle"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Infinitesimal Work Equation (268abc2d-6579-4759-8f64-4cad92e886f1)", "label": "Infinitesimal Work Equation", "shape": "box", "size": 30, "title": "Infinitesimal Work Equation\nd W={\\vec{F}}\\cdot{\\vec{d r}}.\nThis equation represents the infinitesimal work done by a force \\( \\vec{F} \\) acting on a particle undergoing a displacement \\( \\vec{d r} \\)."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "d W", "label": "d W", "shape": "dot", "size": 20, "title": "d W: Infinitesimal work done"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{d r}", "label": "\\vec{d r}", "shape": "dot", "size": 20, "title": "\\vec{d r}: Infinitesimal displacement vector"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Work Equation (110b1d2e-5425-4a50-bd8a-69138b44867e)", "label": "Work Equation", "shape": "box", "size": 30, "title": "Work Equation\nW=\\int{\\vec{F}}\\cdot d{\\vec{r}}.\nThis equation represents the total work done by a force \\( \\vec{F} \\) acting on a particle along a path, calculated by integrating the dot product of the force and the differential displacement \\( d\\vec{r} \\)."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "W", "label": "W", "shape": "dot", "size": 20, "title": "W: Work done"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "d\\vec{r}", "label": "d\\vec{r}", "shape": "dot", "size": 20, "title": "d\\vec{r}: Infinitesimal displacement vector"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Work-Energy Theorem (eee02918-1661-4693-a8e4-05f33b09f2df)", "label": "Work-Energy Theorem", "shape": "box", "size": 30, "title": "Work-Energy Theorem\nW=\\Delta K\nThis equation relates the work done (W) on a particle to the change in its kinetic energy (\u0394K)."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\Delta K", "label": "\\Delta K", "shape": "dot", "size": 20, "title": "\\Delta K: Change in kinetic energy"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Conservation of Energy Equation (296ca952-e5b5-4ea6-a2a3-0dbd2ceb144c)", "label": "Conservation of Energy Equation", "shape": "box", "size": 30, "title": "Conservation of Energy Equation\nE=K+U\nThis equation represents the conservation of energy in a mechanical system, where the total energy E is the sum of kinetic energy K and potential energy U."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "E", "label": "E", "shape": "dot", "size": 20, "title": "E: Total mechanical energy"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "K", "label": "K", "shape": "dot", "size": 20, "title": "K: Kinetic energy"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "U", "label": "U", "shape": "dot", "size": 20, "title": "U: Potential energy"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Total Momentum of a System of Particles (e942d546-c488-4023-95d6-1496c098c1ab)", "label": "Total Momentum of a System of Particles", "shape": "box", "size": 30, "title": "Total Momentum of a System of Particles\n\\vec{P}=\\sum_{i}\\vec{p_{i}}.\nThis equation represents the total momentum \\( \\vec{P} \\) of a system as the vector sum of the individual momenta \\( \\vec{p_{i}} \\) of the particles in the system."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{P}", "label": "\\vec{P}", "shape": "dot", "size": 20, "title": "\\vec{P}: Total momentum of the system"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{p_{i}}", "label": "\\vec{p_{i}}", "shape": "dot", "size": 20, "title": "\\vec{p_{i}}: Momentum of the i-th particle"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Torque Equation (f0ddd6a0-1ef2-4a7d-b1f9-7684ff694397)", "label": "Torque Equation", "shape": "box", "size": 30, "title": "Torque Equation\n{\\vec{\\tau}}={\\vec{r}}\\times{\\vec{F}}.\nThis equation defines torque as the cross product of the position vector and the force vector."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{\\tau}", "label": "\\vec{\\tau}", "shape": "dot", "size": 20, "title": "\\vec{\\tau}: Torque vector"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{r}", "label": "\\vec{r}", "shape": "dot", "size": 20, "title": "\\vec{r}: Position vector"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Angular Momentum Equation (8ccd0d52-68ce-43d7-8809-732304732d5b)", "label": "Angular Momentum Equation", "shape": "box", "size": 30, "title": "Angular Momentum Equation\n\\vec{L}=\\vec{r}\\times\\vec{p!}\nThis equation defines the angular momentum (\\vec{L}) of a particle as the cross product of its position vector (\\vec{r}) and its linear momentum (\\vec{p})."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\vec{L}", "label": "\\vec{L}", "shape": "dot", "size": 20, "title": "\\vec{L}: Angular momentum"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Newton\u0027s Second Law for Rotation (5393ac92-5f69-48d4-918d-e1f4426303aa)", "label": "Newton\u0027s Second Law for Rotation", "shape": "box", "size": 30, "title": "Newton\u0027s Second Law for Rotation\n{\\vec{\\tau}}={\\frac{d{\\vec{L}}}{d t}}.\nThis equation relates torque (\\vec{\\tau}) to the time rate of change of angular momentum (\\vec{L})."}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Moment of Inertia Equation (a19ef746-9eec-45c7-9a0c-ce754d3d0d43)", "label": "Moment of Inertia Equation", "shape": "box", "size": 30, "title": "Moment of Inertia Equation\nI=\\sum_{i}m_{i}r_{i}^{2}\nThis equation defines the moment of inertia (I) as the sum of the products of the mass (m_i) of each particle and the square of its distance (r_i) from the axis of rotation."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "I", "label": "I", "shape": "dot", "size": 20, "title": "I: Moment of inertia"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "m_{i}", "label": "m_{i}", "shape": "dot", "size": 20, "title": "m_{i}: Mass of the i-th particle"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "r_{i}", "label": "r_{i}", "shape": "dot", "size": 20, "title": "r_{i}: Distance of the i-th particle from the axis of rotation"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Rotational Kinetic Energy (5d130967-a9ae-48b5-a04c-1d70d84abaeb)", "label": "Rotational Kinetic Energy", "shape": "box", "size": 30, "title": "Rotational Kinetic Energy\nK_{\\mathrm{rot}}={\\frac{1}{2}}I\\omega^{2}\nThis equation represents the rotational kinetic energy (K_{\\mathrm{rot}}) of a rotating object, which depends on its moment of inertia (I) and angular velocity (\\omega)."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "K_{\\mathrm{rot}}", "label": "K_{\\mathrm{rot}}", "shape": "dot", "size": 20, "title": "K_{\\mathrm{rot}}: Rotational kinetic energy"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\omega", "label": "\\omega", "shape": "dot", "size": 20, "title": "\\omega: Angular velocity"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Newton\u0027s Law of Universal Gravitation (bb060890-6b77-4339-a844-8345abbe7c20)", "label": "Newton\u0027s Law of Universal Gravitation", "shape": "box", "size": 30, "title": "Newton\u0027s Law of Universal Gravitation\nF_{g}=G{\\frac{m_{1}m_{2}}{r^{2}}}\nThis equation describes the gravitational force between two masses m_1 and m_2 separated by a distance r."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "F_{g}", "label": "F_{g}", "shape": "dot", "size": 20, "title": "F_{g}: Gravitational force between two masses"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "G", "label": "G", "shape": "dot", "size": 20, "title": "G: Gravitational constant"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "m_{1}", "label": "m_{1}", "shape": "dot", "size": 20, "title": "m_{1}: Mass of the first object"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "m_{2}", "label": "m_{2}", "shape": "dot", "size": 20, "title": "m_{2}: Mass of the second object"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "r", "label": "r", "shape": "dot", "size": 20, "title": "r: Position vector"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Gravitational Potential Energy (2b441de1-1b0b-48c7-bdf0-2cb1044f283c)", "label": "Gravitational Potential Energy", "shape": "box", "size": 30, "title": "Gravitational Potential Energy\nU_{g}=-G{\\frac{m_{1}m_{2}}{r}}\nThe gravitational potential energy (U_g) between two masses (m_1 and m_2) separated by a distance (r) in a gravitational field."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "U_{g}", "label": "U_{g}", "shape": "dot", "size": 20, "title": "U_{g}: Gravitational potential energy"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Hooke\u0027s Law for Springs (5838f81a-7d92-4954-9635-45b91efc6689)", "label": "Hooke\u0027s Law for Springs", "shape": "box", "size": 30, "title": "Hooke\u0027s Law for Springs\nF_{s}=-k x\nThis equation describes the force exerted by a spring when it is displaced from its equilibrium position."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "F_{s}", "label": "F_{s}", "shape": "dot", "size": 20, "title": "F_{s}: Force exerted by the spring"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "k", "label": "k", "shape": "dot", "size": 20, "title": "k: Spring constant"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "x", "label": "x", "shape": "dot", "size": 20, "title": "x: Displacement from equilibrium"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Simple Harmonic Motion Equation (3f5a5450-0890-4c03-8bab-330848cd394c)", "label": "Simple Harmonic Motion Equation", "shape": "box", "size": 30, "title": "Simple Harmonic Motion Equation\n\\frac{d^{2}x}{d t^{2}}+\\frac{k}{m}x=0.\nThis equation describes the motion of a simple harmonic oscillator, such as a mass on a spring, where the acceleration is proportional to the displacement and directed towards the equilibrium position."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\frac{d^{2}x}{d t^{2}}", "label": "\\frac{d^{2}x}{d t^{2}}", "shape": "dot", "size": 20, "title": "\\frac{d^{2}x}{d t^{2}}: Second derivative of displacement with respect to time (acceleration)"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Simple Harmonic Motion Equation (4085c70b-f8ea-440b-9d49-dd38eb683323)", "label": "Simple Harmonic Motion Equation", "shape": "box", "size": 30, "title": "Simple Harmonic Motion Equation\nx(t)=A\\cos(\\omega t+\\phi)\nThis equation describes the displacement x(t) of a simple harmonic oscillator as a function of time, where A is the amplitude, \u03c9 is the angular frequency, and \u03c6 is the phase constant."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "x(t)", "label": "x(t)", "shape": "dot", "size": 20, "title": "x(t): Position of the oscillator at time t"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "A", "label": "A", "shape": "dot", "size": 20, "title": "A: Amplitude of the oscillation"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\phi", "label": "\\phi", "shape": "dot", "size": 20, "title": "\\phi: Phase constant"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Parallel Component of Gravitational Force on Incline (b002ab72-4452-4abe-8e3b-fdc2e679dd4a)", "label": "Parallel Component of Gravitational Force on Incline", "shape": "box", "size": 30, "title": "Parallel Component of Gravitational Force on Incline\nF_{\\parallel}=m g\\cos\\theta\nThis equation represents the component of gravitational force acting parallel to an inclined plane."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "F_{\\parallel}", "label": "F_{\\parallel}", "shape": "dot", "size": 20, "title": "F_{\\parallel}: Parallel component of gravitational force"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "g", "label": "g", "shape": "dot", "size": 20, "title": "g: Acceleration due to gravity"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\theta", "label": "\\theta", "shape": "dot", "size": 20, "title": "\\theta: Angle of the incline with the horizontal"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Equation of Motion on an Inclined Plane (35e71a0b-3a49-44fa-bf98-a64d51b44420)", "label": "Equation of Motion on an Inclined Plane", "shape": "box", "size": 30, "title": "Equation of Motion on an Inclined Plane\nm a = m g \\cos\\theta\nThis equation describes the motion of a block on a frictionless inclined plane, where the only force causing motion is the component of gravity parallel to the incline."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "a", "label": "a", "shape": "dot", "size": 20, "title": "a: Acceleration of the particle"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Acceleration on an Inclined Plane (c5a388fb-298b-476f-acd7-0ceaefc16b21)", "label": "Acceleration on an Inclined Plane", "shape": "box", "size": 30, "title": "Acceleration on an Inclined Plane\na=g\\cos\\theta\nThis equation describes the acceleration of a block sliding down a frictionless inclined plane under the influence of gravity."}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Acceleration on an Inclined Plane (948aed6b-b3f9-453a-bd38-4c6ceb4298d6)", "label": "Acceleration on an Inclined Plane", "shape": "box", "size": 30, "title": "Acceleration on an Inclined Plane\na=(9.81)(\\cos30^{\\circ})\\approx8.49~\\mathrm{m/s^{2}}.\nThis equation calculates the acceleration of a block sliding down a frictionless inclined plane with an angle of 30 degrees."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "9.81", "label": "9.81", "shape": "dot", "size": 20, "title": "9.81: Acceleration due to gravity in m/s^2"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "\\cos30^{\\circ}", "label": "\\cos30^{\\circ}", "shape": "dot", "size": 20, "title": "\\cos30^{\\circ}: Cosine of the angle of the incline (30 degrees)"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Kinematic Equation for Constant Acceleration (d66634e1-077a-4316-8a76-aa2741390908)", "label": "Kinematic Equation for Constant Acceleration", "shape": "box", "size": 30, "title": "Kinematic Equation for Constant Acceleration\nv^{2}=v_{0}^{2}+2a s\nThis equation relates the final velocity (v) of an object to its initial velocity (v_0), acceleration (a), and displacement (s) under constant acceleration."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "v_{0}", "label": "v_{0}", "shape": "dot", "size": 20, "title": "v_{0}: Initial velocity of the object"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "s", "label": "s", "shape": "dot", "size": 20, "title": "s: Displacement of the object"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Velocity of a Block on an Incline (4dfbfcca-8135-4818-8068-ad4e2876cfad)", "label": "Velocity of a Block on an Incline", "shape": "box", "size": 30, "title": "Velocity of a Block on an Incline\nv={\\sqrt{2(8.49)(2)}}\\approx5.83~{\\mathrm{m/s}}.\nThis equation calculates the velocity of a block sliding down a frictionless inclined plane after traveling a certain distance."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "8.49", "label": "8.49", "shape": "dot", "size": 20, "title": "8.49: Acceleration of the block along the incline (m/s^2)"}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "2", "label": "2", "shape": "dot", "size": 20, "title": "2: Distance traveled by the block (m)"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Kinematic Equation for Displacement (b7e3ea6e-8170-4730-8bbd-b9912d84ab77)", "label": "Kinematic Equation for Displacement", "shape": "box", "size": 30, "title": "Kinematic Equation for Displacement\ns=v_{0}t+{\\frac{1}{2}}a t^{2}\nThis equation describes the displacement (s) of an object under constant acceleration (a), starting with an initial velocity (v_0) over time (t)."}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Time to Reach the Bottom of Incline (c6dad230-d494-4cb0-95c8-c37dd0d00abf)", "label": "Time to Reach the Bottom of Incline", "shape": "box", "size": 30, "title": "Time to Reach the Bottom of Incline\n4={\\frac{1}{2}}(8.49)t^{2}.\nThis equation calculates the time it takes for a block to reach the bottom of a frictionless inclined plane, given the acceleration and distance traveled."}, {"color": "#E74C3C", "font": {"color": "#000000"}, "id": "4", "label": "4", "shape": "dot", "size": 20, "title": "4: Distance traveled along the incline (L = 4 m)"}, {"color": "#90EE90", "font": {"color": "#000000"}, "id": "Eq: Time to Reach the Bottom of Incline (c47c61b3-3b16-40a6-ae67-8a0a9fae9f52)", "label": "Time to Reach the Bottom of Incline", "shape": "box", "size": 30, "title": "Time to Reach the Bottom of Incline\nt=\\sqrt{\\frac{2(4)}{8.49}}\\approx0.97~\\mathrm{s}.\nThis equation calculates the time it takes for a block to reach the bottom of a frictionless inclined plane, given the acceleration and distance traveled."}]);
+                  edges = new vis.DataSet([{"color": "#7F8C8D", "from": "Eq: Velocity Equation (abf9c9a1-66b4-4bc4-9c63-abc8779d9600)", "to": "\\vec{v}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity Equation (abf9c9a1-66b4-4bc4-9c63-abc8779d9600)", "to": "\\vec{r}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity Equation (abf9c9a1-66b4-4bc4-9c63-abc8779d9600)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Speed from Velocity Magnitude (9bca8f1a-7333-4ce0-b611-c6b9047a88b1)", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Speed from Velocity Magnitude (9bca8f1a-7333-4ce0-b611-c6b9047a88b1)", "to": "\\vec{v}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration Equation (7f8480f7-872d-4627-9951-e5d72aa1238e)", "to": "\\vec{a}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration Equation (7f8480f7-872d-4627-9951-e5d72aa1238e)", "to": "\\vec{v}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration Equation (7f8480f7-872d-4627-9951-e5d72aa1238e)", "to": "\\vec{r}(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (02033868-e018-45ab-a2b0-362fd087ec0b)", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (02033868-e018-45ab-a2b0-362fd087ec0b)", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law (02033868-e018-45ab-a2b0-362fd087ec0b)", "to": "\\vec{a}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law in terms of Momentum (1c869b01-9289-4cf4-ab04-bb43c19380e5)", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law in terms of Momentum (1c869b01-9289-4cf4-ab04-bb43c19380e5)", "to": "\\vec{p}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law in terms of Momentum (1c869b01-9289-4cf4-ab04-bb43c19380e5)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law in terms of Momentum (1c869b01-9289-4cf4-ab04-bb43c19380e5)", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law in terms of Momentum (1c869b01-9289-4cf4-ab04-bb43c19380e5)", "to": "\\vec{v}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Infinitesimal Work Equation (268abc2d-6579-4759-8f64-4cad92e886f1)", "to": "d W", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Infinitesimal Work Equation (268abc2d-6579-4759-8f64-4cad92e886f1)", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Infinitesimal Work Equation (268abc2d-6579-4759-8f64-4cad92e886f1)", "to": "\\vec{d r}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work Equation (110b1d2e-5425-4a50-bd8a-69138b44867e)", "to": "W", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work Equation (110b1d2e-5425-4a50-bd8a-69138b44867e)", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work Equation (110b1d2e-5425-4a50-bd8a-69138b44867e)", "to": "d\\vec{r}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work-Energy Theorem (eee02918-1661-4693-a8e4-05f33b09f2df)", "to": "W", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Work-Energy Theorem (eee02918-1661-4693-a8e4-05f33b09f2df)", "to": "\\Delta K", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation (296ca952-e5b5-4ea6-a2a3-0dbd2ceb144c)", "to": "E", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation (296ca952-e5b5-4ea6-a2a3-0dbd2ceb144c)", "to": "K", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Conservation of Energy Equation (296ca952-e5b5-4ea6-a2a3-0dbd2ceb144c)", "to": "U", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Total Momentum of a System of Particles (e942d546-c488-4023-95d6-1496c098c1ab)", "to": "\\vec{P}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Total Momentum of a System of Particles (e942d546-c488-4023-95d6-1496c098c1ab)", "to": "\\vec{p_{i}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque Equation (f0ddd6a0-1ef2-4a7d-b1f9-7684ff694397)", "to": "\\vec{\\tau}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque Equation (f0ddd6a0-1ef2-4a7d-b1f9-7684ff694397)", "to": "\\vec{r}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Torque Equation (f0ddd6a0-1ef2-4a7d-b1f9-7684ff694397)", "to": "\\vec{F}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Angular Momentum Equation (8ccd0d52-68ce-43d7-8809-732304732d5b)", "to": "\\vec{L}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Angular Momentum Equation (8ccd0d52-68ce-43d7-8809-732304732d5b)", "to": "\\vec{r}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Angular Momentum Equation (8ccd0d52-68ce-43d7-8809-732304732d5b)", "to": "\\vec{p}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law for Rotation (5393ac92-5f69-48d4-918d-e1f4426303aa)", "to": "\\vec{\\tau}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law for Rotation (5393ac92-5f69-48d4-918d-e1f4426303aa)", "to": "\\vec{L}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Second Law for Rotation (5393ac92-5f69-48d4-918d-e1f4426303aa)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Moment of Inertia Equation (a19ef746-9eec-45c7-9a0c-ce754d3d0d43)", "to": "I", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Moment of Inertia Equation (a19ef746-9eec-45c7-9a0c-ce754d3d0d43)", "to": "m_{i}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Moment of Inertia Equation (a19ef746-9eec-45c7-9a0c-ce754d3d0d43)", "to": "r_{i}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Rotational Kinetic Energy (5d130967-a9ae-48b5-a04c-1d70d84abaeb)", "to": "K_{\\mathrm{rot}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Rotational Kinetic Energy (5d130967-a9ae-48b5-a04c-1d70d84abaeb)", "to": "I", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Rotational Kinetic Energy (5d130967-a9ae-48b5-a04c-1d70d84abaeb)", "to": "\\omega", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation (bb060890-6b77-4339-a844-8345abbe7c20)", "to": "F_{g}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation (bb060890-6b77-4339-a844-8345abbe7c20)", "to": "G", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation (bb060890-6b77-4339-a844-8345abbe7c20)", "to": "m_{1}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation (bb060890-6b77-4339-a844-8345abbe7c20)", "to": "m_{2}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Newton\u0027s Law of Universal Gravitation (bb060890-6b77-4339-a844-8345abbe7c20)", "to": "r", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy (2b441de1-1b0b-48c7-bdf0-2cb1044f283c)", "to": "U_{g}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy (2b441de1-1b0b-48c7-bdf0-2cb1044f283c)", "to": "G", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy (2b441de1-1b0b-48c7-bdf0-2cb1044f283c)", "to": "m_{1}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy (2b441de1-1b0b-48c7-bdf0-2cb1044f283c)", "to": "m_{2}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Gravitational Potential Energy (2b441de1-1b0b-48c7-bdf0-2cb1044f283c)", "to": "r", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Hooke\u0027s Law for Springs (5838f81a-7d92-4954-9635-45b91efc6689)", "to": "F_{s}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Hooke\u0027s Law for Springs (5838f81a-7d92-4954-9635-45b91efc6689)", "to": "k", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Hooke\u0027s Law for Springs (5838f81a-7d92-4954-9635-45b91efc6689)", "to": "x", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (3f5a5450-0890-4c03-8bab-330848cd394c)", "to": "\\frac{d^{2}x}{d t^{2}}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (3f5a5450-0890-4c03-8bab-330848cd394c)", "to": "x", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (3f5a5450-0890-4c03-8bab-330848cd394c)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (3f5a5450-0890-4c03-8bab-330848cd394c)", "to": "k", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (3f5a5450-0890-4c03-8bab-330848cd394c)", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (4085c70b-f8ea-440b-9d49-dd38eb683323)", "to": "x(t)", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (4085c70b-f8ea-440b-9d49-dd38eb683323)", "to": "A", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (4085c70b-f8ea-440b-9d49-dd38eb683323)", "to": "\\omega", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (4085c70b-f8ea-440b-9d49-dd38eb683323)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Simple Harmonic Motion Equation (4085c70b-f8ea-440b-9d49-dd38eb683323)", "to": "\\phi", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Parallel Component of Gravitational Force on Incline (b002ab72-4452-4abe-8e3b-fdc2e679dd4a)", "to": "F_{\\parallel}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Parallel Component of Gravitational Force on Incline (b002ab72-4452-4abe-8e3b-fdc2e679dd4a)", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Parallel Component of Gravitational Force on Incline (b002ab72-4452-4abe-8e3b-fdc2e679dd4a)", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Parallel Component of Gravitational Force on Incline (b002ab72-4452-4abe-8e3b-fdc2e679dd4a)", "to": "\\theta", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Equation of Motion on an Inclined Plane (35e71a0b-3a49-44fa-bf98-a64d51b44420)", "to": "m", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Equation of Motion on an Inclined Plane (35e71a0b-3a49-44fa-bf98-a64d51b44420)", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Equation of Motion on an Inclined Plane (35e71a0b-3a49-44fa-bf98-a64d51b44420)", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Equation of Motion on an Inclined Plane (35e71a0b-3a49-44fa-bf98-a64d51b44420)", "to": "\\theta", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration on an Inclined Plane (c5a388fb-298b-476f-acd7-0ceaefc16b21)", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration on an Inclined Plane (c5a388fb-298b-476f-acd7-0ceaefc16b21)", "to": "g", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration on an Inclined Plane (c5a388fb-298b-476f-acd7-0ceaefc16b21)", "to": "\\theta", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration on an Inclined Plane (948aed6b-b3f9-453a-bd38-4c6ceb4298d6)", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration on an Inclined Plane (948aed6b-b3f9-453a-bd38-4c6ceb4298d6)", "to": "9.81", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Acceleration on an Inclined Plane (948aed6b-b3f9-453a-bd38-4c6ceb4298d6)", "to": "\\cos30^{\\circ}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration (d66634e1-077a-4316-8a76-aa2741390908)", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration (d66634e1-077a-4316-8a76-aa2741390908)", "to": "v_{0}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration (d66634e1-077a-4316-8a76-aa2741390908)", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Constant Acceleration (d66634e1-077a-4316-8a76-aa2741390908)", "to": "s", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity of a Block on an Incline (4dfbfcca-8135-4818-8068-ad4e2876cfad)", "to": "v", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity of a Block on an Incline (4dfbfcca-8135-4818-8068-ad4e2876cfad)", "to": "8.49", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Velocity of a Block on an Incline (4dfbfcca-8135-4818-8068-ad4e2876cfad)", "to": "2", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Displacement (b7e3ea6e-8170-4730-8bbd-b9912d84ab77)", "to": "s", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Displacement (b7e3ea6e-8170-4730-8bbd-b9912d84ab77)", "to": "v_{0}", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Displacement (b7e3ea6e-8170-4730-8bbd-b9912d84ab77)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Kinematic Equation for Displacement (b7e3ea6e-8170-4730-8bbd-b9912d84ab77)", "to": "a", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Time to Reach the Bottom of Incline (c6dad230-d494-4cb0-95c8-c37dd0d00abf)", "to": "4", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Time to Reach the Bottom of Incline (c6dad230-d494-4cb0-95c8-c37dd0d00abf)", "to": "8.49", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Time to Reach the Bottom of Incline (c6dad230-d494-4cb0-95c8-c37dd0d00abf)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Time to Reach the Bottom of Incline (c47c61b3-3b16-40a6-ae67-8a0a9fae9f52)", "to": "t", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Time to Reach the Bottom of Incline (c47c61b3-3b16-40a6-ae67-8a0a9fae9f52)", "to": "4", "width": 1.5}, {"color": "#7F8C8D", "from": "Eq: Time to Reach the Bottom of Incline (c47c61b3-3b16-40a6-ae67-8a0a9fae9f52)", "to": "8.49", "width": 1.5}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"barnesHut": {"gravitationalConstant": -2000, "centralGravity": 0.3, "springLength": 150, "springConstant": 0.04, "damping": 0.09, "avoidOverlap": 0.1}, "minVelocity": 0.75}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    
+                </div>
+            </div>
+        </div>
+        
