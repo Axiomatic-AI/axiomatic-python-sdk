@@ -1,7 +1,7 @@
 import base64
 import dill  # type: ignore
 import json
-import requests
+import requests # type: ignore
 import os
 import time
 import json
@@ -44,15 +44,15 @@ class AxtractHelper:
         parsed_paper: Optional[ParseResponse] = None,
     ) -> Optional[EquationExtractionResponse]:        
         if file_path:
-            with open(file_path, "rb") as file:
-                response = self._ax_client.document.equation.from_pdf(document=file)
+            with open(file_path, "rb") as pdf_file:
+                response = self._ax_client.document.equation.from_pdf(document=pdf_file)
         
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
             file = requests.get(url_path)
             from io import BytesIO
-            pdf_file = BytesIO(file.content)
+            pdf_file = BytesIO(file.content) # type: ignore [assignment]
             response = self._ax_client.document.equation.from_pdf(document=pdf_file)
         
         elif parsed_paper:
