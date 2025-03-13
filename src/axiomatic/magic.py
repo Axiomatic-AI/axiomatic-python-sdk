@@ -5,6 +5,9 @@ import platformdirs  # type: ignore
 import os
 import sys
 import time
+import json
+import base64
+import dill  # type: ignore
 from . import Axiomatic
 
 
@@ -92,14 +95,6 @@ class AXMagic:
 
         This cell won't run as Python code; instead, the text will be sent to the tool_schedule method
         of the Axiomatic client.
-
-        Available Tools:
-            - fdtd
-            - femwell
-            - jaxfem
-            - optiland
-            - pyspice
-            - sax-gdsfactory
         """
         if not tool.strip():
             print("Please provider a tool name when calling this magic like:  %%tool_schedule [optional_tool_name]")
@@ -126,13 +121,32 @@ class AXMagic:
                     else:
                         if result.status == "SUCCEEDED":
                             os.environ["TOOL_RESULT"] = result.output
-                            get_ipython().user_ns["tool_result"] = result.output
-                            print(result.output)
+                            output = json.loads(result.output)
+                            if not output['objects']:
+                                get_ipython().user_ns["tool_result"] = output
+                            else:
+                                get_ipython().user_ns["tool_result"] = {
+                                    "messages": output['messages'],
+                                    "objects": self._load_objects_from_base64(output['objects'])
+                                }
+                            print("SUCCEEDED: access the execution result with tool_result variable.")
                         else:
                             print(result.error_trace)
                         break
             else:
                 print(output.error_trace)
+
+    def _load_objects_from_base64(self, encoded_dict):
+        loaded_objects = {}
+        for key, encoded_str in encoded_dict.items():
+            try:
+                decoded_bytes = base64.b64decode(encoded_str)
+                loaded_obj = dill.loads(decoded_bytes)
+                loaded_objects[key] = loaded_obj
+            except Exception as e:
+                print(f"Error loading object for key '{key}': {e}")
+                loaded_objects[key] = None
+        return loaded_objects
 
 
 def ax_help(value: str):
