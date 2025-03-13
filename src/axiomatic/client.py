@@ -51,7 +51,9 @@ class AxtractHelper:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
             file = requests.get(url_path)
-            response = self._ax_client.document.equation.from_pdf(document=file.content)
+            from io import BytesIO
+            pdf_file = BytesIO(file.content)
+            response = self._ax_client.document.equation.from_pdf(document=pdf_file)
         
         elif parsed_paper:
             response = EquationExtractionResponse.model_validate(
