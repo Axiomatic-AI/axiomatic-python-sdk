@@ -1,7 +1,7 @@
 import base64
 import dill  # type: ignore
 import json
-import requests
+import requests # type: ignore
 import os
 import time
 import json
@@ -42,24 +42,29 @@ class AxtractHelper:
         file_path: Optional[str] = None,
         url_path: Optional[str] = None,
         parsed_paper: Optional[ParseResponse] = None,
-    ) -> Optional[EquationExtractionResponse]:
-        response: Union[EquationExtractionResponse, EquationProcessingResponse]
-        
+    ) -> Optional[EquationExtractionResponse]:        
         if file_path:
-            with open(file_path, "rb") as file:
-                response = self._ax_client.document.equation.from_pdf(document=file)
+            with open(file_path, "rb") as pdf_file:
+                response = self._ax_client.document.equation.from_pdf(document=pdf_file)
+        
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
-
-            response = self._ax_client.document.equation.from_pdf(document=url_path)
+            url_file = requests.get(url_path)
+            from io import BytesIO
+            pdf_stream = BytesIO(url_file.content)
+            response = self._ax_client.document.equation.from_pdf(document=pdf_stream)
+        
         elif parsed_paper:
-            response = self._ax_client.document.equation.process(**parsed_paper.model_dump())
+            response = EquationExtractionResponse.model_validate(
+                self._ax_client.document.equation.process(**parsed_paper.model_dump()).model_dump()
+            )
+        
         else:
             print("Please provide either a file path or a URL to analyze.")
             return None
-
-        return EquationExtractionResponse(equations=response.equations)
+        
+        return response
 
     def validate_equations(
         self,

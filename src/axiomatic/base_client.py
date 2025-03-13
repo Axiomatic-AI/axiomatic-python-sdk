@@ -27,7 +27,6 @@ from .code_execution.client import AsyncCodeExecutionClient
 from .fso.client import AsyncFsoClient
 from .pic.client import AsyncPicClient
 
-
 class BaseClient:
     """
     Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
