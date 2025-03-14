@@ -164,42 +164,23 @@ def plot_interactive_spectra(
             dict(type="line", xref="paper", x0=0, x1=1, yref="y", y0=yh, y1=yh, line=dict(color="red", dash="dash"))
         )
 
-    # Create frames for each index
-    slider_index = list(range(len(spectra[0])))
+    # Create initial figure
     fig = go.Figure()
 
     # Build initial figure for immediate display
-    init_idx = slider_index[0]
+    init_idx = 0
     for i, spec in enumerate(spectra):
         fig.add_trace(go.Scatter(x=wavelengths, y=spec[init_idx], mode="lines", name=spectrum_labels[i]))
-    # Build frames for animation
-    frames = []
-    for idx in slider_index:
-        frame_data = []
-        for i, spec in enumerate(spectra):
-            frame_data.append(go.Scatter(x=wavelengths, y=spec[idx], mode="lines", name=spectrum_labels[i]))
-        frames.append(
-            go.Frame(
-                data=frame_data,
-                name=str(idx),
-            )
-        )
 
-    fig.frames = frames
-
-    #  Create transition steps
+    # Create transition steps
     steps = []
-    for idx in slider_index:
-        steps.append(
-            dict(
-                method="animate",
-                args=[
-                    [str(idx)],
-                    {"mode": "immediate", "frame": {"duration": 0, "redraw": True}, "transition": {"duration": 0}},
-                ],
-                label=str(idx),
-            )
+    for idx in range(len(spectra[0])):
+        step = dict(
+            method="restyle",
+            args=["y", [spec[idx] for spec in spectra]],
+            label=str(idx),
         )
+        steps.append(step)
 
     # Create the slider
     sliders = [dict(active=0, currentvalue={"prefix": "Index: "}, pad={"t": 50}, steps=steps)]
