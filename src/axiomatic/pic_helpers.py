@@ -328,7 +328,10 @@ def print_statements(
             if (param_stmt.formalization is None or param_stmt.formalization.mapping is None) and only_formalized:
                 continue
             val = param_stmt.validation or param_val
-            holds_tag = "holds" if val.holds else "not-hold"
+            if val.holds is not None:
+                holds_tag = "holds" if val.holds else "not-hold"
+            else:
+                holds_tag = ''
             html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>{param_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label">Statement:</span> {param_stmt.text}</p>')
@@ -359,8 +362,11 @@ def print_statements(
         ):
             if struct_stmt.formalization is None and only_formalized:
                 continue
-
-            holds_tag = "holds" if struct_val.holds else "not-hold"
+            
+            if val.holds is not None:
+                holds_tag = "holds" if struct_val.holds else "not-hold"
+            else:
+                holds_tag = ''
             html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>Type: {struct_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label ">Statement:</span> {struct_stmt.text}</p>')
