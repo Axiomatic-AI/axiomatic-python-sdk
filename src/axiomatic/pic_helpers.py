@@ -274,6 +274,8 @@ def print_statements(
             .block { background-color: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
             .block h2 { margin-top: 0; font-size: 1.2em; color: #333; }
             .block p { margin: 5px 0; color: #555; }
+            .holds { background-color: #d4edda; border-color: #c3e6cb; }
+            .not-hold { background-color: #f8d7da; border-color: #f5c6cb; }
             .label { font-weight: bold; }
             .block code {
                 background-color: #f4f4f4;
@@ -288,7 +290,6 @@ def print_statements(
         </style>
         </head>
         <body>
-        <h1> Extracted statements </h1>
         """)
 
         # Cost Functions Rendering
@@ -317,7 +318,7 @@ def print_statements(
             val = cost_stmt.validation or cost_val
             if val.satisfiable is not None and val.message is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
-                html_parts.append(f"<p>{val.message}</p>")
+                html_parts.append(f'<p><span class="label">Reason:</span> {val.message}</p>')
             html_parts.append("</div>")
 
         # Parameter Constraints Rendering
@@ -326,8 +327,9 @@ def print_statements(
         ):
             if (param_stmt.formalization is None or param_stmt.formalization.mapping is None) and only_formalized:
                 continue
-
-            html_parts.append('<div class="block">')
+            val = param_stmt.validation or param_val
+            holds_tag = "holds" if val.holds else "not-hold"
+            html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>{param_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label">Statement:</span> {param_stmt.text}</p>')
             html_parts.append('<p><span class="label">Formalization:</span> ')
@@ -345,10 +347,10 @@ def print_statements(
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 html_parts.append(f"<code>{code}</code>")
             html_parts.append("</p>")
-            val = param_stmt.validation or param_val
             if val.satisfiable is not None and val.message is not None and val.holds is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
-                html_parts.append(f'<p><span class="label">Holds:</span> {val.holds} ({val.message})</p>')
+                html_parts.append(f'<p><span class="label">Holds:</span> {val.holds}</p>')
+                html_parts.append(f'<p><span class="label">Reason:</span> {val.message}</p>')
             html_parts.append("</div>")
 
         # Structure Constraints Rendering
@@ -358,9 +360,10 @@ def print_statements(
             if struct_stmt.formalization is None and only_formalized:
                 continue
 
-            html_parts.append('<div class="block">')
+            holds_tag = "holds" if struct_val.holds else "not-hold"
+            html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>Type: {struct_stmt.type}</h2>")
-            html_parts.append(f'<p><span class="label">Statement:</span> {struct_stmt.text}</p>')
+            html_parts.append(f'<p><span class="label ">Statement:</span> {struct_stmt.text}</p>')
             html_parts.append('<p><span class="label">Formalization:</span> ')
             if struct_stmt.formalization is None:
                 html_parts.append("UNFORMALIZED")
@@ -382,7 +385,7 @@ def print_statements(
         # Unformalizable Statements Rendering (if applicable)
         if not only_formalized:
             for unf_stmt in statements.unformalizable_statements or []:
-                html_parts.append('<div class="block">')
+                html_parts.append('<div class="block not-hold">')
                 html_parts.append(f"<h2>Type: {unf_stmt.type}</h2>")
                 html_parts.append(f'<p><span class="label">Statement:</span> {unf_stmt.text}</p>')
                 html_parts.append('<p><span class="label">Formalization:</span> UNFORMALIZABLE</p>')
@@ -398,7 +401,6 @@ def print_statements(
         from IPython.display import display, HTML  # type: ignore
 
         display(HTML(final_html))
-
     else:
         print("-----------------------------------\n")
         for cost_stmt, cost_val in zip(statements.cost_functions or [], validation.cost_functions or []):
