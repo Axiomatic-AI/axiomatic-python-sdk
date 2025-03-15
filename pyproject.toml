@@ -3,7 +3,7 @@ name = "axiomatic"
 
 [tool.poetry]
 name = "axiomatic"
-version = "0.0.110"
+version = "0.0.111"
 description = ""
 readme = "README.md"
 authors = []
