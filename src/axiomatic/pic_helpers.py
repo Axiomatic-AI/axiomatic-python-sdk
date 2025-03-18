@@ -368,7 +368,7 @@ def print_statements(
             else:
                 holds_tag = ''
             html_parts.append(f'<div class="block {holds_tag}">')
-            html_parts.append(f"<h2>Type: {struct_stmt.type}</h2>")
+            html_parts.append(f"<h2>{struct_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label ">Statement:</span> {struct_stmt.text}</p>')
             if struct_stmt.formalization is None:
                 html_parts.append("UNFORMALIZED")
@@ -392,7 +392,7 @@ def print_statements(
         if not only_formalized:
             for unf_stmt in statements.unformalizable_statements or []:
                 html_parts.append('<div class="block not-hold">')
-                html_parts.append(f"<h2>Type: {unf_stmt.type}</h2>")
+                html_parts.append(f"<h2>{unf_stmt.type}</h2>")
                 html_parts.append(f'<p><span class="label">Statement:</span> {unf_stmt.text}</p>')
                 # html_parts.append('<p><span class="label">Formalization:</span> UNFORMALIZABLE</p>')
                 html_parts.append("</div>")
