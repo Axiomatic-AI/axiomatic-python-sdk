@@ -300,10 +300,10 @@ def print_statements(
             html_parts.append('<div class="block">')
             html_parts.append(f"<h2>{cost_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label">Statement:</span> {cost_stmt.text}</p>')
-            html_parts.append('<p><span class="label">Formalization:</span> ')
             if cost_stmt.formalization is None:
                 html_parts.append("UNFORMALIZED")
             else:
+                html_parts.append('<p><span class="label">Formalization:</span> ')
                 code = cost_stmt.formalization.code
                 if cost_stmt.formalization.mapping is not None:
                     for var_name, computation in cost_stmt.formalization.mapping.items():
@@ -314,7 +314,7 @@ def print_statements(
                             )
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 html_parts.append(f"<code>{code}</code>")
-            html_parts.append("</p>")
+                html_parts.append("</p>")
             val = cost_stmt.validation or cost_val
             if val.satisfiable is not None and val.message is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
@@ -335,10 +335,10 @@ def print_statements(
             html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>{param_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label">Statement:</span> {param_stmt.text}</p>')
-            html_parts.append('<p><span class="label">Formalization:</span> ')
             if param_stmt.formalization is None:
                 html_parts.append("UNFORMALIZED")
             else:
+                html_parts.append('<p><span class="label">Formalization:</span> ')
                 code = param_stmt.formalization.code
                 if param_stmt.formalization.mapping is not None:
                     for var_name, computation in param_stmt.formalization.mapping.items():
@@ -349,7 +349,7 @@ def print_statements(
                             )
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 html_parts.append(f"<code>{code}</code>")
-            html_parts.append("</p>")
+                html_parts.append("</p>")
             if val.satisfiable is not None and val.message is not None and val.holds is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
                 html_parts.append(f'<p><span class="label">Holds:</span> {val.holds}</p>')
@@ -370,10 +370,10 @@ def print_statements(
             html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>Type: {struct_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label ">Statement:</span> {struct_stmt.text}</p>')
-            html_parts.append('<p><span class="label">Formalization:</span> ')
             if struct_stmt.formalization is None:
                 html_parts.append("UNFORMALIZED")
             else:
+                html_parts.append('<p><span class="label">Formalization:</span> ')
                 func_constr = struct_stmt.formalization
                 args_str = ", ".join(
                     f"{argname}=" + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
@@ -381,7 +381,7 @@ def print_statements(
                 )
                 func_str = f"{func_constr.function_name}({args_str}) == {func_constr.expected_result}"
                 html_parts.append(f"<code>{func_str}</code>")
-            html_parts.append("</p>")
+                html_parts.append("</p>")
             val = struct_stmt.validation or struct_val
             if val.satisfiable is not None and val.holds is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
@@ -394,7 +394,7 @@ def print_statements(
                 html_parts.append('<div class="block not-hold">')
                 html_parts.append(f"<h2>Type: {unf_stmt.type}</h2>")
                 html_parts.append(f'<p><span class="label">Statement:</span> {unf_stmt.text}</p>')
-                html_parts.append('<p><span class="label">Formalization:</span> UNFORMALIZABLE</p>')
+                # html_parts.append('<p><span class="label">Formalization:</span> UNFORMALIZABLE</p>')
                 html_parts.append("</div>")
 
         # End of HTML document
