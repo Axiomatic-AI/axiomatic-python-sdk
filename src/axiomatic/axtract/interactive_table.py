@@ -2,7 +2,7 @@ import ipywidgets as widgets  # type: ignore
 from IPython.display import display  # type: ignore
 import json  # type: ignore
 import os  # type: ignore
-from .. import EquationExtractionResponse, VariableRequirement
+from .. import EquationProcessingResponse, VariableRequirement
 
 
 def _find_symbol(name, variable_dict):
@@ -33,7 +33,7 @@ def _requirements_from_table(results, variable_dict):
     return requirements
 
 
-def interactive_table(loaded_equations, file_path="./custom_presets.json"):
+def interactive_table(loaded_equations: EquationProcessingResponse, file_path: str = "./custom_presets.json"):
     """
     Creates an interactive table for IMAGING_TELESCOPE,
     PAYLOAD, and user-defined custom templates.
@@ -41,7 +41,7 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
 
     Parameters
     ----------
-    loaded_equations : EquationExtractionResponse
+    loaded_equations : EquationProcessingResponse
         The extracted equations containing variable information
     file_path : str, optional
         JSON file path where we load and save user-created custom templates.
@@ -382,14 +382,14 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     return requirements_result
 
 
-def _create_variable_dict(equation_response: EquationExtractionResponse) -> dict:
+def _create_variable_dict(equation_response: EquationProcessingResponse) -> dict:
     """
-    Creates a variable dictionary from an EquationExtractionResponse object
+    Creates a variable dictionary from an EquationProcessingResponse object
     for use with the interactive_table function.
 
     Parameters
     ----------
-    equation_response : EquationExtractionResponse
+    equation_response : EquationProcessingResponse
         The equation extraction response containing equations and their symbols
 
     Returns

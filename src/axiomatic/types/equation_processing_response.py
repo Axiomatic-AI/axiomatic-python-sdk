@@ -2,13 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .equation_extraction import EquationExtraction
+from .equation_processing import ResponseEquation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class EquationProcessingResponse(UniversalBaseModel):
-    equations: typing.List[EquationExtraction]
+    equations: typing.List[ResponseEquation]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

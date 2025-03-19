@@ -8,11 +8,12 @@ import json
 from typing import Dict, List, Optional, Union
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import ParseResponse, EquationExtractionResponse, EquationProcessingResponse
+from . import ParseResponse, EquationProcessingResponse
 from .axtract.axtract_report import create_report
 from .axtract.validation_results import display_full_results
-from .axtract.interactive_table import _create_variable_dict
-from .types.variable_requirement import VariableRequirement as ApiVariableRequirement
+from .axtract.interactive_table import _create_variable_dict, VariableRequirement
+from .types.variable_requirement import VariableRequirement
+from .types.validate_equations_body import ValidateEquationsBody
 
 
 class Axiomatic(BaseClient):
@@ -27,14 +28,23 @@ class Axiomatic(BaseClient):
 
 
 class AxtractHelper:
-    from .axtract.interactive_table import VariableRequirement
-
     _ax_client: Axiomatic
 
     def __init__(self, ax_client: Axiomatic):
+        """Initialize the AxtractHelper with an Axiomatic client.
+
+        Args:
+            ax_client (Axiomatic): The Axiomatic client instance to use for API calls
+        """
         self._ax_client = ax_client
 
-    def create_report(self, response: EquationExtractionResponse, path: str):
+    def create_report(self, response: EquationProcessingResponse, path: str):
+        """Create a report from equation extraction results.
+
+        Args:
+            response (EquationExtractionResponse): The extracted equations and their metadata
+            path (str): Directory path where the report should be saved
+        """
         create_report(response, path)
 
     def analyze_equations(
@@ -42,10 +52,42 @@ class AxtractHelper:
         file_path: Optional[str] = None,
         url_path: Optional[str] = None,
         parsed_paper: Optional[ParseResponse] = None,
-    ) -> Optional[EquationExtractionResponse]:        
+    ) -> Optional[EquationProcessingResponse]:
+        """Analyze and extract equations from a scientific document.
+
+        This method supports three input methods:
+        1. Local PDF file path
+        2. URL to a PDF (with special handling for arXiv URLs)
+        3. Pre-parsed paper data
+
+        Args:
+            file_path (Optional[str]): Path to a local PDF file
+            url_path (Optional[str]): URL to a PDF file (supports arXiv links)
+            parsed_paper (Optional[ParseResponse]): Pre-parsed paper data
+
+        Returns:
+            Optional[EquationExtractionResponse]: Extracted equations and their metadata.
+            Returns None if no valid input is provided.
+
+        Examples:
+            # From local file
+            client.analyze_equations(file_path="path/to/paper.pdf")
+            
+            # From URL
+            client.analyze_equations(url_path="https://arxiv.org/pdf/2203.00001.pdf")
+            
+            # From parsed paper
+            client.analyze_equations(parsed_paper=parsed_data)
+        """
         if file_path:
             with open(file_path, "rb") as pdf_file:
-                response = self._ax_client.document.equation.from_pdf(document=pdf_file)
+                parsed_document = self._ax_client.document.parse(file=pdf_file)
+                print("We are almost there")
+                response = self._ax_client.document.equation.process(
+                    markdown=parsed_document.markdown, 
+                    interline_equations=parsed_document.interline_equations,
+                    inline_equations=parsed_document.inline_equations
+                    )
         
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
@@ -53,10 +95,16 @@ class AxtractHelper:
             url_file = requests.get(url_path)
             from io import BytesIO
             pdf_stream = BytesIO(url_file.content)
-            response = self._ax_client.document.equation.from_pdf(document=pdf_stream)
+            parsed_document = self._ax_client.document.parse(file=url_file.content)
+            print("We are almost there")
+            response = self._ax_client.document.equation.process(
+                markdown=parsed_document.markdown, 
+                interline_equations=parsed_document.interline_equations,
+                inline_equations=parsed_document.inline_equations
+                )
         
         elif parsed_paper:
-            response = EquationExtractionResponse.model_validate(
+            response = EquationProcessingResponse.model_validate(
                 self._ax_client.document.equation.process(**parsed_paper.model_dump()).model_dump()
             )
         
@@ -68,22 +116,55 @@ class AxtractHelper:
 
     def validate_equations(
         self,
-        requirements: List[VariableRequirement],
-        loaded_equations: EquationExtractionResponse,
+        requirements: list[VariableRequirement],
+        loaded_equations: EquationProcessingResponse,
         show_hypergraph: bool = True,
+        include_internal_model: bool = False,
     ):
-        api_requirements = [
-            ApiVariableRequirement(
-                symbol=req.symbol, name=req.name, value=req.value, units=req.units, tolerance=req.tolerance
-            )
-            for req in requirements
-        ]
+        """Validate equations against a set of variable requirements.
 
-        variable_dict = _create_variable_dict(loaded_equations)
-        api_response = self._ax_client.document.equation.validate(request=api_requirements)
-        display_full_results(api_response.model_dump(), variable_dict, show_hypergraph=show_hypergraph)
+        Args:
+            requirements: List of variable requirements to validate
+            loaded_equations: Previously processed equations to validate
+            show_hypergraph: Whether to display the validation results graph (default: True)
+            include_internal_model: Whether to include internal model equations in validation (default: False)
 
-    def set_numerical_requirements(self, extracted_equations):
+        Returns:
+            EquationValidationResult containing the validation results
+        """
+        # Convert loaded_equations to dict first to ensure proper serialization
+        equations_dict = loaded_equations.model_dump() if hasattr(loaded_equations, 'model_dump') else loaded_equations.dict()
+        
+        request_body = ValidateEquationsBody(
+            variables=requirements,
+            paper_equations=equations_dict,
+            include_internal_model=include_internal_model
+        )
+        
+        print(request_body.model_dump_json())
+
+        api_response = self._ax_client.document.equation.validate(request_body.model_dump_json())
+        
+        if show_hypergraph:
+            pass
+        
+        return api_response
+    
+
+    
+
+    def set_numerical_requirements(self, extracted_equations: EquationProcessingResponse):
+        """Launch an interactive interface for setting numerical requirements for equations.
+
+        This method opens an interactive table interface where users can specify
+        requirements for variables found in the extracted equations.
+
+        Args:
+            extracted_equations: The equations to set requirements for
+
+        Returns:
+            The requirements set through the interactive interface
+        """
         from .axtract.interactive_table import interactive_table
 
         result = interactive_table(extracted_equations)
