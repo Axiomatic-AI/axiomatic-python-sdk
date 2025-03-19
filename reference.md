@@ -2419,7 +2419,7 @@ Optimize a PIC circuit with given cost and constraints
 <dd>
 
 ```python
-from axiomatic import Axiomatic, Netlist, Parameter, StatementDictionary
+from axiomatic import Axiomatic, Netlist, StatementDictionary
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
@@ -2427,11 +2427,6 @@ client = Axiomatic(
 client.pic.circuit.optimize(
     netlist=Netlist(),
     statements=StatementDictionary(),
-    parameters=[
-        Parameter(
-            path="path",
-        )
-    ],
 )
 
 ```
@@ -2464,7 +2459,7 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**parameters:** `typing.Sequence[Parameter]` 
+**parameters:** `typing.Optional[typing.Sequence[Parameter]]` 
     
 </dd>
 </dl>
