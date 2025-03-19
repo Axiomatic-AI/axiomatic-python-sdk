@@ -143,7 +143,7 @@ class AxtractHelper:
         
         print(request_body.model_dump_json())
 
-        api_response = self._ax_client.document.equation.validate(request_body.model_dump_json())
+        api_response = self._ax_client.document.equation.validate(request=request_body.model_dump())
         
         if show_hypergraph:
             pass
