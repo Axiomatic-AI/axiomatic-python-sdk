@@ -1670,7 +1670,7 @@ client.lean.z_3.execute(
 <dl>
 <dd>
 
-Generate GDS factory code to create a PIC component
+Summarize a PIC document
 </dd>
 </dl>
 </dd>
@@ -1718,6 +1718,14 @@ client.pic.document.summarize(
 <dd>
 
 **images:** `typing.Dict[str, str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**question:** `typing.Optional[str]` 
     
 </dd>
 </dl>

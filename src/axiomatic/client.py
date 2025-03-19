@@ -304,6 +304,7 @@ class ToolsHelper:
                                 return result.output
                             else:
                                 return {
+                                    "job_id": job_id,
                                     "messages": output['messages'],
                                     "objects": self._load_objects_from_base64(output['objects'])
                                 }

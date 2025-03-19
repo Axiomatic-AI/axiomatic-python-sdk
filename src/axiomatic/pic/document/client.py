@@ -20,16 +20,23 @@ class DocumentClient:
         self._client_wrapper = client_wrapper
 
     def summarize(
-        self, *, markdown: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        markdown: str,
+        images: typing.Dict[str, str],
+        question: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> SummarizerResponse:
         """
-        Generate GDS factory code to create a PIC component
+        Summarize a PIC document
 
         Parameters
         ----------
         markdown : str
 
         images : typing.Dict[str, str]
+
+        question : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -57,6 +64,7 @@ class DocumentClient:
             json={
                 "markdown": markdown,
                 "images": images,
+                "question": question,
             },
             headers={
                 "content-type": "application/json",
@@ -94,16 +102,23 @@ class AsyncDocumentClient:
         self._client_wrapper = client_wrapper
 
     async def summarize(
-        self, *, markdown: str, images: typing.Dict[str, str], request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        markdown: str,
+        images: typing.Dict[str, str],
+        question: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> SummarizerResponse:
         """
-        Generate GDS factory code to create a PIC component
+        Summarize a PIC document
 
         Parameters
         ----------
         markdown : str
 
         images : typing.Dict[str, str]
+
+        question : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -139,6 +154,7 @@ class AsyncDocumentClient:
             json={
                 "markdown": markdown,
                 "images": images,
+                "question": question,
             },
             headers={
                 "content-type": "application/json",

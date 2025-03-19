@@ -55,6 +55,7 @@ from .plot_info import PlotInfo
 from .plot_parser_output import PlotParserOutput
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
+from .response_equation import ResponseEquation
 from .schedule_job_response import ScheduleJobResponse
 from .solution_response import SolutionResponse
 from .solution_response_solution_value import SolutionResponseSolutionValue
@@ -137,6 +138,7 @@ __all__ = [
     "PlotParserOutput",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
+    "ResponseEquation",
     "ScheduleJobResponse",
     "SolutionResponse",
     "SolutionResponseSolutionValue",
