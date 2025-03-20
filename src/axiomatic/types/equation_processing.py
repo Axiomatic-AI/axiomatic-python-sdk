@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 
 class DictItem(BaseModel):
     key: str
@@ -19,20 +19,20 @@ class ResponseEquation(BaseModel):
     wolfram_expressions: str = Field(
         ..., description="Equation in Wolfram Language (or other symbolic form)"
     )
-    latex_symbols: list[DictItem] = Field(
+    latex_symbols: List[DictItem] = Field(
         ..., description="Detailed metadata for each latex variable in original format"
     )
-    wolfram_symbols: list[str] = Field(
+    wolfram_symbols: List[str] = Field(
         ..., description="List of symbols used in the wolfram expression"
     )
-    narrative_assumptions: list[str] = Field(
+    narrative_assumptions: List[str] = Field(
         ..., description="Narrative text describing assumptions/approximations"
     )
-    type: list[str] = Field(
+    type: List[str] = Field(
         ...,
         description="List of equation classifications (e.g., ['scalar','tensor'])",
     )
-    field_tags: list[str] = Field(
+    field_tags: List[str] = Field(
         ...,
         description="Classification tags (e.g., ['quantum mechanics','gravitation'])",
     )

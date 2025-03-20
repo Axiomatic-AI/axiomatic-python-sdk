@@ -3,6 +3,7 @@ from IPython.display import display  # type: ignore
 import json  # type: ignore
 import os  # type: ignore
 from .. import EquationProcessingResponse, VariableRequirement
+from typing import Dict, Any
 
 
 def _find_symbol(name, variable_dict):
@@ -155,7 +156,7 @@ def interactive_table(loaded_equations: EquationProcessingResponse, file_path: s
     name_label_width = ["150px"]
 
     # Dictionary to keep track of row widget references
-    value_widgets = {}
+    value_widgets: Dict[str, Any] = {}
 
     # ---------------------------------------------------------------
     # 6) display_table(change): Re-populate rows when user selects a template

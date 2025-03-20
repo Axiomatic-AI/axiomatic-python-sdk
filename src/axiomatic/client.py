@@ -5,7 +5,7 @@ import requests # type: ignore
 import os
 import time
 import json
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Sequence, Any
 
 from .base_client import BaseClient, AsyncBaseClient
 from . import ParseResponse, EquationProcessingResponse
@@ -116,7 +116,7 @@ class AxtractHelper:
 
     def validate_equations(
         self,
-        requirements: list[VariableRequirement],
+        requirements: List[VariableRequirement],
         loaded_equations: EquationProcessingResponse,
         include_internal_model: bool = False,
     ) -> EquationValidationResult:
