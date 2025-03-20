@@ -1,5 +1,5 @@
 from typing import List
-from ..types.response_equation import ResponseEquation
+from ..types.equation_processing import ResponseEquation
 from pyvis.network import Network  # type: ignore
 
 
