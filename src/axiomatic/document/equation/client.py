@@ -15,7 +15,7 @@ from ... import core
 from ...types.equation_extraction_response import EquationExtractionResponse
 from ...types.equation_processing_response import EquationProcessingResponse
 from ...core.client_wrapper import AsyncClientWrapper
-
+from ...types.validate_equations_body import ValidateEquationsBody
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
@@ -67,7 +67,7 @@ class EquationClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def validate(
-        self, *, request: typing.Sequence[VariableRequirement], request_options: typing.Optional[RequestOptions] = None
+        self, *, request: ValidateEquationsBody, request_options: typing.Optional[RequestOptions] = None
     ) -> EquationValidationResult:
         """
         Validates a set of variables against stored equations to check for inconsistencies.

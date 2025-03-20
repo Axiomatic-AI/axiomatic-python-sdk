@@ -116,7 +116,7 @@ class AxtractHelper:
 
     def validate_equations(
         self,
-        requirements: List[VariableRequirement],
+        requirements: Sequence[VariableRequirement],
         loaded_equations: EquationProcessingResponse,
         include_internal_model: bool = False,
     ) -> EquationValidationResult:
@@ -131,7 +131,6 @@ class AxtractHelper:
         Returns:
             EquationValidationResult containing the validation results
         """
-        # Convert loaded_equations to dict first to ensure proper serialization
         equations_dict = loaded_equations.model_dump() if hasattr(loaded_equations, 'model_dump') else loaded_equations.dict()
         
         request_body = ValidateEquationsBody(
@@ -140,7 +139,7 @@ class AxtractHelper:
             include_internal_model=include_internal_model
         )
         
-        api_response = self._ax_client.document.equation.validate(request=request_body.model_dump())
+        api_response = self._ax_client.document.equation.validate(request=request_body)
         
         return api_response
     

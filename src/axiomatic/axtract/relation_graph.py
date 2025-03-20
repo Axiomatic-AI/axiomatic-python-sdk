@@ -1,5 +1,5 @@
 from typing import List
-from .. import EquationExtraction
+from ..types.equation_processing import ResponseEquation
 from pyvis.network import Network  # type: ignore
 
 
@@ -20,7 +20,7 @@ def normalize_latex_symbol(symbol: str) -> str:
     return symbol
 
 
-def generate_relation_graph(equations: List[EquationExtraction]) -> str:
+def generate_relation_graph(equations: List[ResponseEquation]) -> str:
     """
     Generates HTML code for a bipartite graph visualization.
     Green nodes represent equations, red nodes represent variables.
@@ -41,7 +41,7 @@ def generate_relation_graph(equations: List[EquationExtraction]) -> str:
     # Add equation nodes (green) and variable nodes (red)
     for eq in equations:
         # Add equation node with unique identifier
-        eq_name = f"Eq: {eq.name} ({eq.id})"  # Add ID to make each node unique
+        eq_name = f"Eq: {eq.name}"  # Add ID to make each node unique
         net.add_node(
             eq_name,
             label=eq.name,
