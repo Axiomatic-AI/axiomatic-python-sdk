@@ -613,7 +613,7 @@ class CircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        parameters: typing.Sequence[Parameter],
+        parameters: typing.Optional[typing.Sequence[Parameter]] = OMIT,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
         use_ideal_component_models: typing.Optional[bool] = OMIT,
@@ -628,7 +628,7 @@ class CircuitClient:
 
         statements : StatementDictionary
 
-        parameters : typing.Sequence[Parameter]
+        parameters : typing.Optional[typing.Sequence[Parameter]]
 
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
@@ -646,7 +646,7 @@ class CircuitClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, Netlist, Parameter, StatementDictionary
+        from axiomatic import Axiomatic, Netlist, StatementDictionary
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
@@ -654,11 +654,6 @@ class CircuitClient:
         client.pic.circuit.optimize(
             netlist=Netlist(),
             statements=StatementDictionary(),
-            parameters=[
-                Parameter(
-                    path="path",
-                )
-            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1649,7 +1644,7 @@ class AsyncCircuitClient:
         *,
         netlist: Netlist,
         statements: StatementDictionary,
-        parameters: typing.Sequence[Parameter],
+        parameters: typing.Optional[typing.Sequence[Parameter]] = OMIT,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
         use_ideal_component_models: typing.Optional[bool] = OMIT,
@@ -1664,7 +1659,7 @@ class AsyncCircuitClient:
 
         statements : StatementDictionary
 
-        parameters : typing.Sequence[Parameter]
+        parameters : typing.Optional[typing.Sequence[Parameter]]
 
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
@@ -1684,7 +1679,7 @@ class AsyncCircuitClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, Netlist, Parameter, StatementDictionary
+        from axiomatic import AsyncAxiomatic, Netlist, StatementDictionary
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -1695,11 +1690,6 @@ class AsyncCircuitClient:
             await client.pic.circuit.optimize(
                 netlist=Netlist(),
                 statements=StatementDictionary(),
-                parameters=[
-                    Parameter(
-                        path="path",
-                    )
-                ],
             )
 
 
