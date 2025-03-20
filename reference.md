@@ -1129,85 +1129,6 @@ client.document.equation.user_variables()
 </dl>
 </details>
 
-<details><summary><code>client.document.equation.<a href="src/axiomatic/document/equation/client.py">validate</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Validates a set of variables against stored equations to check for inconsistencies.
-Returns validation results for each relevant equation.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic, VariableRequirement
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.document.equation.validate(
-    request=[
-        VariableRequirement(
-            symbol="symbol",
-            name="name",
-            value=1.1,
-            units="units",
-            tolerance=1.1,
-        )
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request:** `typing.Sequence[VariableRequirement]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 <details><summary><code>client.document.equation.<a href="src/axiomatic/document/equation/client.py">from_pdf</a>(...)</code></summary>
 <dl>
 <dd>
@@ -1353,6 +1274,127 @@ client.document.equation.process(
 <dd>
 
 **inline_equations:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.document.equation.<a href="src/axiomatic/document/equation/client.py">validate</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Validates a set of variables against stored equations to check for inconsistencies.
+Returns validation results for each relevant equation.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import (
+    Axiomatic,
+    DictItem,
+    EquationProcessingResponse,
+    ResponseEquation,
+    VariableRequirement,
+)
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.equation.validate(
+    variables=[
+        VariableRequirement(
+            symbol="symbol",
+            name="name",
+            value=1.1,
+            units="units",
+            tolerance=1.1,
+        )
+    ],
+    paper_equations=EquationProcessingResponse(
+        equations=[
+            ResponseEquation(
+                name="name",
+                description="description",
+                original_format="original_format",
+                wolfram_expressions="wolfram_expressions",
+                latex_symbols=[
+                    DictItem(
+                        key="key",
+                        value="value",
+                    )
+                ],
+                wolfram_symbols=["wolfram_symbols"],
+                narrative_assumptions=["narrative_assumptions"],
+                type=["type"],
+                field_tags=["field_tags"],
+            )
+        ],
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**variables:** `typing.Sequence[VariableRequirement]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**paper_equations:** `EquationProcessingResponse` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include_internal_model:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
