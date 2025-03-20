@@ -14,7 +14,7 @@ from .axtract.validation_results import display_full_results
 from .axtract.interactive_table import _create_variable_dict, VariableRequirement
 from .types.variable_requirement import VariableRequirement
 from .types.validate_equations_body import ValidateEquationsBody
-
+from .types.equation_validation_result import EquationValidationResult
 
 class Axiomatic(BaseClient):
     def __init__(self, *args, **kwargs):
@@ -118,9 +118,8 @@ class AxtractHelper:
         self,
         requirements: list[VariableRequirement],
         loaded_equations: EquationProcessingResponse,
-        show_hypergraph: bool = True,
         include_internal_model: bool = False,
-    ):
+    ) -> EquationValidationResult:
         """Validate equations against a set of variable requirements.
 
         Args:
@@ -141,16 +140,13 @@ class AxtractHelper:
             include_internal_model=include_internal_model
         )
         
-        print(request_body.model_dump_json())
-
         api_response = self._ax_client.document.equation.validate(request=request_body.model_dump())
-        
-        if show_hypergraph:
-            pass
         
         return api_response
     
 
+    def display_full_results(self, api_response: EquationValidationResult, user_choice):
+        display_full_results(api_response, user_choice)
     
 
     def set_numerical_requirements(self, extracted_equations: EquationProcessingResponse):
