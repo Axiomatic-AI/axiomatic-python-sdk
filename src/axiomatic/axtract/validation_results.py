@@ -6,7 +6,8 @@ import re
 
 def display_full_results(validation_results, requirements=None, show_hypergraph=True):
     """Display equation validation results optimized for dark theme notebooks."""
-    validations = validation_results.get("validations", {})
+    # If validation_results is already a dict, use it directly
+    validations = validation_results if isinstance(validation_results, dict) else validation_results.validations
 
     matching = []
     non_matching = []
@@ -15,13 +16,16 @@ def display_full_results(validation_results, requirements=None, show_hypergraph=
         equation_data = {
             "name": eq_name,
             "latex": value.get("original_format", ""),
-            "lhs": value.get("lhs_value"),
-            "rhs": value.get("rhs_value"),
-            "diff": abs(value.get("lhs_value", 0) - value.get("rhs_value", 0)),
-            "percent_diff": abs(value.get("lhs_value", 0) - value.get("rhs_value", 0))
-            / max(abs(value.get("rhs_value", 0)), 1e-10)
+            "lhs": float(value.get("lhs_value", 0)),
+            "rhs": float(value.get("rhs_value", 0)),
+            "diff": abs(float(value.get("lhs_value", 0)) - float(value.get("rhs_value", 0))),
+            "percent_diff": abs(float(value.get("lhs_value", 0)) - float(value.get("rhs_value", 0)))
+            / max(abs(float(value.get("rhs_value", 0))), 1e-10)
             * 100,
-            "used_values": value.get("used_values", {}),
+            "used_values": {
+                k: float(v.split("*^")[0]) * (10 ** float(v.split("*^")[1])) if "*^" in v else float(v)
+                for k, v in value.get("used_values", {}).items()
+            },
         }
         if value.get("is_valid"):
             matching.append(equation_data)

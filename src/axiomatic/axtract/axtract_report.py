@@ -1,5 +1,5 @@
 from .relation_graph import generate_relation_graph
-from .. import EquationExtractionResponse
+from .. import EquationProcessingResponse
 import os
 import re
 
@@ -190,7 +190,7 @@ HTML_HEAD = """
 """
 
 
-def create_report(report_data: EquationExtractionResponse, report_path: str = "./report.html"):
+def create_report(report_data: EquationProcessingResponse, report_path: str = "./report.html"):
     """
     Creates an HTML report for the extracted equations.
     """
