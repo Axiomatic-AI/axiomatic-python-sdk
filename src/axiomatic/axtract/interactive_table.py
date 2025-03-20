@@ -2,7 +2,8 @@ import ipywidgets as widgets  # type: ignore
 from IPython.display import display  # type: ignore
 import json  # type: ignore
 import os  # type: ignore
-from .. import EquationExtractionResponse, VariableRequirement
+from .. import EquationProcessingResponse, VariableRequirement
+from typing import Dict, Any
 
 
 def _find_symbol(name, variable_dict):
@@ -33,7 +34,7 @@ def _requirements_from_table(results, variable_dict):
     return requirements
 
 
-def interactive_table(loaded_equations, file_path="./custom_presets.json"):
+def interactive_table(loaded_equations: EquationProcessingResponse, file_path: str = "./custom_presets.json"):
     """
     Creates an interactive table for IMAGING_TELESCOPE,
     PAYLOAD, and user-defined custom templates.
@@ -41,7 +42,7 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
 
     Parameters
     ----------
-    loaded_equations : EquationExtractionResponse
+    loaded_equations : EquationProcessingResponse
         The extracted equations containing variable information
     file_path : str, optional
         JSON file path where we load and save user-created custom templates.
@@ -55,49 +56,35 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     # ---------------------------------------------------------------
     # 1) Define built-in templates and units directly inside the function
     # ---------------------------------------------------------------
-    IMAGING_TELESCOPE_template = {
-        "Resolution (panchromatic)": 0,
-        "Ground sampling distance (panchromatic)": 0,
-        "Resolution (multispectral)": 0,
-        "Ground sampling distance (multispectral)": 0,
-        "Altitude": 0,
-        "Half field of view": 0,
-        "Mirror aperture": 0,
-        "F-number": 0,
-        "Focal length": 0,
-        "Pixel size (panchromatic)": 0,
-        "Pixel size (multispectral)": 0,
-        "Swath width": 0,
-    }
 
     IMAGING_TELESCOPE = {
-        "Resolution (panchromatic)": 1.23529,
-        "Ground sampling distance (panchromatic)": 0.61765,
-        "Resolution (multispectral)": 1.81176,
-        "Ground sampling distance (multispectral)": 0.90588,
+        "Resolved Ground Detail, Panchromatic": 1.23529,
+        "Ground Sample Distance, Panchromatic": 0.61765,
+        "Resolved Ground Detail, Multispectral": 1.81176,
+        "Ground Sample Distance, Multispectral": 0.90588,
         "Altitude": 420000,
-        "Half field of view": 0.017104227,
-        "Mirror aperture": 0.85,
-        "F-number": 6.0,
+        "Horizontal Field of View": 0.017104227,
+        "Aperture diameter": 0.85,
+        "f-number": 6.0,
         "Focal length": 5.1,
-        "Pixel size (panchromatic)": 7.5e-6,
-        "Pixel size (multispectral)": 11e-6,
-        "Swath width": 14368.95,
+        "Pixel pitch": 7.5e-6,
+        "Pixel pitch of the multispectral sensor": 11e-6,
+        "Swath Width": 14368.95,
     }
 
     IMAGING_TELESCOPE_UNITS = {
-        "Resolution (panchromatic)": "m",
-        "Ground sampling distance (panchromatic)": "m",
-        "Resolution (multispectral)": "m",
-        "Ground sampling distance (multispectral)": "m",
+        "Resolved Ground Detail, Panchromatic": "m",
+        "Ground Sample Distance, Panchromatic": "m",
+        "Resolved Ground Detail, Multispectral": "m",
+        "Ground Sample Distance, Multispectral": "m",
         "Altitude": "m",
-        "Half field of view": "rad",
-        "Mirror aperture": "m",
-        "F-number": "dimensionless",
+        "Horizontal Field of View": "rad",
+        "Aperture diameter": "m",
+        "f-number": "dimensionless",
         "Focal length": "m",
-        "Pixel size (panchromatic)": "m",
-        "Pixel size (multispectral)": "m",
-        "Swath width": "m",
+        "Pixel pitch": "m",
+        "Pixel pitch of the multispectral sensor": "m",
+        "Swath Width": "m",
     }
 
     PAYLOAD_1 = {
@@ -120,7 +107,6 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     preset_options_dict = {
         "Select a template": [],
         "IMAGING TELESCOPE": list(IMAGING_TELESCOPE.keys()),
-        "IMAGING TELESCOPE template": list(IMAGING_TELESCOPE_template.keys()),
         "PAYLOAD": list(PAYLOAD_1.keys()),
     }
 
@@ -170,7 +156,7 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     name_label_width = ["150px"]
 
     # Dictionary to keep track of row widget references
-    value_widgets = {}
+    value_widgets: Dict[str, Any] = {}
 
     # ---------------------------------------------------------------
     # 6) display_table(change): Re-populate rows when user selects a template
@@ -271,11 +257,6 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
 
         result["values"] = updated_values
         requirements_result[0] = _requirements_from_table(result, variable_dict)
-
-        # Display a confirmation message
-        with message_output:
-            message_output.clear_output()
-            print("Requirements submitted successfully!")
 
         return requirements_result[0]
 
@@ -382,14 +363,14 @@ def interactive_table(loaded_equations, file_path="./custom_presets.json"):
     return requirements_result
 
 
-def _create_variable_dict(equation_response: EquationExtractionResponse) -> dict:
+def _create_variable_dict(equation_response: EquationProcessingResponse) -> dict:
     """
-    Creates a variable dictionary from an EquationExtractionResponse object
+    Creates a variable dictionary from an EquationProcessingResponse object
     for use with the interactive_table function.
 
     Parameters
     ----------
-    equation_response : EquationExtractionResponse
+    equation_response : EquationProcessingResponse
         The equation extraction response containing equations and their symbols
 
     Returns
@@ -406,9 +387,14 @@ def _create_variable_dict(equation_response: EquationExtractionResponse) -> dict
 
     # Iterate through all equations and their symbols
     for equation in equation_response.equations:
-        for symbol in equation.latex_symbols:
+
+        wolfram_symbols = equation.wolfram_symbols
+        latex_symbols = [equation.latex_symbols[i].key for i in range(len(equation.latex_symbols))]
+        names = [equation.latex_symbols[i].value for i in range(len(equation.latex_symbols))]
+
+        for symbol, name in zip(wolfram_symbols, names):
             # Only add if not already present (avoid duplicates)
-            if symbol.key not in variable_dict:
-                variable_dict[symbol.key] = {"name": symbol.value}
+            if symbol not in variable_dict:
+                variable_dict[symbol] = {"name": name}
 
     return variable_dict

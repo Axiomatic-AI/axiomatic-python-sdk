@@ -2,7 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .response_equation import ResponseEquation
+from .equation_processing import ResponseEquation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
