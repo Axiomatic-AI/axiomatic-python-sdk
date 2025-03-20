@@ -5,14 +5,10 @@ import requests # type: ignore
 import os
 import time
 import json
-from typing import Dict, List, Optional, Union
+from typing import Dict
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import ParseResponse, EquationExtractionResponse, EquationProcessingResponse
-from .axtract.axtract_report import create_report
-from .axtract.validation_results import display_full_results
-from .axtract.interactive_table import _create_variable_dict
-from .types.variable_requirement import VariableRequirement as ApiVariableRequirement
+from .types.parse_response import ParseResponse
 
 
 class Axiomatic(BaseClient):
@@ -23,71 +19,6 @@ class Axiomatic(BaseClient):
 
         self.document_helper = DocumentHelper(self)
         self.tools_helper = ToolsHelper(self)
-        self.axtract_helper = AxtractHelper(self)
-
-
-class AxtractHelper:
-    from .axtract.interactive_table import VariableRequirement
-
-    _ax_client: Axiomatic
-
-    def __init__(self, ax_client: Axiomatic):
-        self._ax_client = ax_client
-
-    def create_report(self, response: EquationExtractionResponse, path: str):
-        create_report(response, path)
-
-    def analyze_equations(
-        self,
-        file_path: Optional[str] = None,
-        url_path: Optional[str] = None,
-        parsed_paper: Optional[ParseResponse] = None,
-    ) -> Optional[EquationExtractionResponse]:        
-        if file_path:
-            with open(file_path, "rb") as pdf_file:
-                response = self._ax_client.document.equation.from_pdf(document=pdf_file)
-        
-        elif url_path:
-            if "arxiv" in url_path and "abs" in url_path:
-                url_path = url_path.replace("abs", "pdf")
-            url_file = requests.get(url_path)
-            from io import BytesIO
-            pdf_stream = BytesIO(url_file.content)
-            response = self._ax_client.document.equation.from_pdf(document=pdf_stream)
-        
-        elif parsed_paper:
-            response = EquationExtractionResponse.model_validate(
-                self._ax_client.document.equation.process(**parsed_paper.model_dump()).model_dump()
-            )
-        
-        else:
-            print("Please provide either a file path or a URL to analyze.")
-            return None
-        
-        return response
-
-    def validate_equations(
-        self,
-        requirements: List[VariableRequirement],
-        loaded_equations: EquationExtractionResponse,
-        show_hypergraph: bool = True,
-    ):
-        api_requirements = [
-            ApiVariableRequirement(
-                symbol=req.symbol, name=req.name, value=req.value, units=req.units, tolerance=req.tolerance
-            )
-            for req in requirements
-        ]
-
-        variable_dict = _create_variable_dict(loaded_equations)
-        api_response = self._ax_client.document.equation.validate(request=api_requirements)
-        display_full_results(api_response.model_dump(), variable_dict, show_hypergraph=show_hypergraph)
-
-    def set_numerical_requirements(self, extracted_equations):
-        from .axtract.interactive_table import interactive_table
-
-        result = interactive_table(extracted_equations)
-        return result
 
 
 class DocumentHelper:
