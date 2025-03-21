@@ -6,14 +6,14 @@ from ...core.request_options import RequestOptions
 from ...core.pydantic_utilities import parse_obj_as
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from ... import core
+from ...types.equation_extraction_response import EquationExtractionResponse
+from ...errors.unprocessable_entity_error import UnprocessableEntityError
+from ...types.http_validation_error import HttpValidationError
+from ...types.equation_processing_response import EquationProcessingResponse
 from ...types.variable_requirement import VariableRequirement
 from ...types.equation_validation_result import EquationValidationResult
 from ...core.serialization import convert_and_respect_annotation_metadata
-from ...errors.unprocessable_entity_error import UnprocessableEntityError
-from ...types.http_validation_error import HttpValidationError
-from ... import core
-from ...types.equation_extraction_response import EquationExtractionResponse
-from ...types.equation_processing_response import EquationProcessingResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -60,77 +60,6 @@ class EquationClient:
                         type_=typing.Dict[str, str],  # type: ignore
                         object_=_response.json(),
                     ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def validate(
-        self, *, request: typing.Sequence[VariableRequirement], request_options: typing.Optional[RequestOptions] = None
-    ) -> EquationValidationResult:
-        """
-        Validates a set of variables against stored equations to check for inconsistencies.
-        Returns validation results for each relevant equation.
-
-        Parameters
-        ----------
-        request : typing.Sequence[VariableRequirement]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        EquationValidationResult
-            Successful Response
-
-        Examples
-        --------
-        from axiomatic import Axiomatic, VariableRequirement
-
-        client = Axiomatic(
-            api_key="YOUR_API_KEY",
-        )
-        client.document.equation.validate(
-            request=[
-                VariableRequirement(
-                    symbol="symbol",
-                    name="name",
-                    value=1.1,
-                    units="units",
-                    tolerance=1.1,
-                )
-            ],
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "document/equation/validate",
-            method="POST",
-            json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=typing.Sequence[VariableRequirement], direction="write"
-            ),
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    EquationValidationResult,
-                    parse_obj_as(
-                        type_=EquationValidationResult,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
                 )
             _response_json = _response.json()
         except JSONDecodeError:
@@ -276,6 +205,121 @@ class EquationClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    def validate(
+        self,
+        *,
+        variables: typing.Sequence[VariableRequirement],
+        paper_equations: EquationProcessingResponse,
+        include_internal_model: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> EquationValidationResult:
+        """
+        Validates a set of variables against stored equations to check for inconsistencies.
+        Returns validation results for each relevant equation.
+
+        Parameters
+        ----------
+        variables : typing.Sequence[VariableRequirement]
+
+        paper_equations : EquationProcessingResponse
+
+        include_internal_model : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        EquationValidationResult
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import (
+            Axiomatic,
+            DictItem,
+            EquationProcessingResponse,
+            ResponseEquation,
+            VariableRequirement,
+        )
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.document.equation.validate(
+            variables=[
+                VariableRequirement(
+                    symbol="symbol",
+                    name="name",
+                    value=1.1,
+                    units="units",
+                    tolerance=1.1,
+                )
+            ],
+            paper_equations=EquationProcessingResponse(
+                equations=[
+                    ResponseEquation(
+                        name="name",
+                        description="description",
+                        original_format="original_format",
+                        wolfram_expressions="wolfram_expressions",
+                        latex_symbols=[
+                            DictItem(
+                                key="key",
+                                value="value",
+                            )
+                        ],
+                        wolfram_symbols=["wolfram_symbols"],
+                        narrative_assumptions=["narrative_assumptions"],
+                        type=["type"],
+                        field_tags=["field_tags"],
+                    )
+                ],
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "document/equation/validate",
+            method="POST",
+            json={
+                "variables": convert_and_respect_annotation_metadata(
+                    object_=variables, annotation=typing.Sequence[VariableRequirement], direction="write"
+                ),
+                "paper_equations": convert_and_respect_annotation_metadata(
+                    object_=paper_equations, annotation=EquationProcessingResponse, direction="write"
+                ),
+                "include_internal_model": include_internal_model,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    EquationValidationResult,
+                    parse_obj_as(
+                        type_=EquationValidationResult,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
 
 class AsyncEquationClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -325,85 +369,6 @@ class AsyncEquationClient:
                         type_=typing.Dict[str, str],  # type: ignore
                         object_=_response.json(),
                     ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def validate(
-        self, *, request: typing.Sequence[VariableRequirement], request_options: typing.Optional[RequestOptions] = None
-    ) -> EquationValidationResult:
-        """
-        Validates a set of variables against stored equations to check for inconsistencies.
-        Returns validation results for each relevant equation.
-
-        Parameters
-        ----------
-        request : typing.Sequence[VariableRequirement]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        EquationValidationResult
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from axiomatic import AsyncAxiomatic, VariableRequirement
-
-        client = AsyncAxiomatic(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.document.equation.validate(
-                request=[
-                    VariableRequirement(
-                        symbol="symbol",
-                        name="name",
-                        value=1.1,
-                        units="units",
-                        tolerance=1.1,
-                    )
-                ],
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "document/equation/validate",
-            method="POST",
-            json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=typing.Sequence[VariableRequirement], direction="write"
-            ),
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    EquationValidationResult,
-                    parse_obj_as(
-                        type_=EquationValidationResult,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        parse_obj_as(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
                 )
             _response_json = _response.json()
         except JSONDecodeError:
@@ -547,6 +512,129 @@ class AsyncEquationClient:
                     EquationProcessingResponse,
                     parse_obj_as(
                         type_=EquationProcessingResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def validate(
+        self,
+        *,
+        variables: typing.Sequence[VariableRequirement],
+        paper_equations: EquationProcessingResponse,
+        include_internal_model: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> EquationValidationResult:
+        """
+        Validates a set of variables against stored equations to check for inconsistencies.
+        Returns validation results for each relevant equation.
+
+        Parameters
+        ----------
+        variables : typing.Sequence[VariableRequirement]
+
+        paper_equations : EquationProcessingResponse
+
+        include_internal_model : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        EquationValidationResult
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import (
+            AsyncAxiomatic,
+            DictItem,
+            EquationProcessingResponse,
+            ResponseEquation,
+            VariableRequirement,
+        )
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.document.equation.validate(
+                variables=[
+                    VariableRequirement(
+                        symbol="symbol",
+                        name="name",
+                        value=1.1,
+                        units="units",
+                        tolerance=1.1,
+                    )
+                ],
+                paper_equations=EquationProcessingResponse(
+                    equations=[
+                        ResponseEquation(
+                            name="name",
+                            description="description",
+                            original_format="original_format",
+                            wolfram_expressions="wolfram_expressions",
+                            latex_symbols=[
+                                DictItem(
+                                    key="key",
+                                    value="value",
+                                )
+                            ],
+                            wolfram_symbols=["wolfram_symbols"],
+                            narrative_assumptions=["narrative_assumptions"],
+                            type=["type"],
+                            field_tags=["field_tags"],
+                        )
+                    ],
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "document/equation/validate",
+            method="POST",
+            json={
+                "variables": convert_and_respect_annotation_metadata(
+                    object_=variables, annotation=typing.Sequence[VariableRequirement], direction="write"
+                ),
+                "paper_equations": convert_and_respect_annotation_metadata(
+                    object_=paper_equations, annotation=EquationProcessingResponse, direction="write"
+                ),
+                "include_internal_model": include_internal_model,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    EquationValidationResult,
+                    parse_obj_as(
+                        type_=EquationValidationResult,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

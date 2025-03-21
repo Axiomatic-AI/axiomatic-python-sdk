@@ -186,6 +186,7 @@ class CircuitClient:
         netlist: Netlist,
         statements: StatementDictionary,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -198,6 +199,8 @@ class CircuitClient:
         statements : StatementDictionary
 
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -232,6 +235,7 @@ class CircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -971,7 +975,7 @@ class CircuitClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "pic/circuit/optimizable-parameters/get",
+            "pic/circuit/optimizable-parameters",
             method="POST",
             json={
                 "netlist": convert_and_respect_annotation_metadata(
@@ -1177,6 +1181,7 @@ class AsyncCircuitClient:
         netlist: Netlist,
         statements: StatementDictionary,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
+        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -1189,6 +1194,8 @@ class AsyncCircuitClient:
         statements : StatementDictionary
 
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
+
+        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1231,6 +1238,7 @@ class AsyncCircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
+                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -2042,7 +2050,7 @@ class AsyncCircuitClient:
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "pic/circuit/optimizable-parameters/get",
+            "pic/circuit/optimizable-parameters",
             method="POST",
             json={
                 "netlist": convert_and_respect_annotation_metadata(
