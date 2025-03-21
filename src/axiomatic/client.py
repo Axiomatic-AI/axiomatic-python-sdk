@@ -1,7 +1,7 @@
 import base64
 import dill  # type: ignore
 import json
-import requests # type: ignore
+import requests  # type: ignore
 import os
 import time
 from typing import Dict, Optional, Sequence
@@ -22,6 +22,7 @@ class Axiomatic(BaseClient):
 
         self.document_helper = DocumentHelper(self)
         self.tools_helper = ToolsHelper(self)
+        self.axtract_helper = AxtractHelper(self)
 
 
 class DocumentHelper:
@@ -115,6 +116,7 @@ class DocumentHelper:
             inline_equations=inline_equations,
         )
 
+
 class AxtractHelper:
     _ax_client: Axiomatic
 
@@ -160,10 +162,10 @@ class AxtractHelper:
         Examples:
             # From local file
             client.analyze_equations(file_path="path/to/paper.pdf")
-            
+
             # From URL
             client.analyze_equations(url_path="https://arxiv.org/pdf/2203.00001.pdf")
-            
+
             # From parsed paper
             client.analyze_equations(parsed_paper=parsed_data)
         """
@@ -172,34 +174,35 @@ class AxtractHelper:
                 parsed_document = self._ax_client.document.parse(file=pdf_file)
                 print("We are almost there")
                 response = self._ax_client.document.equation.process(
-                    markdown=parsed_document.markdown, 
+                    markdown=parsed_document.markdown,
                     interline_equations=parsed_document.interline_equations,
-                    inline_equations=parsed_document.inline_equations
-                    )
-        
+                    inline_equations=parsed_document.inline_equations,
+                )
+
         elif url_path:
             if "arxiv" in url_path and "abs" in url_path:
                 url_path = url_path.replace("abs", "pdf")
             url_file = requests.get(url_path)
             from io import BytesIO
+
             pdf_stream = BytesIO(url_file.content)
             parsed_document = self._ax_client.document.parse(file=url_file.content)
             print("We are almost there")
             response = self._ax_client.document.equation.process(
-                markdown=parsed_document.markdown, 
+                markdown=parsed_document.markdown,
                 interline_equations=parsed_document.interline_equations,
-                inline_equations=parsed_document.inline_equations
-                )
-        
+                inline_equations=parsed_document.inline_equations,
+            )
+
         elif parsed_paper:
             response = EquationProcessingResponse.model_validate(
                 self._ax_client.document.equation.process(**parsed_paper.model_dump()).model_dump()
             )
-        
+
         else:
             print("Please provide either a file path or a URL to analyze.")
             return None
-        
+
         return response
 
     def validate_equations(
@@ -220,19 +223,15 @@ class AxtractHelper:
             EquationValidationResult containing the validation results
         """
         # equations_dict = loaded_equations.model_dump() if hasattr(loaded_equations, 'model_dump') else loaded_equations.dict()
-        
+
         api_response = self._ax_client.document.equation.validate(
-            variables=requirements, 
-            paper_equations=loaded_equations,
-            include_internal_model=include_internal_model
-            )
-        
+            variables=requirements, paper_equations=loaded_equations, include_internal_model=include_internal_model
+        )
+
         return api_response
-    
 
     def display_full_results(self, api_response: EquationValidationResult, user_choice):
         display_full_results(api_response, user_choice)
-    
 
     def set_numerical_requirements(self, extracted_equations: EquationProcessingResponse):
         """Launch an interactive interface for setting numerical requirements for equations.
@@ -289,13 +288,13 @@ class ToolsHelper:
                             print(f"status: {result.status}")
                         if result.status == "SUCCEEDED":
                             output = json.loads(result.output or "{}")
-                            if not output['objects']:
+                            if not output["objects"]:
                                 return result.output
                             else:
                                 return {
                                     "job_id": job_id,
-                                    "messages": output['messages'],
-                                    "objects": self._load_objects_from_base64(output['objects'])
+                                    "messages": output["messages"],
+                                    "objects": self._load_objects_from_base64(output["objects"]),
                                 }
                         else:
                             return result.error_trace
@@ -306,10 +305,10 @@ class ToolsHelper:
         result = self._ax_client.tools.status(job_id=job_id)
         if result.status == "SUCCEEDED":
             output = json.loads(result.output or "{}")
-            if not output['objects']:
+            if not output["objects"]:
                 return result.output
             else:
-                return self._load_objects_from_base64(output['objects'])[obj_key]
+                return self._load_objects_from_base64(output["objects"])[obj_key]
         else:
             return result.error_trace
 
