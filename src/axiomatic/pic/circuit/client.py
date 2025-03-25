@@ -29,6 +29,7 @@ from ...types.verify_circuit_code_response import VerifyCircuitCodeResponse
 from .types.settings import Settings
 from ...types.get_spectrum_response import GetSpectrumResponse
 from ...types.get_optimizable_parameters_response import GetOptimizableParametersResponse
+from ...types.update_code_response import UpdateCodeResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -186,7 +187,6 @@ class CircuitClient:
         netlist: Netlist,
         statements: StatementDictionary,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
-        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -199,8 +199,6 @@ class CircuitClient:
         statements : StatementDictionary
 
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
-
-        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -235,7 +233,6 @@ class CircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
-                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -620,7 +617,6 @@ class CircuitClient:
         parameters: typing.Optional[typing.Sequence[Parameter]] = OMIT,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
-        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -637,8 +633,6 @@ class CircuitClient:
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         config : typing.Optional[OptimizeConfig]
-
-        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -679,7 +673,6 @@ class CircuitClient:
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
-                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -855,7 +848,6 @@ class CircuitClient:
         port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
         settings: Settings,
         wls: typing.Sequence[float],
-        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -870,8 +862,6 @@ class CircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
-
-        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -907,7 +897,6 @@ class CircuitClient:
                     object_=settings, annotation=Settings, direction="write"
                 ),
                 "wls": wls,
-                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -995,6 +984,77 @@ class CircuitClient:
                     GetOptimizableParametersResponse,
                     parse_obj_as(
                         type_=GetOptimizableParametersResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update_code(
+        self, *, code: str, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateCodeResponse:
+        """
+        Update GDS code to match the netlist
+
+        Parameters
+        ----------
+        code : str
+
+        netlist : Netlist
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, Netlist
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.pic.circuit.update_code(
+            code="code",
+            netlist=Netlist(),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "pic/circuit/code/update",
+            method="POST",
+            json={
+                "code": code,
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    UpdateCodeResponse,
+                    parse_obj_as(
+                        type_=UpdateCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1181,7 +1241,6 @@ class AsyncCircuitClient:
         netlist: Netlist,
         statements: StatementDictionary,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
-        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ValidateNetlistResponse:
         """
@@ -1194,8 +1253,6 @@ class AsyncCircuitClient:
         statements : StatementDictionary
 
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
-
-        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1238,7 +1295,6 @@ class AsyncCircuitClient:
                 "mapping": convert_and_respect_annotation_metadata(
                     object_=mapping, annotation=typing.Dict[str, typing.Optional[Computation]], direction="write"
                 ),
-                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -1655,7 +1711,6 @@ class AsyncCircuitClient:
         parameters: typing.Optional[typing.Sequence[Parameter]] = OMIT,
         mapping: typing.Optional[typing.Dict[str, typing.Optional[Computation]]] = OMIT,
         config: typing.Optional[OptimizeConfig] = OMIT,
-        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OptimizeNetlistResponse:
         """
@@ -1672,8 +1727,6 @@ class AsyncCircuitClient:
         mapping : typing.Optional[typing.Dict[str, typing.Optional[Computation]]]
 
         config : typing.Optional[OptimizeConfig]
-
-        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1722,7 +1775,6 @@ class AsyncCircuitClient:
                 "config": convert_and_respect_annotation_metadata(
                     object_=config, annotation=OptimizeConfig, direction="write"
                 ),
-                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -1914,7 +1966,6 @@ class AsyncCircuitClient:
         port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
         settings: Settings,
         wls: typing.Sequence[float],
-        use_ideal_component_models: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -1929,8 +1980,6 @@ class AsyncCircuitClient:
         settings : Settings
 
         wls : typing.Sequence[float]
-
-        use_ideal_component_models : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1974,7 +2023,6 @@ class AsyncCircuitClient:
                     object_=settings, annotation=Settings, direction="write"
                 ),
                 "wls": wls,
-                "use_ideal_component_models": use_ideal_component_models,
             },
             headers={
                 "content-type": "application/json",
@@ -2070,6 +2118,85 @@ class AsyncCircuitClient:
                     GetOptimizableParametersResponse,
                     parse_obj_as(
                         type_=GetOptimizableParametersResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update_code(
+        self, *, code: str, netlist: Netlist, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateCodeResponse:
+        """
+        Update GDS code to match the netlist
+
+        Parameters
+        ----------
+        code : str
+
+        netlist : Netlist
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateCodeResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic, Netlist
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.pic.circuit.update_code(
+                code="code",
+                netlist=Netlist(),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "pic/circuit/code/update",
+            method="POST",
+            json={
+                "code": code,
+                "netlist": convert_and_respect_annotation_metadata(
+                    object_=netlist, annotation=Netlist, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    UpdateCodeResponse,
+                    parse_obj_as(
+                        type_=UpdateCodeResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

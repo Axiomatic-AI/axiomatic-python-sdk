@@ -2013,14 +2013,6 @@ client.pic.circuit.validate(
 <dl>
 <dd>
 
-**use_ideal_component_models:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2533,14 +2525,6 @@ client.pic.circuit.optimize(
 <dl>
 <dd>
 
-**use_ideal_component_models:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2786,14 +2770,6 @@ client.pic.circuit.get_sax_spectrum(
 <dl>
 <dd>
 
-**use_ideal_component_models:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2865,6 +2841,85 @@ client.pic.circuit.get_optimizable_parameters(
 <dd>
 
 **get_key_parameters:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pic.circuit.<a href="src/axiomatic/pic/circuit/client.py">update_code</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update GDS code to match the netlist
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, Netlist
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.pic.circuit.update_code(
+    code="code",
+    netlist=Netlist(),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**code:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**netlist:** `Netlist` 
     
 </dd>
 </dl>

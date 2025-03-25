@@ -8,6 +8,8 @@ from .net import Net
 from .placement import Placement
 from .bundle import Bundle
 from .pic_warning import PicWarning
+from .layout_info import LayoutInfo
+from .netlist_output_extra_pdk_settings_value import NetlistOutputExtraPdkSettingsValue
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -25,6 +27,9 @@ class Netlist(UniversalBaseModel):
     placements: typing.Optional[typing.Dict[str, Placement]] = None
     routes: typing.Optional[typing.Dict[str, Bundle]] = None
     warnings: typing.Optional[typing.List[PicWarning]] = None
+    layout_info: typing.Optional[LayoutInfo] = None
+    extra_pdk_settings: typing.Optional[typing.Dict[str, typing.Optional[NetlistOutputExtraPdkSettingsValue]]] = None
+    use_ideal_component_models: typing.Optional[bool] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
