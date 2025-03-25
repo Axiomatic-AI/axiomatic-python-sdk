@@ -223,7 +223,7 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
             plt.plot([parameter_history[i][split_param[0]][split_param[1]] for i in range(len(parameter_history))])
         else:
             plt.plot([parameter_history[i][param.path] for i in range(len(parameter_history))])
-        plt.show()
+    return plt.gcf()
 
 
 def print_statements(
