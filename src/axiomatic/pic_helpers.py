@@ -197,7 +197,9 @@ def plot_interactive_spectra(
     fig.show()
 
 
-def plot_parameter_history(parameters: List[Parameter], parameter_history: List[dict]):
+def plot_parameter_history(
+    parameters: List[Parameter], parameter_history: List[dict], foundry_precision: Optional[float] = None
+):
     """
     Plots the history of specified parameters over iterations.
     Args:
@@ -218,11 +220,22 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
         plt.xlabel("Iterations")
         plt.ylabel(param.path)
         split_param = param.path.split(",")
+        param_vals = None
         if "," in param.path:
             split_param = param.path.split(",")
-            plt.plot([parameter_history[i][split_param[0]][split_param[1]] for i in range(len(parameter_history))])
+            param_vals = [parameter_history[i][split_param[0]][split_param[1]] for i in range(len(parameter_history))]
+            if foundry_precision is not None:
+                lower_bound = [val - foundry_precision for val in param_vals]
+                upper_bound = [val + foundry_precision for val in param_vals]
+                plt.plot(range(len(parameter_history)), param_vals)
+                plt.fill_between(range(len(parameter_history)), lower_bound, upper_bound, color="b", alpha=0.1)
+
+        # Parameters not linked to a component will not be a physical parameter linked to a measurement
+        # and will not have a foundry precision
         else:
-            plt.plot([parameter_history[i][param.path] for i in range(len(parameter_history))])
+            param_vals = [parameter_history[i][param.path] for i in range(len(parameter_history))]
+        plt.plot(range(len(parameter_history)), param_vals, color="b")
+
         plt.show()
 
 
@@ -331,7 +344,7 @@ def print_statements(
             if val.holds is not None:
                 holds_tag = "holds" if val.holds else "not-hold"
             else:
-                holds_tag = ''
+                holds_tag = ""
             html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>{param_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label">Statement:</span> {param_stmt.text}</p>')
@@ -362,11 +375,11 @@ def print_statements(
         ):
             if struct_stmt.formalization is None and only_formalized:
                 continue
-            
+
             if val.holds is not None:
                 holds_tag = "holds" if struct_val.holds else "not-hold"
             else:
-                holds_tag = ''
+                holds_tag = ""
             html_parts.append(f'<div class="block {holds_tag}">')
             html_parts.append(f"<h2>{struct_stmt.type}</h2>")
             html_parts.append(f'<p><span class="label ">Statement:</span> {struct_stmt.text}</p>')
@@ -404,7 +417,7 @@ def print_statements(
         final_html = "\n".join(html_parts)
 
         # Display the HTML string
-        from IPython.display import display, HTML  # type: ignore
+        from IPython.display import HTML, display  # type: ignore
 
         display(HTML(final_html))
     else:
