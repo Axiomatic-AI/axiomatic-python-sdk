@@ -211,19 +211,31 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
     Returns:
         None: This function displays the plots and does not return any value.
     """
+    plt.clf()
 
-    for param in parameters:
-        plt.figure(figsize=(10, 5))
-        plt.title(f"Parameter {param.path} vs. Iterations")
-        plt.xlabel("Iterations")
-        plt.ylabel(param.path)
+    fig, axs = plt.subplots(len(parameters), 1, figsize=(10, 5 * len(parameters)), sharex=True)
+    fig.suptitle("Parameter History vs. Iterations")
+    fig.supxlabel("Iterations")
+    fig.supylabel("Parameter Values")
+
+    for i, param in enumerate(parameters):
         split_param = param.path.split(",")
         if "," in param.path:
-            split_param = param.path.split(",")
-            plt.plot([parameter_history[i][split_param[0]][split_param[1]] for i in range(len(parameter_history))])
+            axs[i].plot(
+                [parameter_history[j][split_param[0]][split_param[1]] for j in range(len(parameter_history))],
+                label=param.path
+            )
         else:
-            plt.plot([parameter_history[i][param.path] for i in range(len(parameter_history))])
-    return plt.gcf()
+            axs[i].plot(
+                [parameter_history[j][param.path] for j in range(len(parameter_history))],
+                label=param.path
+            )
+        axs[i].legend()
+        axs[i].grid(True)
+
+    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.close(fig)
+    return fig
 
 
 def print_statements(
