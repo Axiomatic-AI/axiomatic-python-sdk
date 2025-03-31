@@ -194,7 +194,7 @@ def plot_interactive_spectra(
         yaxis=dict(range=[y_min, y_max]),
     )
 
-    fig.show()
+    return fig
 
 
 def plot_parameter_history(parameters: List[Parameter], parameter_history: List[dict]):
