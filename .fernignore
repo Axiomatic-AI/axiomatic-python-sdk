@@ -5,3 +5,4 @@ src/axiomatic/document_helpers.py
 src/axiomatic/magic.py
 src/axiomatic/pic_helpers.py
 src/axiomatic/axtract/
+.github/workflows/ci.yml
