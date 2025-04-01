@@ -209,18 +209,23 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
                                   are dictionaries where keys correspond to the
                                   second part of the parameter path.
     Returns:
-        None: This function displays the plots and does not return any value.
+        fig: The figure object containing the plots.
     """
     plt.clf()
-
+    
+    # Create figure and axes
     fig, axs = plt.subplots(len(parameters), 1, figsize=(10, 5 * len(parameters)), sharex=True)
     fig.suptitle("Parameter History vs. Iterations")
     fig.supxlabel("Iterations")
     fig.supylabel("Parameter Values")
-
+    
+    # Handle the case where there's only one parameter (axs becomes a single Axes object instead of a list)
+    if len(parameters) == 1:
+        axs = [axs]
+    
     for i, param in enumerate(parameters):
-        split_param = param.path.split(",")
         if "," in param.path:
+            split_param = param.path.split(",")
             axs[i].plot(
                 [parameter_history[j][split_param[0]][split_param[1]] for j in range(len(parameter_history))],
                 label=param.path
@@ -232,7 +237,7 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
             )
         axs[i].legend()
         axs[i].grid(True)
-
+    
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     plt.close(fig)
     return fig
