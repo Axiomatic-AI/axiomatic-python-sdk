@@ -41,7 +41,7 @@ class Z3Client:
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
-        client.lean.z_3.execute(
+        client.lean.z3.execute(
             code="code",
         )
         """
@@ -114,7 +114,7 @@ class AsyncZ3Client:
 
 
         async def main() -> None:
-            await client.lean.z_3.execute(
+            await client.lean.z3.execute(
                 code="code",
             )
 

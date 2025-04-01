@@ -1643,7 +1643,7 @@ client.fso.lens.generate(
 </details>
 
 ## Lean Z3
-<details><summary><code>client.lean.z_3.<a href="src/axiomatic/lean/z_3/client.py">execute</a>(...)</code></summary>
+<details><summary><code>client.lean.z3.<a href="src/axiomatic/lean/z3/client.py">execute</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1661,7 +1661,7 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.lean.z_3.execute(
+client.lean.z3.execute(
     code="code",
 )
 
@@ -2296,6 +2296,14 @@ client.pic.circuit.generate(
 <dl>
 <dd>
 
+**return_cell:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2415,6 +2423,14 @@ client.pic.circuit.refine(
 <dd>
 
 **apply_routing:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**return_cell:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -2719,8 +2735,6 @@ client = Axiomatic(
 )
 client.pic.circuit.get_sax_spectrum(
     netlist=Netlist(),
-    port_pairs=[[]],
-    settings={"key": "value"},
     wls=[1.1],
 )
 
@@ -2746,23 +2760,23 @@ client.pic.circuit.get_sax_spectrum(
 <dl>
 <dd>
 
-**port_pairs:** `typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**settings:** `Settings` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **wls:** `typing.Sequence[float]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port_pairs:** `typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**settings:** `typing.Optional[Settings]` 
     
 </dd>
 </dl>

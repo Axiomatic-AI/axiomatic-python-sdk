@@ -6,7 +6,7 @@ from .bundle_settings_value import BundleSettingsValue
 from .component_instance_layout_info import ComponentInstanceLayoutInfo
 from .computation import Computation
 from .computation_arguments_value import ComputationArgumentsValue
-from .contour_cv_2 import ContourCv2
+from .contour_cv2 import ContourCv2
 from .cost_function import CostFunction
 from .create_api_key_response import CreateApiKeyResponse
 from .create_api_keyrequest import CreateApiKeyrequest
@@ -86,7 +86,7 @@ from .validation_error_loc_item import ValidationErrorLocItem
 from .variable_requirement import VariableRequirement
 from .verify_circuit_code_response import VerifyCircuitCodeResponse
 from .verify_response import VerifyResponse
-from .z_3_expression import Z3Expression
+from .z3expression import Z3Expression
 
 __all__ = [
     "AxesInfo",

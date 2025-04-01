@@ -2,7 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
-from .z_3.client import Z3Client
+from .z3.client import Z3Client
 from ..core.request_options import RequestOptions
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
@@ -10,7 +10,7 @@ from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper
-from .z_3.client import AsyncZ3Client
+from .z3.client import AsyncZ3Client
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -19,7 +19,7 @@ OMIT = typing.cast(typing.Any, ...)
 class LeanClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
-        self.z_3 = Z3Client(client_wrapper=self._client_wrapper)
+        self.z3 = Z3Client(client_wrapper=self._client_wrapper)
 
     def execute(
         self, *, code: str, request_options: typing.Optional[RequestOptions] = None
@@ -155,7 +155,7 @@ class LeanClient:
 class AsyncLeanClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
-        self.z_3 = AsyncZ3Client(client_wrapper=self._client_wrapper)
+        self.z3 = AsyncZ3Client(client_wrapper=self._client_wrapper)
 
     async def execute(
         self, *, code: str, request_options: typing.Optional[RequestOptions] = None

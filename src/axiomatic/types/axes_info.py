@@ -2,7 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .contour_cv_2 import ContourCv2
+from .contour_cv2 import ContourCv2
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 

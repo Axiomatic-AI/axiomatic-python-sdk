@@ -434,6 +434,7 @@ class CircuitClient:
         apply_orientation: typing.Optional[bool] = OMIT,
         apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
+        return_cell: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -452,6 +453,8 @@ class CircuitClient:
         apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
+
+        return_cell : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -482,6 +485,7 @@ class CircuitClient:
                 "apply_orientation": apply_orientation,
                 "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
+                "return_cell": return_cell,
             },
             headers={
                 "content-type": "application/json",
@@ -524,6 +528,7 @@ class CircuitClient:
         apply_orientation: typing.Optional[bool] = OMIT,
         apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
+        return_cell: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RefineCodeResponse:
         """
@@ -546,6 +551,8 @@ class CircuitClient:
         apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
+
+        return_cell : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -578,6 +585,7 @@ class CircuitClient:
                 "apply_orientation": apply_orientation,
                 "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
+                "return_cell": return_cell,
             },
             headers={
                 "content-type": "application/json",
@@ -845,9 +853,9 @@ class CircuitClient:
         self,
         *,
         netlist: Netlist,
-        port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
-        settings: Settings,
         wls: typing.Sequence[float],
+        port_pairs: typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]] = OMIT,
+        settings: typing.Optional[Settings] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -857,11 +865,11 @@ class CircuitClient:
         ----------
         netlist : Netlist
 
-        port_pairs : typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]
-
-        settings : Settings
-
         wls : typing.Sequence[float]
+
+        port_pairs : typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]]
+
+        settings : typing.Optional[Settings]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -880,8 +888,6 @@ class CircuitClient:
         )
         client.pic.circuit.get_sax_spectrum(
             netlist=Netlist(),
-            port_pairs=[[]],
-            settings={"key": "value"},
             wls=[1.1],
         )
         """
@@ -892,11 +898,11 @@ class CircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "wls": wls,
                 "port_pairs": port_pairs,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),
-                "wls": wls,
             },
             headers={
                 "content-type": "application/json",
@@ -1512,6 +1518,7 @@ class AsyncCircuitClient:
         apply_orientation: typing.Optional[bool] = OMIT,
         apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
+        return_cell: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GenerateCodeResponse:
         """
@@ -1530,6 +1537,8 @@ class AsyncCircuitClient:
         apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
+
+        return_cell : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1568,6 +1577,7 @@ class AsyncCircuitClient:
                 "apply_orientation": apply_orientation,
                 "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
+                "return_cell": return_cell,
             },
             headers={
                 "content-type": "application/json",
@@ -1610,6 +1620,7 @@ class AsyncCircuitClient:
         apply_orientation: typing.Optional[bool] = OMIT,
         apply_placement: typing.Optional[bool] = OMIT,
         apply_routing: typing.Optional[bool] = OMIT,
+        return_cell: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RefineCodeResponse:
         """
@@ -1632,6 +1643,8 @@ class AsyncCircuitClient:
         apply_placement : typing.Optional[bool]
 
         apply_routing : typing.Optional[bool]
+
+        return_cell : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1672,6 +1685,7 @@ class AsyncCircuitClient:
                 "apply_orientation": apply_orientation,
                 "apply_placement": apply_placement,
                 "apply_routing": apply_routing,
+                "return_cell": return_cell,
             },
             headers={
                 "content-type": "application/json",
@@ -1963,9 +1977,9 @@ class AsyncCircuitClient:
         self,
         *,
         netlist: Netlist,
-        port_pairs: typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]],
-        settings: Settings,
         wls: typing.Sequence[float],
+        port_pairs: typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]] = OMIT,
+        settings: typing.Optional[Settings] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetSpectrumResponse:
         """
@@ -1975,11 +1989,11 @@ class AsyncCircuitClient:
         ----------
         netlist : Netlist
 
-        port_pairs : typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]
-
-        settings : Settings
-
         wls : typing.Sequence[float]
+
+        port_pairs : typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]]
+
+        settings : typing.Optional[Settings]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2003,8 +2017,6 @@ class AsyncCircuitClient:
         async def main() -> None:
             await client.pic.circuit.get_sax_spectrum(
                 netlist=Netlist(),
-                port_pairs=[[]],
-                settings={"key": "value"},
                 wls=[1.1],
             )
 
@@ -2018,11 +2030,11 @@ class AsyncCircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
+                "wls": wls,
                 "port_pairs": port_pairs,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
                 ),
-                "wls": wls,
             },
             headers={
                 "content-type": "application/json",

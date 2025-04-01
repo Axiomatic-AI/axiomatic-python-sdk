@@ -4,7 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .statement_type import StatementType
 import pydantic
-from .z_3_expression import Z3Expression
+from .z3expression import Z3Expression
 from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
