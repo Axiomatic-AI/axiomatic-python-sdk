@@ -31,21 +31,40 @@ class DocumentHelper:
     def __init__(self, ax_client: Axiomatic):
         self._ax_client = ax_client
 
-    def pdf_from_url(self, url: str) -> ParseResponse:
-        """Download a PDF document from a URL and parse it into a Markdown response."""
-        if "arxiv" in url and "abs" in url:
-            url = url.replace("abs", "pdf")
-            print("The URL is an arXiv abstract page. Replacing 'abs' with 'pdf' to download the PDF.")
-        file = requests.get(url)
-        response = self._ax_client.document.parse(file=file.content)
-        return response
-
-    def pdf_from_file(self, path: str) -> ParseResponse:
+    def pdf_from_file(self, path: str):
         """Open a PDF document from a file path and parse it into a Markdown response."""
         with open(path, "rb") as f:
-            file = f.read()
-        response = self._ax_client.document.parse(file=file)
+            file_bytes = f.read()
+        
+        # Create a tuple with (filename, content and content-type)
+        # we do this because .parse expects a FastAPI Uploadfile
+        file_name = path.split("/")[-1]
+        file_tuple = (file_name, file_bytes, "application/pdf")
+        
+        response = self._ax_client.document.parse(file=file_tuple)
         return response
+
+    def pdf_from_url(self, url: str):
+        """Download a PDF document from a URL and parse it into a Markdown response."""
+        if "arxiv.org" in url and "abs" in url:
+            url = url.replace("abs", "pdf")
+            print("The URL is an arXiv abstract page. Replacing 'abs' with 'pdf' to download the PDF.")
+        response = requests.get(url)
+        
+        if response.status_code != 200:
+            raise Exception(f"Failed to download PDF. Status code: {response.status_code}")
+        
+        # Extract filename from URL or use a default
+        file_name = url.split("/")[-1]
+        if not file_name.endswith(".pdf"):
+            file_name = "document.pdf"
+        
+        # Create a tuple with (filename, content and content-type)
+        # we do this because .parse expects a FastAPI Uploadfile
+        file_tuple = (file_name, response.content, "application/pdf")
+        
+        parse_response = self._ax_client.document.parse(file=file_tuple)
+        return parse_response
 
     def plot_b64_images(self, images: Dict[str, str]):
         """Plot a dictionary of base64 images."""
