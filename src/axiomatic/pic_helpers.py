@@ -332,7 +332,7 @@ def print_statements(
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 html_parts.append(f"<code>{code}</code>")
                 html_parts.append("</p>")
-            val = cost_stmt.validation or cost_val
+            val = cost_val or cost_stmt.validation
             if val.satisfiable is not None and val.message is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
                 html_parts.append(f'<p><span class="label">Reason:</span> {val.message}</p>')
@@ -344,7 +344,7 @@ def print_statements(
         ):
             if (param_stmt.formalization is None or param_stmt.formalization.mapping is None) and only_formalized:
                 continue
-            val = param_stmt.validation or param_val
+            val = param_val or param_stmt.validation
             if val.holds is not None:
                 holds_tag = "holds" if val.holds else "not-hold"
             else:
@@ -371,38 +371,6 @@ def print_statements(
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
                 html_parts.append(f'<p><span class="label">Holds:</span> {val.holds}</p>')
                 html_parts.append(f'<p><span class="label">Reason:</span> {val.message}</p>')
-            html_parts.append("</div>")
-
-        # Structure Constraints Rendering
-        for struct_stmt, struct_val in zip(
-            statements.structure_constraints or [], validation.structure_constraints or []
-        ):
-            if struct_stmt.formalization is None and only_formalized:
-                continue
-            
-            if val.holds is not None:
-                holds_tag = "holds" if struct_val.holds else "not-hold"
-            else:
-                holds_tag = ''
-            html_parts.append(f'<div class="block {holds_tag}">')
-            html_parts.append(f"<h2>{struct_stmt.type}</h2>")
-            html_parts.append(f'<p><span class="label ">Statement:</span> {struct_stmt.text}</p>')
-            if struct_stmt.formalization is None:
-                html_parts.append("UNFORMALIZED")
-            else:
-                html_parts.append('<p><span class="label">Formalization:</span> ')
-                func_constr = struct_stmt.formalization
-                args_str = ", ".join(
-                    f"{argname}=" + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
-                    for argname, argvalue in func_constr.arguments.items()
-                )
-                func_str = f"{func_constr.function_name}({args_str}) == {func_constr.expected_result}"
-                html_parts.append(f"<code>{func_str}</code>")
-                html_parts.append("</p>")
-            val = struct_stmt.validation or struct_val
-            if val.satisfiable is not None and val.holds is not None:
-                html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
-                html_parts.append(f'<p><span class="label">Holds:</span> {val.holds}</p>')
             html_parts.append("</div>")
 
         # Unformalizable Statements Rendering (if applicable)
@@ -447,7 +415,7 @@ def print_statements(
                             )
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 print(code)
-            val = cost_stmt.validation or cost_val
+            val = cost_val or cost_stmt.validation
             if val.satisfiable is not None and val.message is not None:
                 print(f"Satisfiable: {val.satisfiable}")
                 print(val.message)
@@ -475,35 +443,10 @@ def print_statements(
                             )
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 print(code)
-            val = param_stmt.validation or param_val
+            val = param_val or param_stmt.validation
             if val.satisfiable is not None and val.message is not None and val.holds is not None:
                 print(f"Satisfiable: {val.satisfiable}")
                 print(f"Holds: {val.holds} ({val.message})")
-            print("\n-----------------------------------\n")
-        for struct_stmt, struct_val in zip(
-            statements.structure_constraints or [], validation.structure_constraints or []
-        ):
-            if struct_stmt.formalization is None and only_formalized:
-                continue
-            print("Type:", struct_stmt.type)
-            print("Statement:", struct_stmt.text)
-            print("Formalization:", end=" ")
-            if struct_stmt.formalization is None:
-                print("UNFORMALIZED")
-            else:
-                func_constr = struct_stmt.formalization
-                args_str = ", ".join(
-                    [
-                        f"{argname}=" + (f"'{argvalue}'" if isinstance(argvalue, str) else str(argvalue))
-                        for argname, argvalue in func_constr.arguments.items()
-                    ]
-                )
-                func_str = f"{func_constr.function_name}({args_str}) == {func_constr.expected_result}"
-                print(func_str)
-            val = struct_stmt.validation or struct_val
-            if val.satisfiable is not None and val.holds is not None:
-                print(f"Satisfiable: {val.satisfiable}")
-                print(f"Holds: {val.holds}")
             print("\n-----------------------------------\n")
         if not only_formalized:
             for unf_stmt in statements.unformalizable_statements or []:
