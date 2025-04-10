@@ -333,7 +333,7 @@ def print_statements(
                 html_parts.append(f"<code>{code}</code>")
                 html_parts.append("</p>")
             val = cost_val or cost_stmt.validation
-            if val.satisfiable is not None and val.message is not None:
+            if val and val.satisfiable is not None and val.message is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
                 html_parts.append(f'<p><span class="label">Reason:</span> {val.message}</p>')
             html_parts.append("</div>")
@@ -345,7 +345,7 @@ def print_statements(
             if (param_stmt.formalization is None or param_stmt.formalization.mapping is None) and only_formalized:
                 continue
             val = param_val or param_stmt.validation
-            if val.holds is not None:
+            if val and val.holds is not None:
                 holds_tag = "holds" if val.holds else "not-hold"
             else:
                 holds_tag = ''
@@ -367,7 +367,7 @@ def print_statements(
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 html_parts.append(f"<code>{code}</code>")
                 html_parts.append("</p>")
-            if val.satisfiable is not None and val.message is not None and val.holds is not None:
+            if val and val.satisfiable is not None and val.message is not None and val.holds is not None:
                 html_parts.append(f'<p><span class="label">Satisfiable:</span> {val.satisfiable}</p>')
                 html_parts.append(f'<p><span class="label">Holds:</span> {val.holds}</p>')
                 html_parts.append(f'<p><span class="label">Reason:</span> {val.message}</p>')
@@ -416,7 +416,7 @@ def print_statements(
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 print(code)
             val = cost_val or cost_stmt.validation
-            if val.satisfiable is not None and val.message is not None:
+            if val and val.satisfiable is not None and val.message is not None:
                 print(f"Satisfiable: {val.satisfiable}")
                 print(val.message)
             print("\n-----------------------------------\n")
@@ -444,7 +444,7 @@ def print_statements(
                             code = code.replace(var_name, f"{computation.name}({args_str})")
                 print(code)
             val = param_val or param_stmt.validation
-            if val.satisfiable is not None and val.message is not None and val.holds is not None:
+            if val and val.satisfiable is not None and val.message is not None and val.holds is not None:
                 print(f"Satisfiable: {val.satisfiable}")
                 print(f"Holds: {val.holds} ({val.message})")
             print("\n-----------------------------------\n")
