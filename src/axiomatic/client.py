@@ -7,11 +7,12 @@ import time
 from typing import Dict, Optional, Sequence
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import ParseResponse, EquationProcessingResponse
 from .axtract.axtract_report import create_report
 from .axtract.validation_results import display_full_results
-from .types.variable_requirement import VariableRequirement
-from .types.equation_validation_result import EquationValidationResult
+from .types.parse_response import ParseResponse
+from .types.expression_processing_response import ExpressionProcessingResponse
+from .types.validation_requirement import ValidationRequirement
+from .types.expression_validation_result import ExpressionValidationResult
 
 
 class Axiomatic(BaseClient):
@@ -147,7 +148,7 @@ class AxtractHelper:
         """
         self._ax_client = ax_client
 
-    def create_report(self, response: EquationProcessingResponse, path: str):
+    def create_report(self, response: ExpressionProcessingResponse, path: str):
         """Create a report from equation extraction results.
 
         Args:
@@ -161,7 +162,7 @@ class AxtractHelper:
         file_path: Optional[str] = None,
         url_path: Optional[str] = None,
         parsed_paper: Optional[ParseResponse] = None,
-    ) -> Optional[EquationProcessingResponse]:
+    ) -> Optional[ExpressionProcessingResponse]:
         """Analyze and extract equations from a scientific document.
 
         This method supports three input methods:
@@ -214,7 +215,7 @@ class AxtractHelper:
             )
 
         elif parsed_paper:
-            response = EquationProcessingResponse.model_validate(
+            response = ExpressionProcessingResponse.model_validate(
                 self._ax_client.document.equation.process(**parsed_paper.model_dump()).model_dump()
             )
 
@@ -226,10 +227,10 @@ class AxtractHelper:
 
     def validate_equations(
         self,
-        requirements: Sequence[VariableRequirement],
-        loaded_equations: EquationProcessingResponse,
+        requirements: Sequence[ValidationRequirement],
+        loaded_equations: ExpressionProcessingResponse,
         include_internal_model: bool = False,
-    ) -> EquationValidationResult:
+    ) -> ExpressionValidationResult:
         """Validate equations against a set of variable requirements.
 
         Args:
@@ -249,10 +250,10 @@ class AxtractHelper:
 
         return api_response
 
-    def display_full_results(self, api_response: EquationValidationResult, user_choice):
+    def display_full_results(self, api_response: ExpressionValidationResult, user_choice):
         display_full_results(api_response, user_choice)
 
-    def set_numerical_requirements(self, extracted_equations: EquationProcessingResponse):
+    def set_numerical_requirements(self, extracted_equations: ExpressionProcessingResponse):
         """Launch an interactive interface for setting numerical requirements for equations.
 
         This method opens an interactive table interface where users can specify
