@@ -238,7 +238,7 @@ def plot_parameter_history(parameters: List[Parameter], parameter_history: List[
         axs[i].legend()
         axs[i].grid(True)
     
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.tight_layout(rect=(0, 0, 1, 0.96))
     plt.close(fig)
     return fig
 
