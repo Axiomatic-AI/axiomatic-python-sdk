@@ -27,6 +27,7 @@ class PlotClient:
         method: typing.Optional[int] = None,
         plot_info: typing.Optional[str] = None,
         get_img_coords: typing.Optional[bool] = None,
+        get_platform_data: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PlotParserOutput:
         """
@@ -45,6 +46,9 @@ class PlotClient:
 
         get_img_coords : typing.Optional[bool]
             Whether to get coords of points on image
+
+        get_platform_data : typing.Optional[bool]
+            Whether to get concise version of data for the platform
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -70,6 +74,7 @@ class PlotClient:
                 "method": method,
                 "plot_info": plot_info,
                 "get_img_coords": get_img_coords,
+                "get_platform_data": get_platform_data,
             },
             data={},
             files={
@@ -114,6 +119,7 @@ class AsyncPlotClient:
         method: typing.Optional[int] = None,
         plot_info: typing.Optional[str] = None,
         get_img_coords: typing.Optional[bool] = None,
+        get_platform_data: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PlotParserOutput:
         """
@@ -132,6 +138,9 @@ class AsyncPlotClient:
 
         get_img_coords : typing.Optional[bool]
             Whether to get coords of points on image
+
+        get_platform_data : typing.Optional[bool]
+            Whether to get concise version of data for the platform
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -165,6 +174,7 @@ class AsyncPlotClient:
                 "method": method,
                 "plot_info": plot_info,
                 "get_img_coords": get_img_coords,
+                "get_platform_data": get_platform_data,
             },
             data={},
             files={

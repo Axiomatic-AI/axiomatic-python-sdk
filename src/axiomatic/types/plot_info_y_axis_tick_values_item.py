@@ -2,4 +2,4 @@
 
 import typing
 
-ParameterOutputUpperBound = typing.Union[float, str]
+PlotInfoYAxisTickValuesItem = typing.Union[float, int]

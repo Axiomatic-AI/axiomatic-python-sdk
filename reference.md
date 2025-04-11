@@ -530,7 +530,7 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
-Extracts text from documents. It uses advanced pdf segmentation.
+Extracts text from files. It uses advanced pdf segmentation.
 </dd>
 </dl>
 </dd>
@@ -566,17 +566,7 @@ client.document.parse()
 <dl>
 <dd>
 
-**file:** `from __future__ import annotations
-
-core.File` — See core.File for more documentation
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**method:** `typing.Optional[str]` — Method to use for text extraction
+**method:** `typing.Optional[ParseMethods]` — Method to use for text extraction
     
 </dd>
 </dl>
@@ -593,6 +583,82 @@ core.File` — See core.File for more documentation
 <dd>
 
 **layout_model:** `typing.Optional[str]` — Method for layout parsing
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.document.<a href="src/axiomatic/document/client.py">parse_from_arxiv_url</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Extracts text from arxiv urls. It uses advanced pdf segmentation.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.parse_from_arxiv_url()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**arxiv_url:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -1056,6 +1122,14 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
+**get_platform_data:** `typing.Optional[bool]` — Whether to get concise version of data for the platform
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -1129,7 +1203,8 @@ client.document.equation.user_variables()
 </dl>
 </details>
 
-<details><summary><code>client.document.equation.<a href="src/axiomatic/document/equation/client.py">from_pdf</a>(...)</code></summary>
+## Document Expression
+<details><summary><code>client.document.expression.<a href="src/axiomatic/document/expression/client.py">validate</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1141,7 +1216,8 @@ client.document.equation.user_variables()
 <dl>
 <dd>
 
-Extract equations from a document into the database
+Validates a set of variables against stored expressions to check for inconsistencies.
+Returns validation results for each relevant expression.
 </dd>
 </dl>
 </dd>
@@ -1156,12 +1232,72 @@ Extract equations from a document into the database
 <dd>
 
 ```python
-from axiomatic import Axiomatic
+from axiomatic import (
+    Axiomatic,
+    Expression,
+    ExpressionProcessingResponse,
+    Symbol,
+    ValidationRequirement,
+    ValidationResult,
+)
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.document.equation.from_pdf()
+client.document.expression.validate(
+    variables=[
+        ValidationRequirement(
+            symbol=Symbol(
+                name="name",
+                wolfram_format="wolfram_format",
+                latex_representation="latex_representation",
+                dimension="dimension",
+                description="description",
+                type="scalar",
+                validations={
+                    "key": ValidationResult(
+                        is_valid=True,
+                        message="message",
+                    )
+                },
+            ),
+            value=1.1,
+        )
+    ],
+    paper_expressions=ExpressionProcessingResponse(
+        expressions=[
+            Expression(
+                name="name",
+                description="description",
+                original_format="original_format",
+                wolfram_expression="wolfram_expression",
+                symbols={
+                    "key": Symbol(
+                        name="name",
+                        wolfram_format="wolfram_format",
+                        latex_representation="latex_representation",
+                        dimension="dimension",
+                        description="description",
+                        type="scalar",
+                        validations={
+                            "key": ValidationResult(
+                                is_valid=True,
+                                message="message",
+                            )
+                        },
+                    )
+                },
+                narrative_assumptions=["narrative_assumptions"],
+                exp_validations={
+                    "key": ValidationResult(
+                        is_valid=True,
+                        message="message",
+                    )
+                },
+            )
+        ],
+    ),
+)
 
 ```
 </dd>
@@ -1177,9 +1313,15 @@ client.document.equation.from_pdf()
 <dl>
 <dd>
 
-**document:** `from __future__ import annotations
+**variables:** `typing.Sequence[ValidationRequirement]` 
+    
+</dd>
+</dl>
 
-core.File` — See core.File for more documentation
+<dl>
+<dd>
+
+**paper_expressions:** `ExpressionProcessingResponse` 
     
 </dd>
 </dl>
@@ -1199,7 +1341,7 @@ core.File` — See core.File for more documentation
 </dl>
 </details>
 
-<details><summary><code>client.document.equation.<a href="src/axiomatic/document/equation/client.py">process</a>(...)</code></summary>
+<details><summary><code>client.document.expression.<a href="src/axiomatic/document/expression/client.py">process</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1211,7 +1353,7 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
-Process all equations at once and return their annotation
+Process all expressions at once and return their annotation
 </dd>
 </dl>
 </dd>
@@ -1231,7 +1373,7 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.document.equation.process(
+client.document.expression.process(
     markdown="markdown",
 )
 
@@ -1274,127 +1416,6 @@ client.document.equation.process(
 <dd>
 
 **inline_equations:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.document.equation.<a href="src/axiomatic/document/equation/client.py">validate</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Validates a set of variables against stored equations to check for inconsistencies.
-Returns validation results for each relevant equation.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import (
-    Axiomatic,
-    DictItem,
-    EquationProcessingResponse,
-    ResponseEquation,
-    VariableRequirement,
-)
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.document.equation.validate(
-    variables=[
-        VariableRequirement(
-            symbol="symbol",
-            name="name",
-            value=1.1,
-            units="units",
-            tolerance=1.1,
-        )
-    ],
-    paper_equations=EquationProcessingResponse(
-        equations=[
-            ResponseEquation(
-                name="name",
-                description="description",
-                original_format="original_format",
-                wolfram_expressions="wolfram_expressions",
-                latex_symbols=[
-                    DictItem(
-                        key="key",
-                        value="value",
-                    )
-                ],
-                wolfram_symbols=["wolfram_symbols"],
-                narrative_assumptions=["narrative_assumptions"],
-                type=["type"],
-                field_tags=["field_tags"],
-            )
-        ],
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**variables:** `typing.Sequence[VariableRequirement]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**paper_equations:** `EquationProcessingResponse` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**include_internal_model:** `typing.Optional[bool]` 
     
 </dd>
 </dl>

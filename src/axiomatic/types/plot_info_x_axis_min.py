@@ -2,4 +2,4 @@
 
 import typing
 
-ParameterOutputLowerBound = typing.Union[float, str]
+PlotInfoXAxisMin = typing.Union[float, int]

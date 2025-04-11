@@ -4,6 +4,7 @@ import typing
 from ..core.client_wrapper import SyncClientWrapper
 from .plot.client import PlotClient
 from .equation.client import EquationClient
+from .expression.client import ExpressionClient
 from .. import core
 from ..core.request_options import RequestOptions
 from ..types.extract_text_response import ExtractTextResponse
@@ -12,11 +13,13 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
+from ..types.parse_methods import ParseMethods
 from ..types.parse_response import ParseResponse
 from ..types.extract_constants_response import ExtractConstantsResponse
 from ..core.client_wrapper import AsyncClientWrapper
 from .plot.client import AsyncPlotClient
 from .equation.client import AsyncEquationClient
+from .expression.client import AsyncExpressionClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -27,6 +30,7 @@ class DocumentClient:
         self._client_wrapper = client_wrapper
         self.plot = PlotClient(client_wrapper=self._client_wrapper)
         self.equation = EquationClient(client_wrapper=self._client_wrapper)
+        self.expression = ExpressionClient(client_wrapper=self._client_wrapper)
 
     def text(
         self,
@@ -103,21 +107,18 @@ class DocumentClient:
     def parse(
         self,
         *,
-        file: core.File,
-        method: typing.Optional[str] = None,
+        method: typing.Optional[ParseMethods] = None,
         ocr: typing.Optional[bool] = None,
         layout_model: typing.Optional[str] = None,
+        file: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
-        Extracts text from documents. It uses advanced pdf segmentation.
+        Extracts text from files. It uses advanced pdf segmentation.
 
         Parameters
         ----------
-        file : core.File
-            See core.File for more documentation
-
-        method : typing.Optional[str]
+        method : typing.Optional[ParseMethods]
             Method to use for text extraction
 
         ocr : typing.Optional[bool]
@@ -125,6 +126,8 @@ class DocumentClient:
 
         layout_model : typing.Optional[str]
             Method for layout parsing
+
+        file : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -151,12 +154,71 @@ class DocumentClient:
                 "ocr": ocr,
                 "layout_model": layout_model,
             },
-            data={},
-            files={
+            data={
                 "file": file,
             },
+            files={},
             request_options=request_options,
             omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ParseResponse,
+                    parse_obj_as(
+                        type_=ParseResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def parse_from_arxiv_url(
+        self, *, arxiv_url: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+    ) -> ParseResponse:
+        """
+        Extracts text from arxiv urls. It uses advanced pdf segmentation.
+
+        Parameters
+        ----------
+        arxiv_url : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ParseResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.document.parse_from_arxiv_url()
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "document/from-arxiv-url",
+            method="POST",
+            params={
+                "arxiv_url": arxiv_url,
+            },
+            request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -256,6 +318,7 @@ class AsyncDocumentClient:
         self._client_wrapper = client_wrapper
         self.plot = AsyncPlotClient(client_wrapper=self._client_wrapper)
         self.equation = AsyncEquationClient(client_wrapper=self._client_wrapper)
+        self.expression = AsyncExpressionClient(client_wrapper=self._client_wrapper)
 
     async def text(
         self,
@@ -340,21 +403,18 @@ class AsyncDocumentClient:
     async def parse(
         self,
         *,
-        file: core.File,
-        method: typing.Optional[str] = None,
+        method: typing.Optional[ParseMethods] = None,
         ocr: typing.Optional[bool] = None,
         layout_model: typing.Optional[str] = None,
+        file: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
-        Extracts text from documents. It uses advanced pdf segmentation.
+        Extracts text from files. It uses advanced pdf segmentation.
 
         Parameters
         ----------
-        file : core.File
-            See core.File for more documentation
-
-        method : typing.Optional[str]
+        method : typing.Optional[ParseMethods]
             Method to use for text extraction
 
         ocr : typing.Optional[bool]
@@ -362,6 +422,8 @@ class AsyncDocumentClient:
 
         layout_model : typing.Optional[str]
             Method for layout parsing
+
+        file : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -396,12 +458,79 @@ class AsyncDocumentClient:
                 "ocr": ocr,
                 "layout_model": layout_model,
             },
-            data={},
-            files={
+            data={
                 "file": file,
             },
+            files={},
             request_options=request_options,
             omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ParseResponse,
+                    parse_obj_as(
+                        type_=ParseResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def parse_from_arxiv_url(
+        self, *, arxiv_url: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+    ) -> ParseResponse:
+        """
+        Extracts text from arxiv urls. It uses advanced pdf segmentation.
+
+        Parameters
+        ----------
+        arxiv_url : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ParseResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.document.parse_from_arxiv_url()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "document/from-arxiv-url",
+            method="POST",
+            params={
+                "arxiv_url": arxiv_url,
+            },
+            request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:

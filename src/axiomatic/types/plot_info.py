@@ -2,6 +2,12 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .plot_info_x_axis_min import PlotInfoXAxisMin
+from .plot_info_x_axis_max import PlotInfoXAxisMax
+from .plot_info_x_axis_tick_values_item import PlotInfoXAxisTickValuesItem
+from .plot_info_y_axis_min import PlotInfoYAxisMin
+from .plot_info_y_axis_max import PlotInfoYAxisMax
+from .plot_info_y_axis_tick_values_item import PlotInfoYAxisTickValuesItem
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -12,15 +18,15 @@ class PlotInfo(UniversalBaseModel):
     """
 
     x_axis_name: typing.Optional[str] = None
-    x_axis_min: typing.Optional[float] = None
-    x_axis_max: typing.Optional[float] = None
-    x_axis_tick_values: typing.Optional[typing.List[float]] = None
+    x_axis_min: typing.Optional[PlotInfoXAxisMin] = None
+    x_axis_max: typing.Optional[PlotInfoXAxisMax] = None
+    x_axis_tick_values: typing.Optional[typing.List[PlotInfoXAxisTickValuesItem]] = None
     x_axis_unit: typing.Optional[str] = None
     x_scale: typing.Optional[str] = None
     y_axis_name: typing.Optional[str] = None
-    y_axis_min: typing.Optional[float] = None
-    y_axis_max: typing.Optional[float] = None
-    y_axis_tick_values: typing.Optional[typing.List[float]] = None
+    y_axis_min: typing.Optional[PlotInfoYAxisMin] = None
+    y_axis_max: typing.Optional[PlotInfoYAxisMax] = None
+    y_axis_tick_values: typing.Optional[typing.List[PlotInfoYAxisTickValuesItem]] = None
     y_axis_unit: typing.Optional[str] = None
     y_scale: typing.Optional[str] = None
     num_of_lines: typing.Optional[int] = None

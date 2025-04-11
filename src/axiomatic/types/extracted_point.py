@@ -31,6 +31,16 @@ class ExtractedPoint(UniversalBaseModel):
     Y coordinate in the image.
     """
 
+    percentage_coord_x: typing.Optional[float] = pydantic.Field(default=None)
+    """
+    X coordinate in the image as a percentage of img width
+    """
+
+    percentage_coord_y: typing.Optional[float] = pydantic.Field(default=None)
+    """
+    Y coordinate in the image as a percentage of img height
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

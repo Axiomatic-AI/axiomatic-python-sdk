@@ -3,8 +3,7 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import pydantic
 import typing
-from .parameter_output_lower_bound import ParameterOutputLowerBound
-from .parameter_output_upper_bound import ParameterOutputUpperBound
+from .bounds import Bounds
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -18,14 +17,9 @@ class Parameter(UniversalBaseModel):
     Path to the parameter in the netlist in the format 'instance_name,parameter_name'
     """
 
-    lower_bound: typing.Optional[ParameterOutputLowerBound] = pydantic.Field(default=None)
+    bounds: typing.Optional[Bounds] = pydantic.Field(default=None)
     """
-    Lower bound of the parameter
-    """
-
-    upper_bound: typing.Optional[ParameterOutputUpperBound] = pydantic.Field(default=None)
-    """
-    Upper bound of the parameter
+    Lower and upper bounds of the parameter
     """
 
     if IS_PYDANTIC_V2:
