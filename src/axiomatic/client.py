@@ -7,11 +7,7 @@ import time
 from typing import Dict, Optional, Sequence
 
 from .base_client import BaseClient, AsyncBaseClient
-from . import ParseResponse, EquationProcessingResponse
-from .axtract.axtract_report import create_report
-from .axtract.validation_results import display_full_results
-from .types.variable_requirement import VariableRequirement
-from .types.equation_validation_result import EquationValidationResult
+from .types.parse_response import ParseResponse
 
 
 class Axiomatic(BaseClient):
@@ -22,7 +18,6 @@ class Axiomatic(BaseClient):
 
         self.document_helper = DocumentHelper(self)
         self.tools_helper = ToolsHelper(self)
-        self.axtract_helper = AxtractHelper(self)
 
 
 class DocumentHelper:
@@ -41,7 +36,7 @@ class DocumentHelper:
         file_name = path.split("/")[-1]
         file_tuple = (file_name, file_bytes, "application/pdf")
         
-        response = self._ax_client.document.parse(file=file_tuple)
+        response = self._ax_client.document.parse(file=file_tuple) # type: ignore
         return response
 
     def pdf_from_url(self, url: str):
@@ -63,7 +58,7 @@ class DocumentHelper:
         # we do this because .parse expects a FastAPI Uploadfile
         file_tuple = (file_name, response.content, "application/pdf")
         
-        parse_response = self._ax_client.document.parse(file=file_tuple)
+        parse_response = self._ax_client.document.parse(file=file_tuple) # type: ignore
         return parse_response
 
     def plot_b64_images(self, images: Dict[str, str]):
@@ -134,140 +129,6 @@ class DocumentHelper:
             interline_equations=interline_equations,
             inline_equations=inline_equations,
         )
-
-
-class AxtractHelper:
-    _ax_client: Axiomatic
-
-    def __init__(self, ax_client: Axiomatic):
-        """Initialize the AxtractHelper with an Axiomatic client.
-
-        Args:
-            ax_client (Axiomatic): The Axiomatic client instance to use for API calls
-        """
-        self._ax_client = ax_client
-
-    def create_report(self, response: EquationProcessingResponse, path: str):
-        """Create a report from equation extraction results.
-
-        Args:
-            response (EquationExtractionResponse): The extracted equations and their metadata
-            path (str): Directory path where the report should be saved
-        """
-        create_report(response, path)
-
-    def analyze_equations(
-        self,
-        file_path: Optional[str] = None,
-        url_path: Optional[str] = None,
-        parsed_paper: Optional[ParseResponse] = None,
-    ) -> Optional[EquationProcessingResponse]:
-        """Analyze and extract equations from a scientific document.
-
-        This method supports three input methods:
-        1. Local PDF file path
-        2. URL to a PDF (with special handling for arXiv URLs)
-        3. Pre-parsed paper data
-
-        Args:
-            file_path (Optional[str]): Path to a local PDF file
-            url_path (Optional[str]): URL to a PDF file (supports arXiv links)
-            parsed_paper (Optional[ParseResponse]): Pre-parsed paper data
-
-        Returns:
-            Optional[EquationExtractionResponse]: Extracted equations and their metadata.
-            Returns None if no valid input is provided.
-
-        Examples:
-            # From local file
-            client.analyze_equations(file_path="path/to/paper.pdf")
-
-            # From URL
-            client.analyze_equations(url_path="https://arxiv.org/pdf/2203.00001.pdf")
-
-            # From parsed paper
-            client.analyze_equations(parsed_paper=parsed_data)
-        """
-        if file_path:
-            with open(file_path, "rb") as pdf_file:
-                parsed_document = self._ax_client.document.parse(file=pdf_file)
-                print("We are almost there")
-                response = self._ax_client.document.equation.process(
-                    markdown=parsed_document.markdown,
-                    interline_equations=parsed_document.interline_equations,
-                    inline_equations=parsed_document.inline_equations,
-                )
-
-        elif url_path:
-            if "arxiv" in url_path and "abs" in url_path:
-                url_path = url_path.replace("abs", "pdf")
-            url_file = requests.get(url_path)
-            from io import BytesIO
-
-            pdf_stream = BytesIO(url_file.content)
-            parsed_document = self._ax_client.document.parse(file=url_file.content)
-            print("We are almost there")
-            response = self._ax_client.document.equation.process(
-                markdown=parsed_document.markdown,
-                interline_equations=parsed_document.interline_equations,
-                inline_equations=parsed_document.inline_equations,
-            )
-
-        elif parsed_paper:
-            response = EquationProcessingResponse.model_validate(
-                self._ax_client.document.equation.process(**parsed_paper.model_dump()).model_dump()
-            )
-
-        else:
-            print("Please provide either a file path or a URL to analyze.")
-            return None
-
-        return response
-
-    def validate_equations(
-        self,
-        requirements: Sequence[VariableRequirement],
-        loaded_equations: EquationProcessingResponse,
-        include_internal_model: bool = False,
-    ) -> EquationValidationResult:
-        """Validate equations against a set of variable requirements.
-
-        Args:
-            requirements: List of variable requirements to validate
-            loaded_equations: Previously processed equations to validate
-            show_hypergraph: Whether to display the validation results graph (default: True)
-            include_internal_model: Whether to include internal model equations in validation (default: False)
-
-        Returns:
-            EquationValidationResult containing the validation results
-        """
-        # equations_dict = loaded_equations.model_dump() if hasattr(loaded_equations, 'model_dump') else loaded_equations.dict()
-
-        api_response = self._ax_client.document.equation.validate(
-            variables=requirements, paper_equations=loaded_equations, include_internal_model=include_internal_model
-        )
-
-        return api_response
-
-    def display_full_results(self, api_response: EquationValidationResult, user_choice):
-        display_full_results(api_response, user_choice)
-
-    def set_numerical_requirements(self, extracted_equations: EquationProcessingResponse):
-        """Launch an interactive interface for setting numerical requirements for equations.
-
-        This method opens an interactive table interface where users can specify
-        requirements for variables found in the extracted equations.
-
-        Args:
-            extracted_equations: The equations to set requirements for
-
-        Returns:
-            The requirements set through the interactive interface
-        """
-        from .axtract.interactive_table import interactive_table
-
-        result = interactive_table(extracted_equations)
-        return result
 
 
 class ToolsHelper:
