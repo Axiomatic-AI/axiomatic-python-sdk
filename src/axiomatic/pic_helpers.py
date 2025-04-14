@@ -259,8 +259,6 @@ def print_statements(
         or [StatementValidation()] * len(statements.cost_functions or []),
         parameter_constraints=(validation.parameter_constraints if validation is not None else None)
         or [StatementValidation()] * len(statements.parameter_constraints or []),
-        structure_constraints=(validation.structure_constraints if validation is not None else None)
-        or [StatementValidation()] * len(statements.structure_constraints or []),
         unformalizable_statements=(validation.unformalizable_statements if validation is not None else None)
         or [StatementValidation()] * len(statements.unformalizable_statements or []),
     )
@@ -269,8 +267,6 @@ def print_statements(
         raise ValueError("Number of cost functions and validations do not match.")
     if len(validation.parameter_constraints or []) != len(statements.parameter_constraints or []):
         raise ValueError("Number of parameter constraints and validations do not match.")
-    if len(validation.structure_constraints or []) != len(statements.structure_constraints or []):
-        raise ValueError("Number of structure constraints and validations do not match.")
     if len(validation.unformalizable_statements or []) != len(statements.unformalizable_statements or []):
         raise ValueError("Number of unformalizable statements and validations do not match.")
 

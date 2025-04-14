@@ -13,7 +13,6 @@ class StatementValidationDictionary(UniversalBaseModel):
     """
 
     cost_functions: typing.Optional[typing.List[StatementValidation]] = None
-    structure_constraints: typing.Optional[typing.List[StatementValidation]] = None
     parameter_constraints: typing.Optional[typing.List[StatementValidation]] = None
     unformalizable_statements: typing.Optional[typing.List[StatementValidation]] = None
 
