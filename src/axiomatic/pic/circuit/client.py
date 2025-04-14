@@ -853,7 +853,7 @@ class CircuitClient:
         self,
         *,
         netlist: Netlist,
-        wls: typing.Sequence[float],
+        wavelengths: typing.Sequence[float],
         port_pairs: typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]] = OMIT,
         settings: typing.Optional[Settings] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -865,7 +865,7 @@ class CircuitClient:
         ----------
         netlist : Netlist
 
-        wls : typing.Sequence[float]
+        wavelengths : typing.Sequence[float]
 
         port_pairs : typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]]
 
@@ -888,7 +888,7 @@ class CircuitClient:
         )
         client.pic.circuit.get_sax_spectrum(
             netlist=Netlist(),
-            wls=[1.1],
+            wavelengths=[1.1],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -898,7 +898,7 @@ class CircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
-                "wls": wls,
+                "wavelengths": wavelengths,
                 "port_pairs": port_pairs,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"
@@ -1977,7 +1977,7 @@ class AsyncCircuitClient:
         self,
         *,
         netlist: Netlist,
-        wls: typing.Sequence[float],
+        wavelengths: typing.Sequence[float],
         port_pairs: typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]] = OMIT,
         settings: typing.Optional[Settings] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -1989,7 +1989,7 @@ class AsyncCircuitClient:
         ----------
         netlist : Netlist
 
-        wls : typing.Sequence[float]
+        wavelengths : typing.Sequence[float]
 
         port_pairs : typing.Optional[typing.Sequence[typing.Sequence[typing.Optional[typing.Any]]]]
 
@@ -2017,7 +2017,7 @@ class AsyncCircuitClient:
         async def main() -> None:
             await client.pic.circuit.get_sax_spectrum(
                 netlist=Netlist(),
-                wls=[1.1],
+                wavelengths=[1.1],
             )
 
 
@@ -2030,7 +2030,7 @@ class AsyncCircuitClient:
                 "netlist": convert_and_respect_annotation_metadata(
                     object_=netlist, annotation=Netlist, direction="write"
                 ),
-                "wls": wls,
+                "wavelengths": wavelengths,
                 "port_pairs": port_pairs,
                 "settings": convert_and_respect_annotation_metadata(
                     object_=settings, annotation=Settings, direction="write"

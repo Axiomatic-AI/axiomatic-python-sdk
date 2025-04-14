@@ -2756,7 +2756,7 @@ client = Axiomatic(
 )
 client.pic.circuit.get_sax_spectrum(
     netlist=Netlist(),
-    wls=[1.1],
+    wavelengths=[1.1],
 )
 
 ```
@@ -2781,7 +2781,7 @@ client.pic.circuit.get_sax_spectrum(
 <dl>
 <dd>
 
-**wls:** `typing.Sequence[float]` 
+**wavelengths:** `typing.Sequence[float]` 
     
 </dd>
 </dl>

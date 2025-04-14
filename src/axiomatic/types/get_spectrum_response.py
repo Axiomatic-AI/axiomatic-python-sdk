@@ -3,12 +3,14 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .get_spectrum_response_spectrum_value_item import GetSpectrumResponseSpectrumValueItem
+from .get_spectrum_response_spectrum_db_value_item import GetSpectrumResponseSpectrumDbValueItem
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class GetSpectrumResponse(UniversalBaseModel):
     spectrum: typing.Dict[str, typing.List[GetSpectrumResponseSpectrumValueItem]]
+    spectrum_db: typing.Dict[str, typing.List[GetSpectrumResponseSpectrumDbValueItem]]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
