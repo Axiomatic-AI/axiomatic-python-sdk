@@ -53,6 +53,7 @@ from .pic_instance import PicInstance
 from .pic_instance_info_value import PicInstanceInfoValue
 from .pic_instance_settings_value import PicInstanceSettingsValue
 from .pic_warning import PicWarning
+from .pic_z3expression import PicZ3Expression
 from .placement import Placement
 from .platform_data import PlatformData
 from .plot_info import PlotInfo
@@ -75,10 +76,6 @@ from .statement_type import StatementType
 from .statement_validation import StatementValidation
 from .statement_validation_dictionary import StatementValidationDictionary
 from .status_response import StatusResponse
-from .structure_constraint import StructureConstraint
-from .structure_function_call import StructureFunctionCall
-from .structure_function_call_arguments_value import StructureFunctionCallArgumentsValue
-from .structure_function_call_expected_result import StructureFunctionCallExpectedResult
 from .summarizer_response import SummarizerResponse
 from .symbol import Symbol
 from .tools_list_response import ToolsListResponse
@@ -94,7 +91,6 @@ from .validation_requirement import ValidationRequirement
 from .validation_result import ValidationResult
 from .verify_circuit_code_response import VerifyCircuitCodeResponse
 from .verify_response import VerifyResponse
-from .z3expression import Z3Expression
 
 __all__ = [
     "AxesInfo",
@@ -150,6 +146,7 @@ __all__ = [
     "PicInstanceInfoValue",
     "PicInstanceSettingsValue",
     "PicWarning",
+    "PicZ3Expression",
     "Placement",
     "PlatformData",
     "PlotInfo",
@@ -172,10 +169,6 @@ __all__ = [
     "StatementValidation",
     "StatementValidationDictionary",
     "StatusResponse",
-    "StructureConstraint",
-    "StructureFunctionCall",
-    "StructureFunctionCallArgumentsValue",
-    "StructureFunctionCallExpectedResult",
     "SummarizerResponse",
     "Symbol",
     "ToolsListResponse",
@@ -191,5 +184,4 @@ __all__ = [
     "ValidationResult",
     "VerifyCircuitCodeResponse",
     "VerifyResponse",
-    "Z3Expression",
 ]

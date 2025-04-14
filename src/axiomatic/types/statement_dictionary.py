@@ -3,7 +3,6 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .cost_function import CostFunction
-from .structure_constraint import StructureConstraint
 from .parameter_constraint import ParameterConstraint
 from .unformalizable_statement import UnformalizableStatement
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
@@ -16,7 +15,6 @@ class StatementDictionary(UniversalBaseModel):
     """
 
     cost_functions: typing.Optional[typing.List[CostFunction]] = None
-    structure_constraints: typing.Optional[typing.List[StructureConstraint]] = None
     parameter_constraints: typing.Optional[typing.List[ParameterConstraint]] = None
     unformalizable_statements: typing.Optional[typing.List[UnformalizableStatement]] = None
 

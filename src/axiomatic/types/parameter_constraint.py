@@ -4,7 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .statement_type import StatementType
 import pydantic
-from .z3expression import Z3Expression
+from .pic_z3expression import PicZ3Expression
 from .statement_validation import StatementValidation
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
@@ -16,7 +16,7 @@ class ParameterConstraint(UniversalBaseModel):
     The natural language content of the statement.
     """
 
-    formalization: typing.Optional[Z3Expression] = None
+    formalization: typing.Optional[PicZ3Expression] = None
     validation: typing.Optional[StatementValidation] = pydantic.Field(default=None)
     """
     The validation result of the statement.
