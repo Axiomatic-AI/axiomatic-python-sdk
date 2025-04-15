@@ -6,7 +6,6 @@ import os
 import httpx
 from .core.api_error import ApiError
 from .core.client_wrapper import SyncClientWrapper
-from .requirements.client import RequirementsClient
 from .lean.client import LeanClient
 from .formalization.client import FormalizationClient
 from .document.client import DocumentClient
@@ -18,7 +17,6 @@ from .core.request_options import RequestOptions
 from .core.pydantic_utilities import parse_obj_as
 from json.decoder import JSONDecodeError
 from .core.client_wrapper import AsyncClientWrapper
-from .requirements.client import AsyncRequirementsClient
 from .lean.client import AsyncLeanClient
 from .formalization.client import AsyncFormalizationClient
 from .document.client import AsyncDocumentClient
@@ -90,7 +88,6 @@ class BaseClient:
             else httpx.Client(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
-        self.requirements = RequirementsClient(client_wrapper=self._client_wrapper)
         self.lean = LeanClient(client_wrapper=self._client_wrapper)
         self.formalization = FormalizationClient(client_wrapper=self._client_wrapper)
         self.document = DocumentClient(client_wrapper=self._client_wrapper)
@@ -246,7 +243,6 @@ class AsyncBaseClient:
             else httpx.AsyncClient(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
-        self.requirements = AsyncRequirementsClient(client_wrapper=self._client_wrapper)
         self.lean = AsyncLeanClient(client_wrapper=self._client_wrapper)
         self.formalization = AsyncFormalizationClient(client_wrapper=self._client_wrapper)
         self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)

@@ -3,7 +3,6 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from .plot.client import PlotClient
-from .equation.client import EquationClient
 from .expression.client import ExpressionClient
 from .. import core
 from ..core.request_options import RequestOptions
@@ -18,7 +17,6 @@ from ..types.parse_response import ParseResponse
 from ..types.extract_constants_response import ExtractConstantsResponse
 from ..core.client_wrapper import AsyncClientWrapper
 from .plot.client import AsyncPlotClient
-from .equation.client import AsyncEquationClient
 from .expression.client import AsyncExpressionClient
 
 # this is used as the default value for optional parameters
@@ -29,7 +27,6 @@ class DocumentClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
         self.plot = PlotClient(client_wrapper=self._client_wrapper)
-        self.equation = EquationClient(client_wrapper=self._client_wrapper)
         self.expression = ExpressionClient(client_wrapper=self._client_wrapper)
 
     def text(
@@ -107,10 +104,10 @@ class DocumentClient:
     def parse(
         self,
         *,
+        file: core.File,
         method: typing.Optional[ParseMethods] = None,
         ocr: typing.Optional[bool] = None,
         layout_model: typing.Optional[str] = None,
-        file: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
@@ -118,6 +115,9 @@ class DocumentClient:
 
         Parameters
         ----------
+        file : core.File
+            See core.File for more documentation
+
         method : typing.Optional[ParseMethods]
             Method to use for text extraction
 
@@ -126,8 +126,6 @@ class DocumentClient:
 
         layout_model : typing.Optional[str]
             Method for layout parsing
-
-        file : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -154,10 +152,10 @@ class DocumentClient:
                 "ocr": ocr,
                 "layout_model": layout_model,
             },
-            data={
+            data={},
+            files={
                 "file": file,
             },
-            files={},
             request_options=request_options,
             omit=OMIT,
         )
@@ -317,7 +315,6 @@ class AsyncDocumentClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
         self.plot = AsyncPlotClient(client_wrapper=self._client_wrapper)
-        self.equation = AsyncEquationClient(client_wrapper=self._client_wrapper)
         self.expression = AsyncExpressionClient(client_wrapper=self._client_wrapper)
 
     async def text(
@@ -403,10 +400,10 @@ class AsyncDocumentClient:
     async def parse(
         self,
         *,
+        file: core.File,
         method: typing.Optional[ParseMethods] = None,
         ocr: typing.Optional[bool] = None,
         layout_model: typing.Optional[str] = None,
-        file: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ParseResponse:
         """
@@ -414,6 +411,9 @@ class AsyncDocumentClient:
 
         Parameters
         ----------
+        file : core.File
+            See core.File for more documentation
+
         method : typing.Optional[ParseMethods]
             Method to use for text extraction
 
@@ -422,8 +422,6 @@ class AsyncDocumentClient:
 
         layout_model : typing.Optional[str]
             Method for layout parsing
-
-        file : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -458,10 +456,10 @@ class AsyncDocumentClient:
                 "ocr": ocr,
                 "layout_model": layout_model,
             },
-            data={
+            data={},
+            files={
                 "file": file,
             },
-            files={},
             request_options=request_options,
             omit=OMIT,
         )

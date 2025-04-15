@@ -20,21 +20,13 @@ A full reference for this library is available [here](./reference.md).
 Instantiate and use the client with the following:
 
 ```python
-from axiomatic import Axiomatic, UserRequirement
+from axiomatic import Axiomatic
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.requirements.check(
-    request=[
-        UserRequirement(
-            latex_symbol="latex_symbol",
-            requirement_name="requirement_name",
-            tolerance=1.1,
-            value=1.1,
-            units="units",
-        )
-    ],
+client.lean.execute(
+    code="code",
 )
 ```
 
@@ -45,7 +37,7 @@ The SDK also exports an `async` client so that you can make non-blocking calls t
 ```python
 import asyncio
 
-from axiomatic import AsyncAxiomatic, UserRequirement
+from axiomatic import AsyncAxiomatic
 
 client = AsyncAxiomatic(
     api_key="YOUR_API_KEY",
@@ -53,16 +45,8 @@ client = AsyncAxiomatic(
 
 
 async def main() -> None:
-    await client.requirements.check(
-        request=[
-            UserRequirement(
-                latex_symbol="latex_symbol",
-                requirement_name="requirement_name",
-                tolerance=1.1,
-                value=1.1,
-                units="units",
-            )
-        ],
+    await client.lean.execute(
+        code="code",
     )
 
 
@@ -78,7 +62,7 @@ will be thrown.
 from axiomatic.core.api_error import ApiError
 
 try:
-    client.requirements.check(...)
+    client.lean.execute(...)
 except ApiError as e:
     print(e.status_code)
     print(e.body)
@@ -101,7 +85,7 @@ A request is deemed retryable when any of the following HTTP status codes is ret
 Use the `max_retries` request option to configure this behavior.
 
 ```python
-client.requirements.check(..., request_options={
+client.lean.execute(..., request_options={
     "max_retries": 1
 })
 ```
@@ -121,7 +105,7 @@ client = Axiomatic(
 
 
 # Override timeout for a specific method
-client.requirements.check(..., request_options={
+client.lean.execute(..., request_options={
     "timeout_in_seconds": 1
 })
 ```

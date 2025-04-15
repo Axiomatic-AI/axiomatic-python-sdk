@@ -91,71 +91,6 @@ client.health_check_health_check_get()
 </dl>
 </details>
 
-## requirements
-<details><summary><code>client.requirements.<a href="src/axiomatic/requirements/client.py">check</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic, UserRequirement
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.requirements.check(
-    request=[
-        UserRequirement(
-            latex_symbol="latex_symbol",
-            requirement_name="requirement_name",
-            tolerance=1.1,
-            value=1.1,
-            units="units",
-        )
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request:** `typing.Sequence[UserRequirement]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 ## lean
 <details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">execute</a>(...)</code></summary>
 <dl>
@@ -566,6 +501,16 @@ client.document.parse()
 <dl>
 <dd>
 
+**file:** `from __future__ import annotations
+
+core.File` — See core.File for more documentation
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **method:** `typing.Optional[ParseMethods]` — Method to use for text extraction
     
 </dd>
@@ -583,14 +528,6 @@ client.document.parse()
 <dd>
 
 **layout_model:** `typing.Optional[str]` — Method for layout parsing
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**file:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -1142,67 +1079,6 @@ core.File` — See core.File for more documentation
 </dl>
 </details>
 
-## Document Equation
-<details><summary><code>client.document.equation.<a href="src/axiomatic/document/equation/client.py">user_variables</a>()</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get all variables from the DB so the user can choose which variables they want to use in axtract for for their consistency checks.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.document.equation.user_variables()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 ## Document Expression
 <details><summary><code>client.document.expression.<a href="src/axiomatic/document/expression/client.py">validate</a>(...)</code></summary>
 <dl>
@@ -1341,7 +1217,7 @@ client.document.expression.validate(
 </dl>
 </details>
 
-<details><summary><code>client.document.expression.<a href="src/axiomatic/document/expression/client.py">process</a>(...)</code></summary>
+<details><summary><code>client.document.expression.<a href="src/axiomatic/document/expression/client.py">process_depricated_version</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1354,6 +1230,100 @@ client.document.expression.validate(
 <dd>
 
 Process all expressions at once and return their annotation
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.expression.process_depricated_version(
+    markdown="markdown",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**markdown:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**images:** `typing.Optional[typing.Dict[str, str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**interline_equations:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**inline_equations:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.document.expression.<a href="src/axiomatic/document/expression/client.py">process</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+process expressions from document in parallel
 </dd>
 </dl>
 </dd>
@@ -3115,67 +3085,6 @@ client.pic.component.refine(
     
 </dd>
 </dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Requirements DataFiles
-<details><summary><code>client.requirements.data_files.<a href="src/axiomatic/requirements/data_files/client.py">retrieve</a>()</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Provides database for user menu later used to compose reqs in AXtract
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from axiomatic import Axiomatic
-
-client = Axiomatic(
-    api_key="YOUR_API_KEY",
-)
-client.requirements.data_files.retrieve()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
 
 <dl>
 <dd>

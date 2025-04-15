@@ -3,6 +3,5 @@
 import typing
 
 StatementType = typing.Union[
-    typing.Literal["COST_FUNCTION", "STRUCTURE_CONSTRAINT", "PARAMETER_CONSTRAINT", "UNFORMALIZABLE_STATEMENT"],
-    typing.Any,
+    typing.Literal["COST_FUNCTION", "PARAMETER_CONSTRAINT", "UNFORMALIZABLE_STATEMENT"], typing.Any
 ]

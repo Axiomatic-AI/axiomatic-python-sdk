@@ -83,7 +83,6 @@ from .types import (
     Type,
     UnformalizableStatement,
     UpdateCodeResponse,
-    UserRequirement,
     ValidateNetlistResponse,
     ValidateResponse,
     ValidationError,
@@ -94,7 +93,7 @@ from .types import (
     VerifyResponse,
 )
 from .errors import UnprocessableEntityError
-from . import code_execution, document, formalization, fso, lean, pic, requirements, tools
+from . import code_execution, document, formalization, fso, lean, pic, tools
 from .client import AsyncAxiomatic, Axiomatic
 from .environment import AxiomaticEnvironment
 from .version import __version__
@@ -186,7 +185,6 @@ __all__ = [
     "UnformalizableStatement",
     "UnprocessableEntityError",
     "UpdateCodeResponse",
-    "UserRequirement",
     "ValidateNetlistResponse",
     "ValidateResponse",
     "ValidationError",
@@ -202,6 +200,5 @@ __all__ = [
     "fso",
     "lean",
     "pic",
-    "requirements",
     "tools",
 ]

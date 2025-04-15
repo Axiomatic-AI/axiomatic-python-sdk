@@ -157,7 +157,7 @@ class ExpressionClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def process(
+    def process_depricated_version(
         self,
         *,
         markdown: str,
@@ -168,6 +168,83 @@ class ExpressionClient:
     ) -> ExpressionProcessingResponse:
         """
         Process all expressions at once and return their annotation
+
+        Parameters
+        ----------
+        markdown : str
+
+        images : typing.Optional[typing.Dict[str, str]]
+
+        interline_equations : typing.Optional[typing.Sequence[str]]
+
+        inline_equations : typing.Optional[typing.Sequence[str]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExpressionProcessingResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.document.expression.process_depricated_version(
+            markdown="markdown",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "document/expression/process-depricated-version",
+            method="POST",
+            json={
+                "markdown": markdown,
+                "images": images,
+                "interline_equations": interline_equations,
+                "inline_equations": inline_equations,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ExpressionProcessingResponse,
+                    parse_obj_as(
+                        type_=ExpressionProcessingResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def process(
+        self,
+        *,
+        markdown: str,
+        images: typing.Optional[typing.Dict[str, str]] = OMIT,
+        interline_equations: typing.Optional[typing.Sequence[str]] = OMIT,
+        inline_equations: typing.Optional[typing.Sequence[str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExpressionProcessingResponse:
+        """
+        process expressions from document in parallel
 
         Parameters
         ----------
@@ -382,7 +459,7 @@ class AsyncExpressionClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def process(
+    async def process_depricated_version(
         self,
         *,
         markdown: str,
@@ -393,6 +470,91 @@ class AsyncExpressionClient:
     ) -> ExpressionProcessingResponse:
         """
         Process all expressions at once and return their annotation
+
+        Parameters
+        ----------
+        markdown : str
+
+        images : typing.Optional[typing.Dict[str, str]]
+
+        interline_equations : typing.Optional[typing.Sequence[str]]
+
+        inline_equations : typing.Optional[typing.Sequence[str]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExpressionProcessingResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.document.expression.process_depricated_version(
+                markdown="markdown",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "document/expression/process-depricated-version",
+            method="POST",
+            json={
+                "markdown": markdown,
+                "images": images,
+                "interline_equations": interline_equations,
+                "inline_equations": inline_equations,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ExpressionProcessingResponse,
+                    parse_obj_as(
+                        type_=ExpressionProcessingResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def process(
+        self,
+        *,
+        markdown: str,
+        images: typing.Optional[typing.Dict[str, str]] = OMIT,
+        interline_equations: typing.Optional[typing.Sequence[str]] = OMIT,
+        inline_equations: typing.Optional[typing.Sequence[str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExpressionProcessingResponse:
+        """
+        process expressions from document in parallel
 
         Parameters
         ----------

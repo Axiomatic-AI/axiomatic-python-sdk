@@ -82,7 +82,6 @@ from .tools_list_response import ToolsListResponse
 from .type import Type
 from .unformalizable_statement import UnformalizableStatement
 from .update_code_response import UpdateCodeResponse
-from .user_requirement import UserRequirement
 from .validate_netlist_response import ValidateNetlistResponse
 from .validate_response import ValidateResponse
 from .validation_error import ValidationError
@@ -175,7 +174,6 @@ __all__ = [
     "Type",
     "UnformalizableStatement",
     "UpdateCodeResponse",
-    "UserRequirement",
     "ValidateNetlistResponse",
     "ValidateResponse",
     "ValidationError",
