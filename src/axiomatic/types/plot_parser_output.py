@@ -6,7 +6,6 @@ import typing
 from .plot_info import PlotInfo
 import pydantic
 from .axes_info import AxesInfo
-from .platform_data import PlatformData
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -29,11 +28,6 @@ class PlotParserOutput(UniversalBaseModel):
     raw_ocr_data: typing.Optional[typing.List[typing.Optional[typing.Any]]] = pydantic.Field(default=None)
     """
     Raw OCR data
-    """
-
-    platform_data: typing.Optional[PlatformData] = pydantic.Field(default=None)
-    """
-    Concise platform data
     """
 
     if IS_PYDANTIC_V2:

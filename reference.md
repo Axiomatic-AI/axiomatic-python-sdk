@@ -905,6 +905,188 @@ client.tools.list()
 </dl>
 </details>
 
+## DigitalTwin
+<details><summary><code>client.digital_twin.<a href="src/axiomatic/digital_twin/client.py">optimize</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Fits a digital twin model to input data using numerical optimization.
+
+    Accepts parameter guesses, bounds, inputs, targets, and constants — all with units —
+    and returns the optimized parameters that minimize the model's error using a selected cost function.
+
+    Args:
+        OptimizerBody: The input data and optimization parameters.
+    Returns:
+        OptimizerResult: The result of the optimization.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import (
+    Axiomatic,
+    NamedQuantity,
+    NamedQuantityList,
+    ParameterBound,
+    Quantity,
+    QuantityList,
+)
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.digital_twin.optimize(
+    parameters=[
+        NamedQuantity(
+            name="name",
+            value=Quantity(
+                magnitude=1.1,
+                unit="unit",
+            ),
+        )
+    ],
+    parameter_bounds=[
+        ParameterBound(
+            name="name",
+            lower=Quantity(
+                magnitude=1.1,
+                unit="unit",
+            ),
+            upper=Quantity(
+                magnitude=1.1,
+                unit="unit",
+            ),
+        )
+    ],
+    constants=[
+        NamedQuantity(
+            name="name",
+            value=Quantity(
+                magnitude=1.1,
+                unit="unit",
+            ),
+        )
+    ],
+    inputs=[
+        NamedQuantityList(
+            name="name",
+            value=QuantityList(
+                unit="unit",
+                magnitude=[1.1],
+            ),
+        )
+    ],
+    targets=[
+        NamedQuantityList(
+            name="name",
+            value=QuantityList(
+                unit="unit",
+                magnitude=[1.1],
+            ),
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**parameters:** `typing.Sequence[NamedQuantity]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**parameter_bounds:** `typing.Sequence[ParameterBound]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**constants:** `typing.Sequence[NamedQuantity]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**inputs:** `typing.Sequence[NamedQuantityList]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**targets:** `typing.Sequence[NamedQuantityList]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tolerance:** `typing.Optional[float]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max_time:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## CodeExecution Python
 <details><summary><code>client.code_execution.python.<a href="src/axiomatic/code_execution/python/client.py">execute</a>(...)</code></summary>
 <dl>
@@ -1059,7 +1241,77 @@ core.File` — See core.File for more documentation
 <dl>
 <dd>
 
-**get_platform_data:** `typing.Optional[bool]` — Whether to get concise version of data for the platform
+**v2:** `typing.Optional[bool]` — Get v2 of plot parser output. (v1 will be deprecated soon)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.document.plot.<a href="src/axiomatic/document/plot/client.py">split</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Splits a plot into multiple subplots if they exist
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.plot.split()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**plot_img:** `from __future__ import annotations
+
+core.File` — See core.File for more documentation
     
 </dd>
 </dl>

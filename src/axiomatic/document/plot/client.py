@@ -4,7 +4,7 @@ import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ... import core
 from ...core.request_options import RequestOptions
-from ...types.plot_parser_output import PlotParserOutput
+from .types.plot_points_response import PlotPointsResponse
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
@@ -27,9 +27,9 @@ class PlotClient:
         method: typing.Optional[int] = None,
         plot_info: typing.Optional[str] = None,
         get_img_coords: typing.Optional[bool] = None,
-        get_platform_data: typing.Optional[bool] = None,
+        v2: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PlotParserOutput:
+    ) -> PlotPointsResponse:
         """
         Extracts points from plots
 
@@ -47,15 +47,15 @@ class PlotClient:
         get_img_coords : typing.Optional[bool]
             Whether to get coords of points on image
 
-        get_platform_data : typing.Optional[bool]
-            Whether to get concise version of data for the platform
+        v2 : typing.Optional[bool]
+            Get v2 of plot parser output. (v1 will be deprecated soon)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PlotParserOutput
+        PlotPointsResponse
             Successful Response
 
         Examples
@@ -74,7 +74,7 @@ class PlotClient:
                 "method": method,
                 "plot_info": plot_info,
                 "get_img_coords": get_img_coords,
-                "get_platform_data": get_platform_data,
+                "v2": v2,
             },
             data={},
             files={
@@ -86,9 +86,71 @@ class PlotClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PlotParserOutput,
+                    PlotPointsResponse,
                     parse_obj_as(
-                        type_=PlotParserOutput,  # type: ignore
+                        type_=PlotPointsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def split(
+        self, *, plot_img: core.File, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[str]:
+        """
+        Splits a plot into multiple subplots if they exist
+
+        Parameters
+        ----------
+        plot_img : core.File
+            See core.File for more documentation
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.List[str]
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.document.plot.split()
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "document/plot/split",
+            method="POST",
+            data={},
+            files={
+                "plot_img": plot_img,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    typing.List[str],
+                    parse_obj_as(
+                        type_=typing.List[str],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -119,9 +181,9 @@ class AsyncPlotClient:
         method: typing.Optional[int] = None,
         plot_info: typing.Optional[str] = None,
         get_img_coords: typing.Optional[bool] = None,
-        get_platform_data: typing.Optional[bool] = None,
+        v2: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PlotParserOutput:
+    ) -> PlotPointsResponse:
         """
         Extracts points from plots
 
@@ -139,15 +201,15 @@ class AsyncPlotClient:
         get_img_coords : typing.Optional[bool]
             Whether to get coords of points on image
 
-        get_platform_data : typing.Optional[bool]
-            Whether to get concise version of data for the platform
+        v2 : typing.Optional[bool]
+            Get v2 of plot parser output. (v1 will be deprecated soon)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PlotParserOutput
+        PlotPointsResponse
             Successful Response
 
         Examples
@@ -174,7 +236,7 @@ class AsyncPlotClient:
                 "method": method,
                 "plot_info": plot_info,
                 "get_img_coords": get_img_coords,
-                "get_platform_data": get_platform_data,
+                "v2": v2,
             },
             data={},
             files={
@@ -186,9 +248,79 @@ class AsyncPlotClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PlotParserOutput,
+                    PlotPointsResponse,
                     parse_obj_as(
-                        type_=PlotParserOutput,  # type: ignore
+                        type_=PlotPointsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def split(
+        self, *, plot_img: core.File, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[str]:
+        """
+        Splits a plot into multiple subplots if they exist
+
+        Parameters
+        ----------
+        plot_img : core.File
+            See core.File for more documentation
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.List[str]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.document.plot.split()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "document/plot/split",
+            method="POST",
+            data={},
+            files={
+                "plot_img": plot_img,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    typing.List[str],
+                    parse_obj_as(
+                        type_=typing.List[str],  # type: ignore
                         object_=_response.json(),
                     ),
                 )

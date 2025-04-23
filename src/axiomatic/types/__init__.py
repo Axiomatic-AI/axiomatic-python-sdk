@@ -20,7 +20,9 @@ from .expression_validation_result import ExpressionValidationResult
 from .extract_constants_response import ExtractConstantsResponse
 from .extract_text_response import ExtractTextResponse
 from .extracted_point import ExtractedPoint
+from .extracted_point_dto import ExtractedPointDto
 from .extracted_points import ExtractedPoints
+from .extracted_series_dto import ExtractedSeriesDto
 from .find_mapping_response import FindMappingResponse
 from .find_user_response import FindUserResponse
 from .formalize_circuit_response import FormalizeCircuitResponse
@@ -35,6 +37,8 @@ from .get_spectrum_response_spectrum_value_item import GetSpectrumResponseSpectr
 from .http_validation_error import HttpValidationError
 from .informalize_statement_response import InformalizeStatementResponse
 from .layout_info import LayoutInfo
+from .named_quantity import NamedQuantity
+from .named_quantity_list import NamedQuantityList
 from .net import Net
 from .netlist import Netlist
 from .netlist_input_extra_pdk_settings_value import NetlistInputExtraPdkSettingsValue
@@ -43,7 +47,9 @@ from .optimization_history import OptimizationHistory
 from .optimize_config import OptimizeConfig
 from .optimize_netlist_response import OptimizeNetlistResponse
 from .optimize_placement_body_response import OptimizePlacementBodyResponse
+from .optimizer_result import OptimizerResult
 from .parameter import Parameter
+from .parameter_bound import ParameterBound
 from .parameter_constraint import ParameterConstraint
 from .parse_methods import ParseMethods
 from .parse_response import ParseResponse
@@ -55,7 +61,6 @@ from .pic_instance_settings_value import PicInstanceSettingsValue
 from .pic_warning import PicWarning
 from .pic_z3expression import PicZ3Expression
 from .placement import Placement
-from .platform_data import PlatformData
 from .plot_info import PlotInfo
 from .plot_info_x_axis_max import PlotInfoXAxisMax
 from .plot_info_x_axis_min import PlotInfoXAxisMin
@@ -64,7 +69,10 @@ from .plot_info_y_axis_max import PlotInfoYAxisMax
 from .plot_info_y_axis_min import PlotInfoYAxisMin
 from .plot_info_y_axis_tick_values_item import PlotInfoYAxisTickValuesItem
 from .plot_parser_output import PlotParserOutput
+from .plot_parser_output_v2dto import PlotParserOutputV2Dto
 from .port_instance_layout_info import PortInstanceLayoutInfo
+from .quantity import Quantity
+from .quantity_list import QuantityList
 from .refine_code_response import RefineCodeResponse
 from .refine_component_code_response import RefineComponentCodeResponse
 from .schedule_job_response import ScheduleJobResponse
@@ -112,7 +120,9 @@ __all__ = [
     "ExtractConstantsResponse",
     "ExtractTextResponse",
     "ExtractedPoint",
+    "ExtractedPointDto",
     "ExtractedPoints",
+    "ExtractedSeriesDto",
     "FindMappingResponse",
     "FindUserResponse",
     "FormalizeCircuitResponse",
@@ -127,6 +137,8 @@ __all__ = [
     "HttpValidationError",
     "InformalizeStatementResponse",
     "LayoutInfo",
+    "NamedQuantity",
+    "NamedQuantityList",
     "Net",
     "Netlist",
     "NetlistInputExtraPdkSettingsValue",
@@ -135,7 +147,9 @@ __all__ = [
     "OptimizeConfig",
     "OptimizeNetlistResponse",
     "OptimizePlacementBodyResponse",
+    "OptimizerResult",
     "Parameter",
+    "ParameterBound",
     "ParameterConstraint",
     "ParseMethods",
     "ParseResponse",
@@ -147,7 +161,6 @@ __all__ = [
     "PicWarning",
     "PicZ3Expression",
     "Placement",
-    "PlatformData",
     "PlotInfo",
     "PlotInfoXAxisMax",
     "PlotInfoXAxisMin",
@@ -156,7 +169,10 @@ __all__ = [
     "PlotInfoYAxisMin",
     "PlotInfoYAxisTickValuesItem",
     "PlotParserOutput",
+    "PlotParserOutputV2Dto",
     "PortInstanceLayoutInfo",
+    "Quantity",
+    "QuantityList",
     "RefineCodeResponse",
     "RefineComponentCodeResponse",
     "ScheduleJobResponse",

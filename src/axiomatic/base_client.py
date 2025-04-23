@@ -10,6 +10,7 @@ from .lean.client import LeanClient
 from .formalization.client import FormalizationClient
 from .document.client import DocumentClient
 from .tools.client import ToolsClient
+from .digital_twin.client import DigitalTwinClient
 from .code_execution.client import CodeExecutionClient
 from .fso.client import FsoClient
 from .pic.client import PicClient
@@ -21,6 +22,7 @@ from .lean.client import AsyncLeanClient
 from .formalization.client import AsyncFormalizationClient
 from .document.client import AsyncDocumentClient
 from .tools.client import AsyncToolsClient
+from .digital_twin.client import AsyncDigitalTwinClient
 from .code_execution.client import AsyncCodeExecutionClient
 from .fso.client import AsyncFsoClient
 from .pic.client import AsyncPicClient
@@ -92,6 +94,7 @@ class BaseClient:
         self.formalization = FormalizationClient(client_wrapper=self._client_wrapper)
         self.document = DocumentClient(client_wrapper=self._client_wrapper)
         self.tools = ToolsClient(client_wrapper=self._client_wrapper)
+        self.digital_twin = DigitalTwinClient(client_wrapper=self._client_wrapper)
         self.code_execution = CodeExecutionClient(client_wrapper=self._client_wrapper)
         self.fso = FsoClient(client_wrapper=self._client_wrapper)
         self.pic = PicClient(client_wrapper=self._client_wrapper)
@@ -247,6 +250,7 @@ class AsyncBaseClient:
         self.formalization = AsyncFormalizationClient(client_wrapper=self._client_wrapper)
         self.document = AsyncDocumentClient(client_wrapper=self._client_wrapper)
         self.tools = AsyncToolsClient(client_wrapper=self._client_wrapper)
+        self.digital_twin = AsyncDigitalTwinClient(client_wrapper=self._client_wrapper)
         self.code_execution = AsyncCodeExecutionClient(client_wrapper=self._client_wrapper)
         self.fso = AsyncFsoClient(client_wrapper=self._client_wrapper)
         self.pic = AsyncPicClient(client_wrapper=self._client_wrapper)
