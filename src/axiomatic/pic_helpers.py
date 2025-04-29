@@ -509,7 +509,7 @@ def get_wavelengths_to_plot(statements: StatementDictionary, num_samples: int = 
         max_wl = max(max_wl, max(vlines))
     if min_wl >= max_wl:
         avg_wl = sum(vlines) / len(vlines) if vlines else 1550
-        min_wl, max_wl = avg_wl - 0.1, avg_wl + 0.1
+        min_wl, max_wl = avg_wl - 10, avg_wl + 10
     else:
         range_size = max_wl - min_wl
         min_wl -= 0.2 * range_size
