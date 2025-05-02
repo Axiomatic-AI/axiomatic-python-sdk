@@ -452,7 +452,7 @@ def print_statements(
                 print("\n-----------------------------------\n")
 
 
-def _str_units_to_float(str_units: str) -> float:
+def _str_units_to_float(str_units: str) -> Optional[float]:
     unit_conversions = {
         "nm": 1e-3,
         "um": 1,
@@ -492,8 +492,11 @@ def get_wavelengths_to_plot(statements: StatementDictionary, num_samples: int = 
                     and len(comp.arguments["wavelength_range"]) == 2
                     and all(isinstance(wl, str) for wl in comp.arguments["wavelength_range"])
                 ):
-                    min_wl = min(min_wl, _str_units_to_float(comp.arguments["wavelength_range"][0])) if _str_units_to_float(comp.arguments["wavelength_range"][0]) is not None else min_wl
-                    max_wl = max(max_wl, _str_units_to_float(comp.arguments["wavelength_range"][1])) if _str_units_to_float(comp.arguments["wavelength_range"][1]) is not None else max_wl
+                    mi = _str_units_to_float(comp.arguments["wavelength_range"][0])
+                    ma = _str_units_to_float(comp.arguments["wavelength_range"][1])
+                    if mi is not None and ma is not None:
+                        min_wl = min(min_wl, mi)
+                        max_wl = max(max_wl, ma)
         return min_wl, max_wl, vlines
 
     for cost_stmt in statements.cost_functions or []:
