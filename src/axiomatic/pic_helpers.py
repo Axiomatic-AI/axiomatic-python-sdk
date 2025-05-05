@@ -112,12 +112,17 @@ def plot_interactive_spectra(
         A list of spectra, where each spectrum is a list of lists of float values, each
         corresponding to the transmission of a single wavelength.
     wavelengths : list of float
-        A list of wavelength values corresponding to the x-axis of the plot, in nm.
+        A list of wavelength values corresponding to the x-axis of the plot, in um.
     vlines : list of float, optional
-        A list of x-values where vertical lines should be drawn, in nm. Defaults to an empty list.
+        A list of x-values where vertical lines should be drawn, in um. Defaults to an empty list.
     hlines : list of float, optional
         A list of y-values where horizontal lines should be drawn. Defaults to an empty list.
     """
+
+    # Convert wavelengths to nm
+    wavelengths = [wl*1e3 for wl in wavelengths]
+    vlines = [wl*1e3 for wl in vlines]
+
     if isinstance(spectra, dict):
         port_keys = []
         for key in spectra:
@@ -460,11 +465,13 @@ def print_statements(
 
 
 def _str_units_to_float(str_units: str) -> Optional[float]:
+    """Returns the numeric value of a string with units in micrometers, e.g. '1550 nm' -> 1.55"""
+    """Return None if the string is not a valid unit."""
     unit_conversions = {
-        "nm": 1,
-        "um": 1e3,
-        "mm": 1e6,
-        "m": 1e9,
+        "nm": 1e-3,
+        "um": 1,
+        "mm": 1e3,
+        "m": 1e6,
     }
     match = re.match(r"([\d\.]+)\s*([a-zA-Z]+)", str_units)
     numeric_value = float(match.group(1)) if match else None
@@ -472,11 +479,11 @@ def _str_units_to_float(str_units: str) -> Optional[float]:
     return float(numeric_value * unit_conversions[unit]) if unit in unit_conversions and numeric_value is not None else None
 
 
-def get_wavelengths_to_plot(statements: StatementDictionary, num_samples: int = 100) -> Tuple[List[float], List[float]]:
+def get_wavelengths_to_plot(statements: StatementDictionary, num_samples: int = 1000) -> Tuple[List[float], List[float]]:
     """
     Get the wavelengths to plot based on the statements.
 
-    Returns a list of wavelengths to plot the spectra and a list of vertical lines to plot on top the spectra, in nm.
+    Returns a list of wavelengths to plot the spectra and a list of vertical lines to plot on top the spectra, in um.
     """
 
     min_wl = float("inf")
