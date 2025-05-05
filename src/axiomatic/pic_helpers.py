@@ -198,7 +198,7 @@ def plot_interactive_spectra(
     # Create the layout
     fig.update_layout(
         xaxis_title="Wavelength (nm)",
-        yaxis_title="Transmission " + "(dB)" if db else "(linear)",
+        yaxis_title="Transmission " + ("(dB)" if db else "(linear)"),
         shapes=shapes,
         sliders=sliders,
         yaxis=dict(range=[y_min, y_max]),
