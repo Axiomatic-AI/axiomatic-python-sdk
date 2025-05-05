@@ -119,9 +119,11 @@ def plot_interactive_spectra(
         A list of y-values where horizontal lines should be drawn. Defaults to an empty list.
     """
 
+    hlines = hlines or []
+    
     # Convert wavelengths to nm
     wavelengths = [wl*1e3 for wl in wavelengths]
-    vlines = [wl*1e3 for wl in vlines]
+    vlines = [wl*1e3 for wl in vlines] if vlines else []
 
     if isinstance(spectra, dict):
         port_keys = []
@@ -142,10 +144,6 @@ def plot_interactive_spectra(
 
     elif spectrum_labels is None:
         spectrum_labels = [f"Spectrum {i}" for i in range(len(spectra))]
-    if vlines is None:
-        vlines = []
-    if hlines is None:
-        hlines = []
 
     if isinstance(spectra, dict):
         spectra = list(spectra.values())
