@@ -112,9 +112,9 @@ def plot_interactive_spectra(
         A list of spectra, where each spectrum is a list of lists of float values, each
         corresponding to the transmission of a single wavelength.
     wavelengths : list of float
-        A list of wavelength values corresponding to the x-axis of the plot.
+        A list of wavelength values corresponding to the x-axis of the plot, in nm.
     vlines : list of float, optional
-        A list of x-values where vertical lines should be drawn. Defaults to an empty list.
+        A list of x-values where vertical lines should be drawn, in nm. Defaults to an empty list.
     hlines : list of float, optional
         A list of y-values where horizontal lines should be drawn. Defaults to an empty list.
     """
@@ -149,9 +149,16 @@ def plot_interactive_spectra(
     all_vals = [val for spec in spectra for iteration in spec for val in iteration]
     y_min = min(all_vals)
     y_max = max(all_vals)
-    if hlines:
-        y_min = min(hlines + [y_min]) * 0.95
-        y_max = max(hlines + [y_max]) * 1.05
+
+    # dB scale
+    if y_max <= 0:
+        y_max = 0
+        db = True
+    else:
+        db = False
+        if hlines:
+            y_min = min(hlines + [y_min]) * 0.95
+            y_max = max(hlines + [y_max]) * 1.05
 
     # Create hlines and vlines
     shapes = []
@@ -187,8 +194,8 @@ def plot_interactive_spectra(
 
     # Create the layout
     fig.update_layout(
-        xaxis_title="Wavelength",
-        yaxis_title="Transmission",
+        xaxis_title="Wavelength (nm)",
+        yaxis_title="Transmission " + "(dB)" if db else "(linear)",
         shapes=shapes,
         sliders=sliders,
         yaxis=dict(range=[y_min, y_max]),
@@ -454,10 +461,10 @@ def print_statements(
 
 def _str_units_to_float(str_units: str) -> Optional[float]:
     unit_conversions = {
-        "nm": 1e-3,
-        "um": 1,
-        "mm": 1e3,
-        "m": 1e6,
+        "nm": 1,
+        "um": 1e3,
+        "mm": 1e6,
+        "m": 1e9,
     }
     match = re.match(r"([\d\.]+)\s*([a-zA-Z]+)", str_units)
     numeric_value = float(match.group(1)) if match else None
@@ -469,7 +476,7 @@ def get_wavelengths_to_plot(statements: StatementDictionary, num_samples: int = 
     """
     Get the wavelengths to plot based on the statements.
 
-    Returns a list of wavelengths to plot the spectra and a list of vertical lines to plot on top the spectra.
+    Returns a list of wavelengths to plot the spectra and a list of vertical lines to plot on top the spectra, in nm.
     """
 
     min_wl = float("inf")
@@ -511,8 +518,8 @@ def get_wavelengths_to_plot(statements: StatementDictionary, num_samples: int = 
         min_wl = min(min_wl, min(vlines))
         max_wl = max(max_wl, max(vlines))
     if min_wl >= max_wl:
-        avg_wl = sum(vlines) / len(vlines) if vlines else 1.55
-        min_wl, max_wl = avg_wl - 0.01, avg_wl + 0.01
+        avg_wl = sum(vlines) / len(vlines) if vlines else _str_units_to_float("1550 nm")
+        min_wl, max_wl = avg_wl - _str_units_to_float("10 nm"), avg_wl + _str_units_to_float("10 nm")
     else:
         range_size = max_wl - min_wl
         min_wl -= 0.2 * range_size
