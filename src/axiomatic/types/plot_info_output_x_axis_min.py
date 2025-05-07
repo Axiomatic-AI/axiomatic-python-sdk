@@ -2,4 +2,4 @@
 
 import typing
 
-PlotInfoYAxisTickValuesItem = typing.Union[float, int]
+PlotInfoOutputXAxisMin = typing.Union[float, int]

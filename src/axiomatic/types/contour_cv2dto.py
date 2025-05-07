@@ -2,4 +2,4 @@
 
 import typing
 
-PlotInfoXAxisMax = typing.Union[float, int]
+ContourCv2Dto = typing.List[typing.List[int]]

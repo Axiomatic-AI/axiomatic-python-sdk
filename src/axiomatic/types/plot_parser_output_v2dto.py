@@ -3,6 +3,8 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .extracted_series_dto import ExtractedSeriesDto
+from .plot_info_dto import PlotInfoDto
+from .axes_info_dto import AxesInfoDto
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -16,6 +18,8 @@ class PlotParserOutputV2Dto(UniversalBaseModel):
     origin: typing.Optional[typing.List[typing.Optional[typing.Any]]] = None
     x_axis_len: typing.Optional[float] = None
     y_axis_len: typing.Optional[float] = None
+    plot_info: typing.Optional[PlotInfoDto] = None
+    axes_info: typing.Optional[AxesInfoDto] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

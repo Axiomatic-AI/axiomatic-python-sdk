@@ -92,6 +92,94 @@ client.health_check_health_check_get()
 </details>
 
 ## lean
+<details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">formalize</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.lean.formalize(
+    query="query",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**query:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**universe:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**k_best:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max_attempts:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**verbose:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">execute</a>(...)</code></summary>
 <dl>
 <dd>
@@ -194,6 +282,94 @@ client.lean.suggest(
 <dd>
 
 **code_prefix:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.lean.<a href="src/axiomatic/lean/client.py">prove</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.lean.prove(
+    code="code",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**code:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**universe:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**k_best:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max_attempts:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**verbose:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -947,7 +1123,6 @@ from axiomatic import (
     NamedQuantityList,
     ParameterBound,
     Quantity,
-    QuantityList,
 )
 
 client = Axiomatic(
@@ -985,24 +1160,16 @@ client.digital_twin.optimize(
             ),
         )
     ],
-    inputs=[
-        NamedQuantityList(
-            name="name",
-            value=QuantityList(
-                unit="unit",
-                magnitude=[1.1],
-            ),
-        )
-    ],
-    targets=[
-        NamedQuantityList(
-            name="name",
-            value=QuantityList(
-                unit="unit",
-                magnitude=[1.1],
-            ),
-        )
-    ],
+    input=NamedQuantityList(
+        name="name",
+        unit="unit",
+        magnitudes=[1.1],
+    ),
+    target=NamedQuantityList(
+        name="name",
+        unit="unit",
+        magnitudes=[1.1],
+    ),
 )
 
 ```
@@ -1043,7 +1210,7 @@ client.digital_twin.optimize(
 <dl>
 <dd>
 
-**inputs:** `typing.Sequence[NamedQuantityList]` 
+**input:** `NamedQuantityList` 
     
 </dd>
 </dl>
@@ -1051,7 +1218,7 @@ client.digital_twin.optimize(
 <dl>
 <dd>
 
-**targets:** `typing.Sequence[NamedQuantityList]` 
+**target:** `NamedQuantityList` 
     
 </dd>
 </dl>
@@ -1071,6 +1238,190 @@ client.digital_twin.optimize(
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.digital_twin.<a href="src/axiomatic/digital_twin/client.py">evaluate</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Evaluate Digital Twin Model
+
+    This endpoint takes model parameters and target functions as input,
+    then returns the evaluated values for each target function using the
+    specified model. It can be used for model validation, simulation,
+    and prediction tasks.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic, NamedQuantity, NamedQuantityList, Quantity
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.digital_twin.evaluate(
+    parameters=[
+        NamedQuantity(
+            name="name",
+            value=Quantity(
+                magnitude=1.1,
+                unit="unit",
+            ),
+        )
+    ],
+    target_unit="target_unit",
+    input=NamedQuantityList(
+        name="name",
+        unit="unit",
+        magnitudes=[1.1],
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**parameters:** `typing.Sequence[NamedQuantity]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**target_unit:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**input:** `NamedQuantityList` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**constants:** `typing.Optional[typing.Sequence[NamedQuantity]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**plot_meta:** `typing.Optional[PlotMeta]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.digital_twin.<a href="src/axiomatic/digital_twin/client.py">list_models</a>()</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieves a list of available digital twin models and their parameter definitions.
+
+    Returns the name, description (if available), and parameter details
+    (name, unit, lower and upper bound) for each model.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import Axiomatic
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.digital_twin.list_models()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
 
 <dl>
 <dd>

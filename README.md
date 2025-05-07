@@ -25,8 +25,8 @@ from axiomatic import Axiomatic
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
-client.lean.execute(
-    code="code",
+client.lean.formalize(
+    query="query",
 )
 ```
 
@@ -45,8 +45,8 @@ client = AsyncAxiomatic(
 
 
 async def main() -> None:
-    await client.lean.execute(
-        code="code",
+    await client.lean.formalize(
+        query="query",
     )
 
 
@@ -62,7 +62,7 @@ will be thrown.
 from axiomatic.core.api_error import ApiError
 
 try:
-    client.lean.execute(...)
+    client.lean.formalize(...)
 except ApiError as e:
     print(e.status_code)
     print(e.body)
@@ -85,7 +85,7 @@ A request is deemed retryable when any of the following HTTP status codes is ret
 Use the `max_retries` request option to configure this behavior.
 
 ```python
-client.lean.execute(..., request_options={
+client.lean.formalize(..., request_options={
     "max_retries": 1
 })
 ```
@@ -105,7 +105,7 @@ client = Axiomatic(
 
 
 # Override timeout for a specific method
-client.lean.execute(..., request_options={
+client.lean.formalize(..., request_options={
     "timeout_in_seconds": 1
 })
 ```

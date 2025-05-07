@@ -4,11 +4,14 @@ import typing
 from ..core.client_wrapper import SyncClientWrapper
 from .z3.client import Z3Client
 from ..core.request_options import RequestOptions
+from ..types.lean_formalize_response import LeanFormalizeResponse
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
+from ..types.execute_response import ExecuteResponse
+from ..types.lean_prove_response import LeanProveResponse
 from ..core.client_wrapper import AsyncClientWrapper
 from .z3.client import AsyncZ3Client
 
@@ -21,9 +24,89 @@ class LeanClient:
         self._client_wrapper = client_wrapper
         self.z3 = Z3Client(client_wrapper=self._client_wrapper)
 
-    def execute(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    def formalize(
+        self,
+        *,
+        query: str,
+        universe: typing.Optional[str] = OMIT,
+        k_best: typing.Optional[int] = OMIT,
+        max_attempts: typing.Optional[int] = OMIT,
+        verbose: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LeanFormalizeResponse:
+        """
+        Parameters
+        ----------
+        query : str
+
+        universe : typing.Optional[str]
+
+        k_best : typing.Optional[int]
+
+        max_attempts : typing.Optional[int]
+
+        verbose : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LeanFormalizeResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.lean.formalize(
+            query="query",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "lean/formalize",
+            method="POST",
+            json={
+                "query": query,
+                "universe": universe,
+                "k_best": k_best,
+                "max_attempts": max_attempts,
+                "verbose": verbose,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    LeanFormalizeResponse,
+                    parse_obj_as(
+                        type_=LeanFormalizeResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def execute(self, *, code: str, request_options: typing.Optional[RequestOptions] = None) -> ExecuteResponse:
         """
         Parameters
         ----------
@@ -34,7 +117,7 @@ class LeanClient:
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        ExecuteResponse
             Successful Response
 
         Examples
@@ -63,9 +146,9 @@ class LeanClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    ExecuteResponse,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=ExecuteResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -151,15 +234,185 @@ class LeanClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    def prove(
+        self,
+        *,
+        code: str,
+        universe: typing.Optional[str] = OMIT,
+        k_best: typing.Optional[int] = OMIT,
+        max_attempts: typing.Optional[int] = OMIT,
+        verbose: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LeanProveResponse:
+        """
+        Parameters
+        ----------
+        code : str
+
+        universe : typing.Optional[str]
+
+        k_best : typing.Optional[int]
+
+        max_attempts : typing.Optional[int]
+
+        verbose : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LeanProveResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.lean.prove(
+            code="code",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "lean/prove",
+            method="POST",
+            json={
+                "code": code,
+                "universe": universe,
+                "k_best": k_best,
+                "max_attempts": max_attempts,
+                "verbose": verbose,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    LeanProveResponse,
+                    parse_obj_as(
+                        type_=LeanProveResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
 
 class AsyncLeanClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
         self.z3 = AsyncZ3Client(client_wrapper=self._client_wrapper)
 
-    async def execute(
-        self, *, code: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Optional[typing.Any]:
+    async def formalize(
+        self,
+        *,
+        query: str,
+        universe: typing.Optional[str] = OMIT,
+        k_best: typing.Optional[int] = OMIT,
+        max_attempts: typing.Optional[int] = OMIT,
+        verbose: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LeanFormalizeResponse:
+        """
+        Parameters
+        ----------
+        query : str
+
+        universe : typing.Optional[str]
+
+        k_best : typing.Optional[int]
+
+        max_attempts : typing.Optional[int]
+
+        verbose : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LeanFormalizeResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.lean.formalize(
+                query="query",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "lean/formalize",
+            method="POST",
+            json={
+                "query": query,
+                "universe": universe,
+                "k_best": k_best,
+                "max_attempts": max_attempts,
+                "verbose": verbose,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    LeanFormalizeResponse,
+                    parse_obj_as(
+                        type_=LeanFormalizeResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def execute(self, *, code: str, request_options: typing.Optional[RequestOptions] = None) -> ExecuteResponse:
         """
         Parameters
         ----------
@@ -170,7 +423,7 @@ class AsyncLeanClient:
 
         Returns
         -------
-        typing.Optional[typing.Any]
+        ExecuteResponse
             Successful Response
 
         Examples
@@ -207,9 +460,9 @@ class AsyncLeanClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    typing.Optional[typing.Any],
+                    ExecuteResponse,
                     parse_obj_as(
-                        type_=typing.Optional[typing.Any],  # type: ignore
+                        type_=ExecuteResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -285,6 +538,96 @@ class AsyncLeanClient:
                     typing.Optional[typing.Any],
                     parse_obj_as(
                         type_=typing.Optional[typing.Any],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def prove(
+        self,
+        *,
+        code: str,
+        universe: typing.Optional[str] = OMIT,
+        k_best: typing.Optional[int] = OMIT,
+        max_attempts: typing.Optional[int] = OMIT,
+        verbose: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LeanProveResponse:
+        """
+        Parameters
+        ----------
+        code : str
+
+        universe : typing.Optional[str]
+
+        k_best : typing.Optional[int]
+
+        max_attempts : typing.Optional[int]
+
+        verbose : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LeanProveResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.lean.prove(
+                code="code",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "lean/prove",
+            method="POST",
+            json={
+                "code": code,
+                "universe": universe,
+                "k_best": k_best,
+                "max_attempts": max_attempts,
+                "verbose": verbose,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    LeanProveResponse,
+                    parse_obj_as(
+                        type_=LeanProveResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

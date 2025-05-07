@@ -13,6 +13,9 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
+from ..types.plot_meta import PlotMeta
+from ..types.evaluate_result import EvaluateResult
+from ..types.list_models_result import ListModelsResult
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -29,8 +32,8 @@ class DigitalTwinClient:
         parameters: typing.Sequence[NamedQuantity],
         parameter_bounds: typing.Sequence[ParameterBound],
         constants: typing.Sequence[NamedQuantity],
-        inputs: typing.Sequence[NamedQuantityList],
-        targets: typing.Sequence[NamedQuantityList],
+        input: NamedQuantityList,
+        target: NamedQuantityList,
         tolerance: typing.Optional[float] = OMIT,
         max_time: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -54,9 +57,9 @@ class DigitalTwinClient:
 
         constants : typing.Sequence[NamedQuantity]
 
-        inputs : typing.Sequence[NamedQuantityList]
+        input : NamedQuantityList
 
-        targets : typing.Sequence[NamedQuantityList]
+        target : NamedQuantityList
 
         tolerance : typing.Optional[float]
 
@@ -78,7 +81,6 @@ class DigitalTwinClient:
             NamedQuantityList,
             ParameterBound,
             Quantity,
-            QuantityList,
         )
 
         client = Axiomatic(
@@ -116,24 +118,16 @@ class DigitalTwinClient:
                     ),
                 )
             ],
-            inputs=[
-                NamedQuantityList(
-                    name="name",
-                    value=QuantityList(
-                        unit="unit",
-                        magnitude=[1.1],
-                    ),
-                )
-            ],
-            targets=[
-                NamedQuantityList(
-                    name="name",
-                    value=QuantityList(
-                        unit="unit",
-                        magnitude=[1.1],
-                    ),
-                )
-            ],
+            input=NamedQuantityList(
+                name="name",
+                unit="unit",
+                magnitudes=[1.1],
+            ),
+            target=NamedQuantityList(
+                name="name",
+                unit="unit",
+                magnitudes=[1.1],
+            ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -149,11 +143,11 @@ class DigitalTwinClient:
                 "constants": convert_and_respect_annotation_metadata(
                     object_=constants, annotation=typing.Sequence[NamedQuantity], direction="write"
                 ),
-                "inputs": convert_and_respect_annotation_metadata(
-                    object_=inputs, annotation=typing.Sequence[NamedQuantityList], direction="write"
+                "input": convert_and_respect_annotation_metadata(
+                    object_=input, annotation=NamedQuantityList, direction="write"
                 ),
-                "targets": convert_and_respect_annotation_metadata(
-                    object_=targets, annotation=typing.Sequence[NamedQuantityList], direction="write"
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=NamedQuantityList, direction="write"
                 ),
                 "tolerance": tolerance,
                 "max_time": max_time,
@@ -189,6 +183,164 @@ class DigitalTwinClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    def evaluate(
+        self,
+        *,
+        parameters: typing.Sequence[NamedQuantity],
+        target_unit: str,
+        input: NamedQuantityList,
+        constants: typing.Optional[typing.Sequence[NamedQuantity]] = OMIT,
+        plot_meta: typing.Optional[PlotMeta] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> EvaluateResult:
+        """
+        Evaluate Digital Twin Model
+
+            This endpoint takes model parameters and target functions as input,
+            then returns the evaluated values for each target function using the
+            specified model. It can be used for model validation, simulation,
+            and prediction tasks.
+
+        Parameters
+        ----------
+        parameters : typing.Sequence[NamedQuantity]
+
+        target_unit : str
+
+        input : NamedQuantityList
+
+        constants : typing.Optional[typing.Sequence[NamedQuantity]]
+
+        plot_meta : typing.Optional[PlotMeta]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        EvaluateResult
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic, NamedQuantity, NamedQuantityList, Quantity
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.digital_twin.evaluate(
+            parameters=[
+                NamedQuantity(
+                    name="name",
+                    value=Quantity(
+                        magnitude=1.1,
+                        unit="unit",
+                    ),
+                )
+            ],
+            target_unit="target_unit",
+            input=NamedQuantityList(
+                name="name",
+                unit="unit",
+                magnitudes=[1.1],
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "digital-twin/evaluate",
+            method="POST",
+            json={
+                "parameters": convert_and_respect_annotation_metadata(
+                    object_=parameters, annotation=typing.Sequence[NamedQuantity], direction="write"
+                ),
+                "target_unit": target_unit,
+                "input": convert_and_respect_annotation_metadata(
+                    object_=input, annotation=NamedQuantityList, direction="write"
+                ),
+                "constants": convert_and_respect_annotation_metadata(
+                    object_=constants, annotation=typing.Sequence[NamedQuantity], direction="write"
+                ),
+                "plot_meta": convert_and_respect_annotation_metadata(
+                    object_=plot_meta, annotation=PlotMeta, direction="write"
+                ),
+                "model_name": "EOResponseModel",
+                "target_function": "eo_response",
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    EvaluateResult,
+                    parse_obj_as(
+                        type_=EvaluateResult,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def list_models(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListModelsResult:
+        """
+        Retrieves a list of available digital twin models and their parameter definitions.
+
+            Returns the name, description (if available), and parameter details
+            (name, unit, lower and upper bound) for each model.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListModelsResult
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import Axiomatic
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.digital_twin.list_models()
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "digital-twin/models",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ListModelsResult,
+                    parse_obj_as(
+                        type_=ListModelsResult,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
 
 class AsyncDigitalTwinClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -200,8 +352,8 @@ class AsyncDigitalTwinClient:
         parameters: typing.Sequence[NamedQuantity],
         parameter_bounds: typing.Sequence[ParameterBound],
         constants: typing.Sequence[NamedQuantity],
-        inputs: typing.Sequence[NamedQuantityList],
-        targets: typing.Sequence[NamedQuantityList],
+        input: NamedQuantityList,
+        target: NamedQuantityList,
         tolerance: typing.Optional[float] = OMIT,
         max_time: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -225,9 +377,9 @@ class AsyncDigitalTwinClient:
 
         constants : typing.Sequence[NamedQuantity]
 
-        inputs : typing.Sequence[NamedQuantityList]
+        input : NamedQuantityList
 
-        targets : typing.Sequence[NamedQuantityList]
+        target : NamedQuantityList
 
         tolerance : typing.Optional[float]
 
@@ -251,7 +403,6 @@ class AsyncDigitalTwinClient:
             NamedQuantityList,
             ParameterBound,
             Quantity,
-            QuantityList,
         )
 
         client = AsyncAxiomatic(
@@ -292,24 +443,16 @@ class AsyncDigitalTwinClient:
                         ),
                     )
                 ],
-                inputs=[
-                    NamedQuantityList(
-                        name="name",
-                        value=QuantityList(
-                            unit="unit",
-                            magnitude=[1.1],
-                        ),
-                    )
-                ],
-                targets=[
-                    NamedQuantityList(
-                        name="name",
-                        value=QuantityList(
-                            unit="unit",
-                            magnitude=[1.1],
-                        ),
-                    )
-                ],
+                input=NamedQuantityList(
+                    name="name",
+                    unit="unit",
+                    magnitudes=[1.1],
+                ),
+                target=NamedQuantityList(
+                    name="name",
+                    unit="unit",
+                    magnitudes=[1.1],
+                ),
             )
 
 
@@ -328,11 +471,11 @@ class AsyncDigitalTwinClient:
                 "constants": convert_and_respect_annotation_metadata(
                     object_=constants, annotation=typing.Sequence[NamedQuantity], direction="write"
                 ),
-                "inputs": convert_and_respect_annotation_metadata(
-                    object_=inputs, annotation=typing.Sequence[NamedQuantityList], direction="write"
+                "input": convert_and_respect_annotation_metadata(
+                    object_=input, annotation=NamedQuantityList, direction="write"
                 ),
-                "targets": convert_and_respect_annotation_metadata(
-                    object_=targets, annotation=typing.Sequence[NamedQuantityList], direction="write"
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=NamedQuantityList, direction="write"
                 ),
                 "tolerance": tolerance,
                 "max_time": max_time,
@@ -362,6 +505,180 @@ class AsyncDigitalTwinClient:
                             object_=_response.json(),
                         ),
                     )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def evaluate(
+        self,
+        *,
+        parameters: typing.Sequence[NamedQuantity],
+        target_unit: str,
+        input: NamedQuantityList,
+        constants: typing.Optional[typing.Sequence[NamedQuantity]] = OMIT,
+        plot_meta: typing.Optional[PlotMeta] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> EvaluateResult:
+        """
+        Evaluate Digital Twin Model
+
+            This endpoint takes model parameters and target functions as input,
+            then returns the evaluated values for each target function using the
+            specified model. It can be used for model validation, simulation,
+            and prediction tasks.
+
+        Parameters
+        ----------
+        parameters : typing.Sequence[NamedQuantity]
+
+        target_unit : str
+
+        input : NamedQuantityList
+
+        constants : typing.Optional[typing.Sequence[NamedQuantity]]
+
+        plot_meta : typing.Optional[PlotMeta]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        EvaluateResult
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic, NamedQuantity, NamedQuantityList, Quantity
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.digital_twin.evaluate(
+                parameters=[
+                    NamedQuantity(
+                        name="name",
+                        value=Quantity(
+                            magnitude=1.1,
+                            unit="unit",
+                        ),
+                    )
+                ],
+                target_unit="target_unit",
+                input=NamedQuantityList(
+                    name="name",
+                    unit="unit",
+                    magnitudes=[1.1],
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "digital-twin/evaluate",
+            method="POST",
+            json={
+                "parameters": convert_and_respect_annotation_metadata(
+                    object_=parameters, annotation=typing.Sequence[NamedQuantity], direction="write"
+                ),
+                "target_unit": target_unit,
+                "input": convert_and_respect_annotation_metadata(
+                    object_=input, annotation=NamedQuantityList, direction="write"
+                ),
+                "constants": convert_and_respect_annotation_metadata(
+                    object_=constants, annotation=typing.Sequence[NamedQuantity], direction="write"
+                ),
+                "plot_meta": convert_and_respect_annotation_metadata(
+                    object_=plot_meta, annotation=PlotMeta, direction="write"
+                ),
+                "model_name": "EOResponseModel",
+                "target_function": "eo_response",
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    EvaluateResult,
+                    parse_obj_as(
+                        type_=EvaluateResult,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def list_models(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListModelsResult:
+        """
+        Retrieves a list of available digital twin models and their parameter definitions.
+
+            Returns the name, description (if available), and parameter details
+            (name, unit, lower and upper bound) for each model.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListModelsResult
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import AsyncAxiomatic
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.digital_twin.list_models()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "digital-twin/models",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ListModelsResult,
+                    parse_obj_as(
+                        type_=ListModelsResult,  # type: ignore
+                        object_=_response.json(),
+                    ),
                 )
             _response_json = _response.json()
         except JSONDecodeError:

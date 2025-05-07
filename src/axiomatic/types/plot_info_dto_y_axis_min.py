@@ -2,4 +2,4 @@
 
 import typing
 
-PlotInfoYAxisMin = typing.Union[float, int]
+PlotInfoDtoYAxisMin = typing.Union[float, int]
