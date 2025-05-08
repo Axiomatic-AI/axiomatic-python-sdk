@@ -21,16 +21,6 @@ class ExtractedPointDto(UniversalBaseModel):
     Y-axis value of the extracted point.
     """
 
-    img_coord_x: typing.Optional[float] = pydantic.Field(default=None)
-    """
-    X coordinate in the image.
-    """
-
-    img_coord_y: typing.Optional[float] = pydantic.Field(default=None)
-    """
-    Y coordinate in the image.
-    """
-
     percentage_coord_x: typing.Optional[float] = pydantic.Field(default=None)
     """
     X coordinate in the image as a percentage of img width

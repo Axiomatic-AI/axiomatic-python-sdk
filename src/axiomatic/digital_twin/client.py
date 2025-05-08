@@ -2,6 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from ..types.model_names import ModelNames
 from ..types.named_quantity import NamedQuantity
 from ..types.parameter_bound import ParameterBound
 from ..types.named_quantity_list import NamedQuantityList
@@ -13,7 +14,8 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
-from ..types.plot_meta import PlotMeta
+from ..types.targets import Targets
+from ..types.input_values import InputValues
 from ..types.evaluate_result import EvaluateResult
 from ..types.list_models_result import ListModelsResult
 from ..core.client_wrapper import AsyncClientWrapper
@@ -29,6 +31,7 @@ class DigitalTwinClient:
     def optimize(
         self,
         *,
+        model_name: ModelNames,
         parameters: typing.Sequence[NamedQuantity],
         parameter_bounds: typing.Sequence[ParameterBound],
         constants: typing.Sequence[NamedQuantity],
@@ -51,6 +54,8 @@ class DigitalTwinClient:
 
         Parameters
         ----------
+        model_name : ModelNames
+
         parameters : typing.Sequence[NamedQuantity]
 
         parameter_bounds : typing.Sequence[ParameterBound]
@@ -87,6 +92,7 @@ class DigitalTwinClient:
             api_key="YOUR_API_KEY",
         )
         client.digital_twin.optimize(
+            model_name="PNJunctionSiliconOnInsulatorWavelength",
             parameters=[
                 NamedQuantity(
                     name="name",
@@ -134,6 +140,7 @@ class DigitalTwinClient:
             "digital-twin/optimize",
             method="POST",
             json={
+                "model_name": model_name,
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[NamedQuantity], direction="write"
                 ),
@@ -151,7 +158,6 @@ class DigitalTwinClient:
                 ),
                 "tolerance": tolerance,
                 "max_time": max_time,
-                "model_name": "EOResponseModel",
             },
             headers={
                 "content-type": "application/json",
@@ -186,11 +192,11 @@ class DigitalTwinClient:
     def evaluate(
         self,
         *,
+        model_name: ModelNames,
         parameters: typing.Sequence[NamedQuantity],
+        target_function: Targets,
         target_unit: str,
-        input: NamedQuantityList,
-        constants: typing.Optional[typing.Sequence[NamedQuantity]] = OMIT,
-        plot_meta: typing.Optional[PlotMeta] = OMIT,
+        input_values: InputValues,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> EvaluateResult:
         """
@@ -203,15 +209,15 @@ class DigitalTwinClient:
 
         Parameters
         ----------
+        model_name : ModelNames
+
         parameters : typing.Sequence[NamedQuantity]
+
+        target_function : Targets
 
         target_unit : str
 
-        input : NamedQuantityList
-
-        constants : typing.Optional[typing.Sequence[NamedQuantity]]
-
-        plot_meta : typing.Optional[PlotMeta]
+        input_values : InputValues
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -223,12 +229,19 @@ class DigitalTwinClient:
 
         Examples
         --------
-        from axiomatic import Axiomatic, NamedQuantity, NamedQuantityList, Quantity
+        from axiomatic import (
+            Axiomatic,
+            EvaluatePoint,
+            InputValues,
+            NamedQuantity,
+            Quantity,
+        )
 
         client = Axiomatic(
             api_key="YOUR_API_KEY",
         )
         client.digital_twin.evaluate(
+            model_name="PNJunctionSiliconOnInsulatorWavelength",
             parameters=[
                 NamedQuantity(
                     name="name",
@@ -238,11 +251,19 @@ class DigitalTwinClient:
                     ),
                 )
             ],
+            target_function="delta_n_eff",
             target_unit="target_unit",
-            input=NamedQuantityList(
+            input_values=InputValues(
                 name="name",
                 unit="unit",
-                magnitudes=[1.1],
+                points=[
+                    EvaluatePoint(
+                        value_x=1.1,
+                        percentage_coord_x=1.1,
+                        value_y=1.1,
+                        percentage_coord_y=1.1,
+                    )
+                ],
             ),
         )
         """
@@ -250,21 +271,15 @@ class DigitalTwinClient:
             "digital-twin/evaluate",
             method="POST",
             json={
+                "model_name": model_name,
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[NamedQuantity], direction="write"
                 ),
+                "target_function": target_function,
                 "target_unit": target_unit,
-                "input": convert_and_respect_annotation_metadata(
-                    object_=input, annotation=NamedQuantityList, direction="write"
+                "input_values": convert_and_respect_annotation_metadata(
+                    object_=input_values, annotation=InputValues, direction="write"
                 ),
-                "constants": convert_and_respect_annotation_metadata(
-                    object_=constants, annotation=typing.Sequence[NamedQuantity], direction="write"
-                ),
-                "plot_meta": convert_and_respect_annotation_metadata(
-                    object_=plot_meta, annotation=PlotMeta, direction="write"
-                ),
-                "model_name": "EOResponseModel",
-                "target_function": "eo_response",
             },
             headers={
                 "content-type": "application/json",
@@ -349,6 +364,7 @@ class AsyncDigitalTwinClient:
     async def optimize(
         self,
         *,
+        model_name: ModelNames,
         parameters: typing.Sequence[NamedQuantity],
         parameter_bounds: typing.Sequence[ParameterBound],
         constants: typing.Sequence[NamedQuantity],
@@ -371,6 +387,8 @@ class AsyncDigitalTwinClient:
 
         Parameters
         ----------
+        model_name : ModelNames
+
         parameters : typing.Sequence[NamedQuantity]
 
         parameter_bounds : typing.Sequence[ParameterBound]
@@ -412,6 +430,7 @@ class AsyncDigitalTwinClient:
 
         async def main() -> None:
             await client.digital_twin.optimize(
+                model_name="PNJunctionSiliconOnInsulatorWavelength",
                 parameters=[
                     NamedQuantity(
                         name="name",
@@ -462,6 +481,7 @@ class AsyncDigitalTwinClient:
             "digital-twin/optimize",
             method="POST",
             json={
+                "model_name": model_name,
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[NamedQuantity], direction="write"
                 ),
@@ -479,7 +499,6 @@ class AsyncDigitalTwinClient:
                 ),
                 "tolerance": tolerance,
                 "max_time": max_time,
-                "model_name": "EOResponseModel",
             },
             headers={
                 "content-type": "application/json",
@@ -514,11 +533,11 @@ class AsyncDigitalTwinClient:
     async def evaluate(
         self,
         *,
+        model_name: ModelNames,
         parameters: typing.Sequence[NamedQuantity],
+        target_function: Targets,
         target_unit: str,
-        input: NamedQuantityList,
-        constants: typing.Optional[typing.Sequence[NamedQuantity]] = OMIT,
-        plot_meta: typing.Optional[PlotMeta] = OMIT,
+        input_values: InputValues,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> EvaluateResult:
         """
@@ -531,15 +550,15 @@ class AsyncDigitalTwinClient:
 
         Parameters
         ----------
+        model_name : ModelNames
+
         parameters : typing.Sequence[NamedQuantity]
+
+        target_function : Targets
 
         target_unit : str
 
-        input : NamedQuantityList
-
-        constants : typing.Optional[typing.Sequence[NamedQuantity]]
-
-        plot_meta : typing.Optional[PlotMeta]
+        input_values : InputValues
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -553,7 +572,13 @@ class AsyncDigitalTwinClient:
         --------
         import asyncio
 
-        from axiomatic import AsyncAxiomatic, NamedQuantity, NamedQuantityList, Quantity
+        from axiomatic import (
+            AsyncAxiomatic,
+            EvaluatePoint,
+            InputValues,
+            NamedQuantity,
+            Quantity,
+        )
 
         client = AsyncAxiomatic(
             api_key="YOUR_API_KEY",
@@ -562,6 +587,7 @@ class AsyncDigitalTwinClient:
 
         async def main() -> None:
             await client.digital_twin.evaluate(
+                model_name="PNJunctionSiliconOnInsulatorWavelength",
                 parameters=[
                     NamedQuantity(
                         name="name",
@@ -571,11 +597,19 @@ class AsyncDigitalTwinClient:
                         ),
                     )
                 ],
+                target_function="delta_n_eff",
                 target_unit="target_unit",
-                input=NamedQuantityList(
+                input_values=InputValues(
                     name="name",
                     unit="unit",
-                    magnitudes=[1.1],
+                    points=[
+                        EvaluatePoint(
+                            value_x=1.1,
+                            percentage_coord_x=1.1,
+                            value_y=1.1,
+                            percentage_coord_y=1.1,
+                        )
+                    ],
                 ),
             )
 
@@ -586,21 +620,15 @@ class AsyncDigitalTwinClient:
             "digital-twin/evaluate",
             method="POST",
             json={
+                "model_name": model_name,
                 "parameters": convert_and_respect_annotation_metadata(
                     object_=parameters, annotation=typing.Sequence[NamedQuantity], direction="write"
                 ),
+                "target_function": target_function,
                 "target_unit": target_unit,
-                "input": convert_and_respect_annotation_metadata(
-                    object_=input, annotation=NamedQuantityList, direction="write"
+                "input_values": convert_and_respect_annotation_metadata(
+                    object_=input_values, annotation=InputValues, direction="write"
                 ),
-                "constants": convert_and_respect_annotation_metadata(
-                    object_=constants, annotation=typing.Sequence[NamedQuantity], direction="write"
-                ),
-                "plot_meta": convert_and_respect_annotation_metadata(
-                    object_=plot_meta, annotation=PlotMeta, direction="write"
-                ),
-                "model_name": "EOResponseModel",
-                "target_function": "eo_response",
             },
             headers={
                 "content-type": "application/json",

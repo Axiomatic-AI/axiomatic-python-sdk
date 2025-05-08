@@ -15,8 +15,9 @@ from .create_api_key_response import CreateApiKeyResponse
 from .create_api_keyrequest import CreateApiKeyrequest
 from .create_user_request import CreateUserRequest
 from .create_user_response import CreateUserResponse
+from .evaluate_point import EvaluatePoint
 from .evaluate_result import EvaluateResult
-from .evaluate_result_eval_value import EvaluateResultEvalValue
+from .evaluate_result_value import EvaluateResultValue
 from .execute_code_response import ExecuteCodeResponse
 from .execute_response import ExecuteResponse
 from .expression import Expression
@@ -41,11 +42,13 @@ from .get_spectrum_response_spectrum_db_value_item import GetSpectrumResponseSpe
 from .get_spectrum_response_spectrum_value_item import GetSpectrumResponseSpectrumValueItem
 from .http_validation_error import HttpValidationError
 from .informalize_statement_response import InformalizeStatementResponse
+from .input_values import InputValues
 from .layout_info import LayoutInfo
 from .lean_formalize_response import LeanFormalizeResponse
 from .lean_prove_response import LeanProveResponse
 from .list_models_result import ListModelsResult
 from .model_info import ModelInfo
+from .model_names import ModelNames
 from .model_parameter_info import ModelParameterInfo
 from .model_target_info import ModelTargetInfo
 from .named_quantity import NamedQuantity
@@ -80,17 +83,12 @@ from .plot_info_dto_x_axis_tick_values_item import PlotInfoDtoXAxisTickValuesIte
 from .plot_info_dto_y_axis_max import PlotInfoDtoYAxisMax
 from .plot_info_dto_y_axis_min import PlotInfoDtoYAxisMin
 from .plot_info_dto_y_axis_tick_values_item import PlotInfoDtoYAxisTickValuesItem
-from .plot_info_input_x_axis_max import PlotInfoInputXAxisMax
-from .plot_info_input_x_axis_min import PlotInfoInputXAxisMin
-from .plot_info_input_y_axis_max import PlotInfoInputYAxisMax
-from .plot_info_input_y_axis_min import PlotInfoInputYAxisMin
-from .plot_info_output_x_axis_max import PlotInfoOutputXAxisMax
-from .plot_info_output_x_axis_min import PlotInfoOutputXAxisMin
-from .plot_info_output_x_axis_tick_values_item import PlotInfoOutputXAxisTickValuesItem
-from .plot_info_output_y_axis_max import PlotInfoOutputYAxisMax
-from .plot_info_output_y_axis_min import PlotInfoOutputYAxisMin
-from .plot_info_output_y_axis_tick_values_item import PlotInfoOutputYAxisTickValuesItem
-from .plot_meta import PlotMeta
+from .plot_info_x_axis_max import PlotInfoXAxisMax
+from .plot_info_x_axis_min import PlotInfoXAxisMin
+from .plot_info_x_axis_tick_values_item import PlotInfoXAxisTickValuesItem
+from .plot_info_y_axis_max import PlotInfoYAxisMax
+from .plot_info_y_axis_min import PlotInfoYAxisMin
+from .plot_info_y_axis_tick_values_item import PlotInfoYAxisTickValuesItem
 from .plot_parser_output import PlotParserOutput
 from .plot_parser_output_v2dto import PlotParserOutputV2Dto
 from .port_instance_layout_info import PortInstanceLayoutInfo
@@ -108,6 +106,7 @@ from .statement_validation_dictionary import StatementValidationDictionary
 from .status_response import StatusResponse
 from .summarizer_response import SummarizerResponse
 from .symbol import Symbol
+from .targets import Targets
 from .tools_list_response import ToolsListResponse
 from .type import Type
 from .unformalizable_statement import UnformalizableStatement
@@ -137,8 +136,9 @@ __all__ = [
     "CreateApiKeyrequest",
     "CreateUserRequest",
     "CreateUserResponse",
+    "EvaluatePoint",
     "EvaluateResult",
-    "EvaluateResultEvalValue",
+    "EvaluateResultValue",
     "ExecuteCodeResponse",
     "ExecuteResponse",
     "Expression",
@@ -163,11 +163,13 @@ __all__ = [
     "GetSpectrumResponseSpectrumValueItem",
     "HttpValidationError",
     "InformalizeStatementResponse",
+    "InputValues",
     "LayoutInfo",
     "LeanFormalizeResponse",
     "LeanProveResponse",
     "ListModelsResult",
     "ModelInfo",
+    "ModelNames",
     "ModelParameterInfo",
     "ModelTargetInfo",
     "NamedQuantity",
@@ -202,17 +204,12 @@ __all__ = [
     "PlotInfoDtoYAxisMax",
     "PlotInfoDtoYAxisMin",
     "PlotInfoDtoYAxisTickValuesItem",
-    "PlotInfoInputXAxisMax",
-    "PlotInfoInputXAxisMin",
-    "PlotInfoInputYAxisMax",
-    "PlotInfoInputYAxisMin",
-    "PlotInfoOutputXAxisMax",
-    "PlotInfoOutputXAxisMin",
-    "PlotInfoOutputXAxisTickValuesItem",
-    "PlotInfoOutputYAxisMax",
-    "PlotInfoOutputYAxisMin",
-    "PlotInfoOutputYAxisTickValuesItem",
-    "PlotMeta",
+    "PlotInfoXAxisMax",
+    "PlotInfoXAxisMin",
+    "PlotInfoXAxisTickValuesItem",
+    "PlotInfoYAxisMax",
+    "PlotInfoYAxisMin",
+    "PlotInfoYAxisTickValuesItem",
     "PlotParserOutput",
     "PlotParserOutputV2Dto",
     "PortInstanceLayoutInfo",
@@ -230,6 +227,7 @@ __all__ = [
     "StatusResponse",
     "SummarizerResponse",
     "Symbol",
+    "Targets",
     "ToolsListResponse",
     "Type",
     "UnformalizableStatement",

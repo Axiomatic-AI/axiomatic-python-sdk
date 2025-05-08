@@ -1129,6 +1129,7 @@ client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.digital_twin.optimize(
+    model_name="PNJunctionSiliconOnInsulatorWavelength",
     parameters=[
         NamedQuantity(
             name="name",
@@ -1182,6 +1183,14 @@ client.digital_twin.optimize(
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**model_name:** `ModelNames` 
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -1286,12 +1295,19 @@ Evaluate Digital Twin Model
 <dd>
 
 ```python
-from axiomatic import Axiomatic, NamedQuantity, NamedQuantityList, Quantity
+from axiomatic import (
+    Axiomatic,
+    EvaluatePoint,
+    InputValues,
+    NamedQuantity,
+    Quantity,
+)
 
 client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.digital_twin.evaluate(
+    model_name="PNJunctionSiliconOnInsulatorWavelength",
     parameters=[
         NamedQuantity(
             name="name",
@@ -1301,11 +1317,19 @@ client.digital_twin.evaluate(
             ),
         )
     ],
+    target_function="delta_n_eff",
     target_unit="target_unit",
-    input=NamedQuantityList(
+    input_values=InputValues(
         name="name",
         unit="unit",
-        magnitudes=[1.1],
+        points=[
+            EvaluatePoint(
+                value_x=1.1,
+                percentage_coord_x=1.1,
+                value_y=1.1,
+                percentage_coord_y=1.1,
+            )
+        ],
     ),
 )
 
@@ -1323,7 +1347,23 @@ client.digital_twin.evaluate(
 <dl>
 <dd>
 
+**model_name:** `ModelNames` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **parameters:** `typing.Sequence[NamedQuantity]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**target_function:** `Targets` 
     
 </dd>
 </dl>
@@ -1339,23 +1379,7 @@ client.digital_twin.evaluate(
 <dl>
 <dd>
 
-**input:** `NamedQuantityList` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**constants:** `typing.Optional[typing.Sequence[NamedQuantity]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**plot_meta:** `typing.Optional[PlotMeta]` 
+**input_values:** `InputValues` 
     
 </dd>
 </dl>

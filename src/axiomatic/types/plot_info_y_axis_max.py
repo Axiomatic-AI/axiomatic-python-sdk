@@ -2,4 +2,4 @@
 
 import typing
 
-PlotInfoOutputXAxisTickValuesItem = typing.Union[float, int]
+PlotInfoYAxisMax = typing.Union[float, int]
