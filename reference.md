@@ -1129,7 +1129,7 @@ client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.digital_twin.optimize(
-    model_name="PNJunctionSiliconOnInsulatorWavelength",
+    model_name="RingModulatorSiliconOnInsulatorAllPassWavelength",
     parameters=[
         NamedQuantity(
             name="name",
@@ -1307,7 +1307,7 @@ client = Axiomatic(
     api_key="YOUR_API_KEY",
 )
 client.digital_twin.evaluate(
-    model_name="PNJunctionSiliconOnInsulatorWavelength",
+    model_name="RingModulatorSiliconOnInsulatorAllPassWavelength",
     parameters=[
         NamedQuantity(
             name="name",
@@ -2013,6 +2013,125 @@ client.document.expression.process(
 <dd>
 
 **inline_equations:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.document.expression.<a href="src/axiomatic/document/expression/client.py">sympy_plot</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+generate a sympy plot for a given expression
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from axiomatic import (
+    Axiomatic,
+    Expression,
+    Symbol,
+    SympyPlotVariable,
+    ValidationResult,
+)
+
+client = Axiomatic(
+    api_key="YOUR_API_KEY",
+)
+client.document.expression.sympy_plot(
+    expression=Expression(
+        name="name",
+        description="description",
+        original_format="original_format",
+        wolfram_expression="wolfram_expression",
+        symbols={
+            "key": Symbol(
+                name="name",
+                wolfram_format="wolfram_format",
+                latex_representation="latex_representation",
+                dimension="dimension",
+                description="description",
+                type="scalar",
+                validations={
+                    "key": ValidationResult(
+                        is_valid=True,
+                        message="message",
+                    )
+                },
+            )
+        },
+        narrative_assumptions=["narrative_assumptions"],
+        exp_validations={
+            "key": ValidationResult(
+                is_valid=True,
+                message="message",
+            )
+        },
+    ),
+    variables=[
+        SympyPlotVariable(
+            symbol="symbol",
+            span=[1.1],
+            feature="x",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**expression:** `Expression` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**variables:** `typing.Sequence[SympyPlotVariable]` 
     
 </dd>
 </dl>

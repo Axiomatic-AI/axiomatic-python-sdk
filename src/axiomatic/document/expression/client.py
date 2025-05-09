@@ -12,6 +12,9 @@ from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from ...types.expression import Expression
+from ...types.sympy_plot_variable import SympyPlotVariable
+from ...types.sympy_plot_response import SympyPlotResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -293,6 +296,123 @@ class ExpressionClient:
                     ExpressionProcessingResponse,
                     parse_obj_as(
                         type_=ExpressionProcessingResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def sympy_plot(
+        self,
+        *,
+        expression: Expression,
+        variables: typing.Sequence[SympyPlotVariable],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SympyPlotResponse:
+        """
+        generate a sympy plot for a given expression
+
+        Parameters
+        ----------
+        expression : Expression
+
+        variables : typing.Sequence[SympyPlotVariable]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SympyPlotResponse
+            Successful Response
+
+        Examples
+        --------
+        from axiomatic import (
+            Axiomatic,
+            Expression,
+            Symbol,
+            SympyPlotVariable,
+            ValidationResult,
+        )
+
+        client = Axiomatic(
+            api_key="YOUR_API_KEY",
+        )
+        client.document.expression.sympy_plot(
+            expression=Expression(
+                name="name",
+                description="description",
+                original_format="original_format",
+                wolfram_expression="wolfram_expression",
+                symbols={
+                    "key": Symbol(
+                        name="name",
+                        wolfram_format="wolfram_format",
+                        latex_representation="latex_representation",
+                        dimension="dimension",
+                        description="description",
+                        type="scalar",
+                        validations={
+                            "key": ValidationResult(
+                                is_valid=True,
+                                message="message",
+                            )
+                        },
+                    )
+                },
+                narrative_assumptions=["narrative_assumptions"],
+                exp_validations={
+                    "key": ValidationResult(
+                        is_valid=True,
+                        message="message",
+                    )
+                },
+            ),
+            variables=[
+                SympyPlotVariable(
+                    symbol="symbol",
+                    span=[1.1],
+                    feature="x",
+                )
+            ],
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "document/expression/sympy_plot",
+            method="POST",
+            json={
+                "expression": convert_and_respect_annotation_metadata(
+                    object_=expression, annotation=Expression, direction="write"
+                ),
+                "variables": convert_and_respect_annotation_metadata(
+                    object_=variables, annotation=typing.Sequence[SympyPlotVariable], direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    SympyPlotResponse,
+                    parse_obj_as(
+                        type_=SympyPlotResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -611,6 +731,131 @@ class AsyncExpressionClient:
                     ExpressionProcessingResponse,
                     parse_obj_as(
                         type_=ExpressionProcessingResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        parse_obj_as(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def sympy_plot(
+        self,
+        *,
+        expression: Expression,
+        variables: typing.Sequence[SympyPlotVariable],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SympyPlotResponse:
+        """
+        generate a sympy plot for a given expression
+
+        Parameters
+        ----------
+        expression : Expression
+
+        variables : typing.Sequence[SympyPlotVariable]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SympyPlotResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from axiomatic import (
+            AsyncAxiomatic,
+            Expression,
+            Symbol,
+            SympyPlotVariable,
+            ValidationResult,
+        )
+
+        client = AsyncAxiomatic(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.document.expression.sympy_plot(
+                expression=Expression(
+                    name="name",
+                    description="description",
+                    original_format="original_format",
+                    wolfram_expression="wolfram_expression",
+                    symbols={
+                        "key": Symbol(
+                            name="name",
+                            wolfram_format="wolfram_format",
+                            latex_representation="latex_representation",
+                            dimension="dimension",
+                            description="description",
+                            type="scalar",
+                            validations={
+                                "key": ValidationResult(
+                                    is_valid=True,
+                                    message="message",
+                                )
+                            },
+                        )
+                    },
+                    narrative_assumptions=["narrative_assumptions"],
+                    exp_validations={
+                        "key": ValidationResult(
+                            is_valid=True,
+                            message="message",
+                        )
+                    },
+                ),
+                variables=[
+                    SympyPlotVariable(
+                        symbol="symbol",
+                        span=[1.1],
+                        feature="x",
+                    )
+                ],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "document/expression/sympy_plot",
+            method="POST",
+            json={
+                "expression": convert_and_respect_annotation_metadata(
+                    object_=expression, annotation=Expression, direction="write"
+                ),
+                "variables": convert_and_respect_annotation_metadata(
+                    object_=variables, annotation=typing.Sequence[SympyPlotVariable], direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    SympyPlotResponse,
+                    parse_obj_as(
+                        type_=SympyPlotResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

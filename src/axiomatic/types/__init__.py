@@ -29,6 +29,7 @@ from .extracted_point import ExtractedPoint
 from .extracted_point_dto import ExtractedPointDto
 from .extracted_points import ExtractedPoints
 from .extracted_series_dto import ExtractedSeriesDto
+from .feature import Feature
 from .find_mapping_response import FindMappingResponse
 from .find_user_response import FindUserResponse
 from .formalize_circuit_response import FormalizeCircuitResponse
@@ -106,6 +107,8 @@ from .statement_validation_dictionary import StatementValidationDictionary
 from .status_response import StatusResponse
 from .summarizer_response import SummarizerResponse
 from .symbol import Symbol
+from .sympy_plot_response import SympyPlotResponse
+from .sympy_plot_variable import SympyPlotVariable
 from .targets import Targets
 from .tools_list_response import ToolsListResponse
 from .type import Type
@@ -150,6 +153,7 @@ __all__ = [
     "ExtractedPointDto",
     "ExtractedPoints",
     "ExtractedSeriesDto",
+    "Feature",
     "FindMappingResponse",
     "FindUserResponse",
     "FormalizeCircuitResponse",
@@ -227,6 +231,8 @@ __all__ = [
     "StatusResponse",
     "SummarizerResponse",
     "Symbol",
+    "SympyPlotResponse",
+    "SympyPlotVariable",
     "Targets",
     "ToolsListResponse",
     "Type",

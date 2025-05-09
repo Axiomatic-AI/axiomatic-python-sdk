@@ -4,14 +4,17 @@ import typing
 
 ModelNames = typing.Union[
     typing.Literal[
-        "PNJunctionSiliconOnInsulatorWavelength",
         "RingModulatorSiliconOnInsulatorAllPassWavelength",
         "RingResonatorSiliconOnInsulatorAllPassDetuningFrequency",
         "RingResonatorSiliconOnInsulatorAllPassWavelength",
         "EOResponseModel",
         "LorentzianModel",
         "RingModulatorSimpleSiliconOnInsulatorAllPassWavelength",
+        "RingModulatorSimpleSiliconOnInsulatorAllPassDetuningFrequency",
+        "RingModulatorSimpleSiliconOnInsulatorAllPassDetuningWavelength",
         "RingResonatorSimpleSiliconOnInsulatorAllPassWavelength",
+        "RingResonatorSimpleSiliconOnInsulatorAllPassDetuningFrequency",
+        "RingResonatorSimpleSiliconOnInsulatorAllPassDetuningWavelength",
     ],
     typing.Any,
 ]

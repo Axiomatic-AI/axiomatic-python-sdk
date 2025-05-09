@@ -92,7 +92,7 @@ class DigitalTwinClient:
             api_key="YOUR_API_KEY",
         )
         client.digital_twin.optimize(
-            model_name="PNJunctionSiliconOnInsulatorWavelength",
+            model_name="RingModulatorSiliconOnInsulatorAllPassWavelength",
             parameters=[
                 NamedQuantity(
                     name="name",
@@ -241,7 +241,7 @@ class DigitalTwinClient:
             api_key="YOUR_API_KEY",
         )
         client.digital_twin.evaluate(
-            model_name="PNJunctionSiliconOnInsulatorWavelength",
+            model_name="RingModulatorSiliconOnInsulatorAllPassWavelength",
             parameters=[
                 NamedQuantity(
                     name="name",
@@ -430,7 +430,7 @@ class AsyncDigitalTwinClient:
 
         async def main() -> None:
             await client.digital_twin.optimize(
-                model_name="PNJunctionSiliconOnInsulatorWavelength",
+                model_name="RingModulatorSiliconOnInsulatorAllPassWavelength",
                 parameters=[
                     NamedQuantity(
                         name="name",
@@ -587,7 +587,7 @@ class AsyncDigitalTwinClient:
 
         async def main() -> None:
             await client.digital_twin.evaluate(
-                model_name="PNJunctionSiliconOnInsulatorWavelength",
+                model_name="RingModulatorSiliconOnInsulatorAllPassWavelength",
                 parameters=[
                     NamedQuantity(
                         name="name",
